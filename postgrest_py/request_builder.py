@@ -1,7 +1,5 @@
 from httpx import AsyncClient, Response
 
-from postgrest_py.constants import FILTER_OPERATORS
-
 
 class RequestBuilder:
     def __init__(self, session: AsyncClient, path: str) -> None:
