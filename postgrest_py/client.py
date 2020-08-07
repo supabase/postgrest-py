@@ -38,4 +38,4 @@ class Client:
     def from_(self, table: str) -> RequestBuilder:
         """Alias to Self.from_table()."""
 
-        return self.fromTable(table)
+        return self.from_table(table)
