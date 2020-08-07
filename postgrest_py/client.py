@@ -11,7 +11,7 @@ class Client:
             "Accept-Profile": schema,
             "Content-Profile": schema,
         }
-        self.session = AsyncClient(base_url=base_url, headers=headers)
+        self.session = AsyncClient(base_url=base_url, params={}, headers=headers)
 
     async def __aenter__(self) -> Client:
         return self
