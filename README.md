@@ -1,4 +1,4 @@
-# postgrest-py
+# postgrest_py
 
 PostgREST client for Python. This library provides an ORM interface to PostgREST.
 
@@ -10,8 +10,8 @@ PostgREST client for Python. This library provides an ORM interface to PostgREST
 
 ## CHANGELOG
 
-Read more [here](https://github.com/lqmanh/postgrest-py/blob/master/CHANGELOG.md).
+Read more [here](https://github.com/lqmanh/postgrest_py/blob/master/CHANGELOG.md).
 
 ## TODO
 
-Read more [here](https://github.com/lqmanh/postgrest-py/blob/master/TODO.md).
+Read more [here](https://github.com/lqmanh/postgrest_py/blob/master/TODO.md).
