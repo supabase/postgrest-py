@@ -33,4 +33,4 @@ class Client:
         return self
 
     def fromTable(self, table: str) -> RequestBuilder:
-        return RequestBuilder(self.session, table)
+        return RequestBuilder(self.session, f"/{table}")
