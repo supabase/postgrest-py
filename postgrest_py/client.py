@@ -1,4 +1,4 @@
-from httpx import AsyncClient
+from httpx import AsyncClient, Response
 
 from postgrest_py.request_builder import RequestBuilder
 
@@ -22,7 +22,7 @@ class Client:
     async def aclose(self) -> None:
         await self.session.aclose()
 
-    def auth(self, bearer_token: str, *, username: str = None, password=""):
+    def auth(self, bearer_token: str, *, username: str = None, password: str = None):
         """Authenticate the request, with either bearer token or basic authentication."""
 
         if username:
@@ -44,3 +44,10 @@ class Client:
         """Alias to Self.from_table()."""
 
         return self.from_table(table)
+
+    async def rpc(self, func: str, params: dict) -> Response:
+        """Execute a stored procedure call."""
+
+        path = f"/rpc/{func}"
+        r = await self.session.post(path, json=params)
+        return r

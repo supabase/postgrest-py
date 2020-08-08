@@ -5,6 +5,7 @@
 #### Features
 
 - Support basic authentication
+- Support stored procedures (RPC)
 
 ### v0.1.1
 

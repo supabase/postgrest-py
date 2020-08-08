@@ -12,6 +12,14 @@ PostgREST client for Python. This library provides an ORM interface to PostgREST
 
 ### Instructions
 
+#### With Poetry
+
+```sh
+$ poetry add git+https://github.com/lqmanh/postgrest_py.git#v0.1.1
+```
+
+#### With Pip
+
 ## USAGE
 
 ## DOCUMENTATION
