@@ -22,8 +22,13 @@ class Client:
     async def aclose(self) -> None:
         await self.session.aclose()
 
-    def auth(self, token: str):
-        self.session.headers["Authorization"] = f"Bearer {token}"
+    def auth(self, bearer_token: str, *, username: str = None, password=""):
+        """Authenticate the request, with either bearer token or basic authentication."""
+
+        if username:
+            self.session.auth = (username, password)
+        else:
+            self.session.headers["Authorization"] = f"Bearer {bearer_token}"
         return self
 
     def schema(self, schema: str):

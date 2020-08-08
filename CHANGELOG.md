@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### Unreleased
+
+#### Features
+
+- Support basic authentication
+
 ### v0.1.1
 
 #### Bugfixes
