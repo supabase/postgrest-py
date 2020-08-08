@@ -8,6 +8,13 @@ class RequestBuilder:
         self.json = {}
         self.http_method = "GET"
 
+        self.negate_next = False
+
+    @property
+    def not_(self):
+        self.negate_next = True
+        return self
+
     def select(self, *columns: str):
         self.session.params["select"] = ",".join(columns)
         self.http_method = "GET"
@@ -48,82 +55,137 @@ class RequestBuilder:
         self.session.params[column] = f"not.{operator}.{criteria}"
         return self
 
-    def not_(self, column: str, operator: str, criteria: str):
-        """Alias to Self.filter_out()."""
-
-        return self.filter_out(column, operator, criteria)
-
     def eq(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "eq", criteria)
         return self.filter_in(column, "eq", criteria)
 
     def neq(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "neq", criteria)
         return self.filter_in(column, "neq", criteria)
 
     def gt(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "gt", criteria)
         return self.filter_in(column, "gt", criteria)
 
-    def lt(self, column: str, criteria: str):
-        return self.filter_in(column, "lt", criteria)
-
     def gte(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "gte", criteria)
         return self.filter_in(column, "gte", criteria)
 
+    def lt(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "lt", criteria)
+        return self.filter_in(column, "lt", criteria)
+
     def lte(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "lte", criteria)
         return self.filter_in(column, "lte", criteria)
 
     def like(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "like", criteria)
         return self.filter_in(column, "like", criteria)
 
     def ilike(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "ilike", criteria)
         return self.filter_in(column, "ilike", criteria)
 
     def is_(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "is", criteria)
         return self.filter_in(column, "is", criteria)
 
     def in_(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "in", criteria)
         return self.filter_in(column, "in", criteria)
 
     def fts(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "fts", criteria)
         return self.filter_in(column, "fts", criteria)
 
     def plfts(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "plfts", criteria)
         return self.filter_in(column, "plfts", criteria)
 
     def phfts(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "phfts", criteria)
         return self.filter_in(column, "phfts", criteria)
 
     def wfts(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "wfts", criteria)
         return self.filter_in(column, "wfts", criteria)
 
     def cs(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "cs", criteria)
         return self.filter_in(column, "cs", criteria)
 
     def cd(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "cd", criteria)
         return self.filter_in(column, "cd", criteria)
 
-    def ova(self, column: str, criteria: str):
-        return self.filter_in(column, "ova", criteria)
-
-    def ovr(self, column: str, criteria: str):
-        return self.filter_in(column, "ovr", criteria)
+    def ov(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "ov", criteria)
+        return self.filter_in(column, "ov", criteria)
 
     def sl(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "sl", criteria)
         return self.filter_in(column, "sl", criteria)
 
     def sr(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "sr", criteria)
         return self.filter_in(column, "sr", criteria)
 
     def nxr(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "nxr", criteria)
         return self.filter_in(column, "nxr", criteria)
 
     def nxl(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "nxl", criteria)
         return self.filter_in(column, "nxl", criteria)
 
     def adj(self, column: str, criteria: str):
+        if self.negate_next == True:
+            self.negate_next = False
+            return self.filter_out(column, "adj", criteria)
         return self.filter_in(column, "adj", criteria)
-
-    # def or_(self, column: str, criteria: str):
-    #     return self.filter_in(column, "or", criteria)
 
 
 class GetRequestBuilder(RequestBuilder):
