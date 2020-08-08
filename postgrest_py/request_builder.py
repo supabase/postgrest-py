@@ -8,8 +8,8 @@ class RequestBuilder:
         self.json = {}
         self.http_method = "GET"
 
-    def select(self, columns: str):
-        self.session.params["select"] = columns
+    def select(self, *columns: str):
+        self.session.params["select"] = ",".join(columns)
         self.http_method = "GET"
         return GetRequestBuilder.from_request_builder(self)
 

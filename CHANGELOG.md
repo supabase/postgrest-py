@@ -6,6 +6,7 @@
 
 - Support basic authentication
 - Support stored procedures (RPC)
+- `RequestBuilder.select()` now accepts `columns` as variable-length arguments
 
 #### Changed
 
