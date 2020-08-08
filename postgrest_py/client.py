@@ -1,9 +1,11 @@
+from deprecation import deprecated
 from httpx import AsyncClient, Response
 
+from postgrest_py.__version__ import __version__
 from postgrest_py.request_builder import RequestBuilder
 
 
-class Client:
+class PostgrestClient:
     def __init__(self, base_url: str, *, schema="public") -> None:
         headers = {
             "Accept": "application/json",
@@ -51,3 +53,9 @@ class Client:
         path = f"/rpc/{func}"
         r = await self.session.post(path, json=params)
         return r
+
+
+class Client(PostgrestClient):
+    @deprecated("0.2.0", "1.0.0", __version__, "Use PostgrestClient instead")
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
