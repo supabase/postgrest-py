@@ -30,7 +30,7 @@ from postgrest_py import PostgrestClient
 
 async def main():
     async with PostgrestClient("http://localhost:3000") as client:
-        r = await client.from_table("countries").select("*")
+        r = await client.from_("countries").select("*")
         countries = r.json()
 
 asyncio.run(main())
@@ -39,7 +39,7 @@ asyncio.run(main())
 ### Create
 
 ```py
-await client.from_table("countries").insert({
+await client.from_("countries").insert({
     "name": "Việt Nam",
     "capital": "Hà Nội",
 })
@@ -48,7 +48,7 @@ await client.from_table("countries").insert({
 ### Read
 
 ```py
-r = await client.from_table("countries").select("id", "name")
+r = await client.from_("countries").select("id", "name")
 countries = r.json()
 ```
 

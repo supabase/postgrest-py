@@ -39,13 +39,14 @@ class PostgrestClient:
         )
         return self
 
-    def from_table(self, table: str) -> RequestBuilder:
+    def from_(self, table: str) -> RequestBuilder:
         return RequestBuilder(self.session, f"/{table}")
 
-    def from_(self, table: str) -> RequestBuilder:
-        """Alias to Self.from_table()."""
+    @deprecated("0.2.0", "1.0.0", __version__, "Use PostgrestClient.from_() instead")
+    def from_table(self, table: str) -> RequestBuilder:
+        """Alias to Self.from_()."""
 
-        return self.from_table(table)
+        return self.from_(table)
 
     async def rpc(self, func: str, params: dict) -> Response:
         """Execute a stored procedure call."""

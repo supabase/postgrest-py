@@ -13,6 +13,7 @@
 #### Changed
 
 - Rename `Client` to `PostgrestClient` and deprecate the old name
+- Deprecate `PostgrestClient.from_table()`
 
 #### Removed
 
