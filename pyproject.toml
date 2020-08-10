@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "postgrest_py"
+name = "postgrest-py"
 version = "0.2.0"
 description = "PostgREST client for Python. This library provides an ORM interface to PostgREST."
 authors = ["Lương Quang Mạnh <luongquangmanh85@gmail.com>"]

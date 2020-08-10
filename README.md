@@ -1,4 +1,4 @@
-# postgrest_py
+# postgrest-py
 
 PostgREST client for Python. This library provides an ORM interface to PostgREST.
 
@@ -17,7 +17,7 @@ Status: **Unstable**
 #### With Poetry
 
 ```sh
-$ poetry add git+https://github.com/lqmanh/postgrest_py.git#v0.1.1
+$ poetry add postgrest-py
 ```
 
 ## USAGE
@@ -67,8 +67,8 @@ await client.from_("countries").eq("name", "Việt Nam").delete().execute()
 
 ## CHANGELOG
 
-Read more [here](https://github.com/lqmanh/postgrest_py/blob/master/CHANGELOG.md).
+Read more [here](https://github.com/lqmanh/postgrest-py/blob/master/CHANGELOG.md).
 
 ## TODO
 
-Read more [here](https://github.com/lqmanh/postgrest_py/blob/master/TODO.md).
+Read more [here](https://github.com/lqmanh/postgrest-py/blob/master/TODO.md).
