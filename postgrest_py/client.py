@@ -6,6 +6,8 @@ from postgrest_py.request_builder import RequestBuilder
 
 
 class PostgrestClient:
+    """PostgREST client."""
+
     def __init__(self, base_url: str, *, schema="public") -> None:
         headers = {
             "Accept": "application/json",
@@ -24,39 +26,40 @@ class PostgrestClient:
     async def aclose(self) -> None:
         await self.session.aclose()
 
-    def auth(self, bearer_token: str, *, username: str = None, password: str = None):
-        """Authenticate the request, with either bearer token or basic authentication."""
-
+    def auth(self, token: str, *, username: str = None, password: str = None):
+        """Authenticate the client with either bearer token or basic authentication."""
         if username:
             self.session.auth = (username, password)
         else:
-            self.session.headers["Authorization"] = f"Bearer {bearer_token}"
+            self.session.headers["Authorization"] = f"Bearer {token}"
         return self
 
     def schema(self, schema: str):
+        """Switch to another schema."""
         self.session.merge_headers(
             {"Accept-Profile": schema, "Content-Profile": schema}
         )
         return self
 
     def from_(self, table: str) -> RequestBuilder:
+        """Perform a table operation."""
         return RequestBuilder(self.session, f"/{table}")
 
     @deprecated("0.2.0", "1.0.0", __version__, "Use PostgrestClient.from_() instead")
     def from_table(self, table: str) -> RequestBuilder:
         """Alias to Self.from_()."""
-
         return self.from_(table)
 
     async def rpc(self, func: str, params: dict) -> Response:
-        """Execute a stored procedure call."""
-
+        """Perform a stored procedure call."""
         path = f"/rpc/{func}"
         r = await self.session.post(path, json=params)
         return r
 
 
 class Client(PostgrestClient):
+    """Alias to PostgrestClient."""
+
     @deprecated("0.2.0", "1.0.0", __version__, "Use PostgrestClient instead")
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -1,4 +1,8 @@
+from typing import Iterable, Tuple
+
 from httpx import AsyncClient, Response
+
+from postgrest_py.utils import sanitize_param
 
 
 class RequestBuilder:
@@ -42,150 +46,89 @@ class RequestBuilder:
         r = await self.session.request(self.http_method, self.path, json=self.json)
         return r
 
-    def filter_in(self, column: str, operator: str, criteria: str):
-        self.session.params[column] = f"{operator}.{criteria}"
-        return self
-
     def filter(self, column: str, operator: str, criteria: str):
-        """Alias to Self.filter_in()."""
-
-        return self.filter_in(column, operator, criteria)
-
-    def filter_out(self, column: str, operator: str, criteria: str):
-        self.session.params[column] = f"not.{operator}.{criteria}"
+        """Either filter in or filter out based on Self.negate_next."""
+        if self.negate_next == True:
+            self.negate_next = False
+            operator = f"not.{operator}"
+        self.session.params[sanitize_param(column)] = f"{operator}.{criteria}"
         return self
 
-    def eq(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "eq", criteria)
-        return self.filter_in(column, "eq", criteria)
+    def eq(self, column: str, value: str):
+        return self.filter(column, "eq", sanitize_param(value))
 
-    def neq(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "neq", criteria)
-        return self.filter_in(column, "neq", criteria)
+    def neq(self, column: str, value: str):
+        return self.filter(column, "neq", sanitize_param(value))
 
-    def gt(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "gt", criteria)
-        return self.filter_in(column, "gt", criteria)
+    def gt(self, column: str, value: str):
+        return self.filter(column, "gt", sanitize_param(value))
 
-    def gte(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "gte", criteria)
-        return self.filter_in(column, "gte", criteria)
+    def gte(self, column: str, value: str):
+        return self.filter(column, "gte", sanitize_param(value))
 
-    def lt(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "lt", criteria)
-        return self.filter_in(column, "lt", criteria)
+    def lt(self, column: str, value: str):
+        return self.filter(column, "lt", sanitize_param(value))
 
-    def lte(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "lte", criteria)
-        return self.filter_in(column, "lte", criteria)
+    def lte(self, column: str, value: str):
+        return self.filter(column, "lte", sanitize_param(value))
 
-    def like(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "like", criteria)
-        return self.filter_in(column, "like", criteria)
+    def is_(self, column: str, value: str):
+        return self.filter(column, "is", sanitize_param(value))
 
-    def ilike(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "ilike", criteria)
-        return self.filter_in(column, "ilike", criteria)
+    def like(self, column: str, pattern: str):
+        pattern = pattern.replace("%", "*")
+        return self.filter(column, "like", pattern)
 
-    def is_(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "is", criteria)
-        return self.filter_in(column, "is", criteria)
+    def ilike(self, column: str, pattern: str):
+        pattern = pattern.replace("%", "*")
+        return self.filter(column, "ilike", pattern)
 
-    def in_(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "in", criteria)
-        return self.filter_in(column, "in", criteria)
+    def in_(self, column: str, values: Iterable[str]):
+        values = map(sanitize_param, values)
+        values = ",".join(values)
+        return self.filter(column, "in", f"({values})")
 
-    def fts(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "fts", criteria)
-        return self.filter_in(column, "fts", criteria)
+    def cs(self, column: str, values: Iterable[str]):
+        values = map(sanitize_param, values)
+        values = ",".join(values)
+        return self.filter(column, "cs", f"{{values}}")
 
-    def plfts(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "plfts", criteria)
-        return self.filter_in(column, "plfts", criteria)
+    def cd(self, column: str, values: Iterable[str]):
+        values = map(sanitize_param, values)
+        values = ",".join(values)
+        return self.filter(column, "cd", f"{{values}}")
 
-    def phfts(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "phfts", criteria)
-        return self.filter_in(column, "phfts", criteria)
+    def ov(self, column: str, values: Iterable[str]):
+        values = map(sanitize_param, values)
+        values = ",".join(values)
+        return self.filter(column, "ov", f"{{values}}")
 
-    def wfts(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "wfts", criteria)
-        return self.filter_in(column, "wfts", criteria)
+    def fts(self, column: str, query: str):
+        return self.filter(column, "fts", sanitize_param(query))
 
-    def cs(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "cs", criteria)
-        return self.filter_in(column, "cs", criteria)
+    def plfts(self, column: str, query: str):
+        return self.filter(column, "plfts", sanitize_param(query))
 
-    def cd(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "cd", criteria)
-        return self.filter_in(column, "cd", criteria)
+    def phfts(self, column: str, query: str):
+        return self.filter(column, "phfts", sanitize_param(query))
 
-    def ov(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "ov", criteria)
-        return self.filter_in(column, "ov", criteria)
+    def wfts(self, column: str, query: str):
+        return self.filter(column, "wfts", sanitize_param(query))
 
-    def sl(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "sl", criteria)
-        return self.filter_in(column, "sl", criteria)
+    def sl(self, column: str, range: Tuple[int, int]):
+        return self.filter(column, "sl", f"({range[0]},{range[1]})")
 
-    def sr(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "sr", criteria)
-        return self.filter_in(column, "sr", criteria)
+    def sr(self, column: str, range: Tuple[int, int]):
+        return self.filter(column, "sr", f"({range[0]},{range[1]})")
 
-    def nxr(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "nxr", criteria)
-        return self.filter_in(column, "nxr", criteria)
+    def nxl(self, column: str, range: Tuple[int, int]):
+        return self.filter(column, "nxl", f"({range[0]},{range[1]})")
 
-    def nxl(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "nxl", criteria)
-        return self.filter_in(column, "nxl", criteria)
+    def nxr(self, column: str, range: Tuple[int, int]):
+        return self.filter(column, "nxr", f"({range[0]},{range[1]})")
 
-    def adj(self, column: str, criteria: str):
-        if self.negate_next == True:
-            self.negate_next = False
-            return self.filter_out(column, "adj", criteria)
-        return self.filter_in(column, "adj", criteria)
+    def adj(self, column: str, range: Tuple[int, int]):
+        return self.filter(column, "adj", f"({range[0]},{range[1]})")
 
 
 class GetRequestBuilder(RequestBuilder):

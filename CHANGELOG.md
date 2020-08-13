@@ -1,5 +1,16 @@
 ## CHANGELOG
 
+### Unreleased
+
+#### Changed
+
+- Change behavior of `RequestBuilder.filter()`
+- Change signature of general filters
+
+#### Removed
+
+- Remove `RequestBuilder.filter_in()` and `RequestBuilder.filter_out()`
+
 ### v0.2.0
 
 #### Added

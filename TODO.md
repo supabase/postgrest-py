@@ -2,7 +2,8 @@
 
 - [ ] Multi-criteria ordering
 - [ ] Exact match filtering
-- [ ] OR filter
+- [ ] AND and OR filters
+- [ ] Counting
 - [ ] Input validation
 - [ ] Tests
 - [ ] CI/CD
