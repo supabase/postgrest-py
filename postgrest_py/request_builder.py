@@ -2,7 +2,7 @@ from typing import Iterable, Tuple
 
 from httpx import AsyncClient, Response
 
-from postgrest_py.utils import sanitize_param
+from postgrest_py.utils import sanitize_param, sanitize_pattern_param
 
 
 class RequestBuilder:
@@ -76,12 +76,22 @@ class RequestBuilder:
         return self.filter(column, "is", sanitize_param(value))
 
     def like(self, column: str, pattern: str):
-        pattern = pattern.replace("%", "*")
-        return self.filter(column, "like", pattern)
+        return self.filter(column, "like", sanitize_pattern_param(pattern))
 
     def ilike(self, column: str, pattern: str):
-        pattern = pattern.replace("%", "*")
-        return self.filter(column, "ilike", pattern)
+        return self.filter(column, "ilike", sanitize_pattern_param(pattern))
+
+    def fts(self, column: str, query: str):
+        return self.filter(column, "fts", sanitize_param(query))
+
+    def plfts(self, column: str, query: str):
+        return self.filter(column, "plfts", sanitize_param(query))
+
+    def phfts(self, column: str, query: str):
+        return self.filter(column, "phfts", sanitize_param(query))
+
+    def wfts(self, column: str, query: str):
+        return self.filter(column, "wfts", sanitize_param(query))
 
     def in_(self, column: str, values: Iterable[str]):
         values = map(sanitize_param, values)
@@ -102,18 +112,6 @@ class RequestBuilder:
         values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, "ov", f"{{values}}")
-
-    def fts(self, column: str, query: str):
-        return self.filter(column, "fts", sanitize_param(query))
-
-    def plfts(self, column: str, query: str):
-        return self.filter(column, "plfts", sanitize_param(query))
-
-    def phfts(self, column: str, query: str):
-        return self.filter(column, "phfts", sanitize_param(query))
-
-    def wfts(self, column: str, query: str):
-        return self.filter(column, "wfts", sanitize_param(query))
 
     def sl(self, column: str, range: Tuple[int, int]):
         return self.filter(column, "sl", f"({range[0]},{range[1]})")
