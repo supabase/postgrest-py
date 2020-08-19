@@ -1,6 +1,8 @@
-## ROADMAP
+## TODO
 
-- [ ] Exact match filtering
-- [ ] AND and OR filters
 - [ ] Counting
-- [ ] CI/CD
+- [ ] AND and OR filters
+- [ ] Exact match filtering
+- [ ] Add test cases for `RequestBuilder`
+- [ ] Auto publish to Pypi
+- [ ] Auto generate documentation

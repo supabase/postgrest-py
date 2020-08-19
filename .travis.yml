@@ -9,3 +9,10 @@ install:
   - poetry install
 script:
   - poetry run pytest
+deploy:
+  - provider: releases
+    edge: true
+    token: $GITHUB_TOKEN
+    on:
+      branch: master
+      tags: true

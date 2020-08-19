@@ -1,6 +1,11 @@
 ## CHANGELOG
 
-### Unreleased
+### v0.3.0
+
+#### Added
+
+- Add some basic test cases for `PostgrestClient`
+- Use Travis CI
 
 #### Changed
 
