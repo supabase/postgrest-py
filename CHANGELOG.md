@@ -1,5 +1,12 @@
 ## CHANGELOG
 
+### v0.3.1
+
+#### Removed
+
+- Remove dummy test cases
+- Remove PyPy3 from Travis CI
+
 ### v0.3.0
 
 #### Added
