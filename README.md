@@ -1,3 +1,8 @@
+[![](https://img.shields.io/github/license/lqmanh/postgrest-py)](https://github.com/lqmanh/postgrest-py)
+[![](https://img.shields.io/pypi/pyversions/postgrest-py)](https://pypi.org/project/postgrest-py)
+[![](https://img.shields.io/pypi/v/postgrest-py)](https://pypi.org/project/postgrest-py)
+[![](https://img.shields.io/travis/lqmanh/postgrest-py)](https://travis-ci.com/lqmanh/postgrest-py)
+
 # postgrest-py
 
 PostgREST client for Python. This library provides an ORM interface to PostgREST.
