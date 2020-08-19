@@ -14,10 +14,16 @@ Status: **Unstable**
 
 ### Instructions
 
-#### With Poetry
+#### With Poetry (recommended)
 
 ```sh
 $ poetry add postgrest-py
+```
+
+#### With Pip
+
+```sh
+$ pip install postgrest-py
 ```
 
 ## USAGE
@@ -64,6 +70,20 @@ await client.from_("countries").eq("name", "Việt Nam").delete().execute()
 ### General filters
 
 ### Stored procedures (RPC)
+
+## DEVELOPMENT
+
+```sh
+$ git clone https://github.com/lqmanh/postgrest-py.git
+$ cd postgrest-py
+$ poetry install
+```
+
+### Testing
+
+```sh
+$ poetry run pytest
+```
 
 ## CHANGELOG
 

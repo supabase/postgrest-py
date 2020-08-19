@@ -1,3 +1,5 @@
+from typing import Union
+
 from deprecation import deprecated
 from httpx import AsyncClient, Response
 
@@ -15,7 +17,7 @@ class PostgrestClient:
             "Accept-Profile": schema,
             "Content-Profile": schema,
         }
-        self.session = AsyncClient(base_url=base_url, params={}, headers=headers)
+        self.session = AsyncClient(base_url=base_url, headers=headers)
 
     async def __aenter__(self):
         return self
@@ -26,7 +28,13 @@ class PostgrestClient:
     async def aclose(self) -> None:
         await self.session.aclose()
 
-    def auth(self, token: str, *, username: str = None, password: str = None):
+    def auth(
+        self,
+        token: str,
+        *,
+        username: Union[str, bytes] = None,
+        password: Union[str, bytes] = None,
+    ):
         """Authenticate the client with either bearer token or basic authentication."""
         if username:
             self.session.auth = (username, password)
@@ -36,7 +44,7 @@ class PostgrestClient:
 
     def schema(self, schema: str):
         """Switch to another schema."""
-        self.session.merge_headers(
+        self.session.headers.update(
             {"Accept-Profile": schema, "Content-Profile": schema}
         )
         return self

@@ -349,6 +349,20 @@ version = ">=0.12"
 python = "<3.8"
 
 [[package]]
+name = "pytest-asyncio"
+version = "0.14.0"
+description = "Pytest support for asyncio."
+category = "dev"
+optional = false
+python-versions = ">= 3.5"
+
+[package.extras]
+testing = ["async-generator (>=1.3)", "coverage", "hypothesis (>=5.7.1)"]
+
+[package.dependencies]
+pytest = ">=5.4.0"
+
+[[package]]
 name = "regex"
 version = "2020.7.14"
 description = "Alternative regular expression module, to replace re."
@@ -423,7 +437,7 @@ testing = ["jaraco.itertools", "func-timeout"]
 [metadata]
 lock-version = "1.0"
 python-versions = "^3.7"
-content-hash = "239dbd3ed3ff9c9cfd9489ee52650b7050a36324b56d05dcbb6e8fa515834319"
+content-hash = "3da84ccb58d2bbc3f203afe8a79164a23a648bdedf99431570b1d99477f07b32"
 
 [metadata.files]
 appdirs = [
@@ -568,6 +582,10 @@ pyparsing = [
 pytest = [
     {file = "pytest-6.0.1-py3-none-any.whl", hash = "sha256:8b6007800c53fdacd5a5c192203f4e531eb2a1540ad9c752e052ec0f7143dbad"},
     {file = "pytest-6.0.1.tar.gz", hash = "sha256:85228d75db9f45e06e57ef9bf4429267f81ac7c0d742cc9ed63d09886a9fe6f4"},
+]
+pytest-asyncio = [
+    {file = "pytest-asyncio-0.14.0.tar.gz", hash = "sha256:9882c0c6b24429449f5f969a5158b528f39bde47dc32e85b9f0403965017e700"},
+    {file = "pytest_asyncio-0.14.0-py3-none-any.whl", hash = "sha256:2eae1e34f6c68fc0a9dc12d4bea190483843ff4708d24277c41568d6b6044f1d"},
 ]
 regex = [
     {file = "regex-2020.7.14-cp27-cp27m-win32.whl", hash = "sha256:e46d13f38cfcbb79bfdb2964b0fe12561fe633caf964a77a5f8d4e45fe5d2ef7"},

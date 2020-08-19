@@ -11,6 +11,10 @@
 
 - Remove `RequestBuilder.filter_in()` and `RequestBuilder.filter_out()`
 
+#### Fixed
+
+- Fix `PostgrestClient.schema()` not actually work
+
 ### v0.2.0
 
 #### Added
