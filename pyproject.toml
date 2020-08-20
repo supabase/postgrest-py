@@ -1,9 +1,11 @@
 [tool.poetry]
 name = "postgrest-py"
-version = "0.3.1"
 description = "PostgREST client for Python. This library provides an ORM interface to PostgREST."
+version = "0.3.1"
 authors = ["Lương Quang Mạnh <luongquangmanh85@gmail.com>"]
 license = "MIT"
+readme = "README.md"
+repository = "https://github.com/supabase/postgrest-py"
 
 [tool.poetry.dependencies]
 python = "^3.7"

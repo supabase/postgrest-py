@@ -1,7 +1,6 @@
-[![](https://img.shields.io/github/license/lqmanh/postgrest-py)](https://github.com/lqmanh/postgrest-py)
+[![](https://img.shields.io/github/license/supabase/postgrest-py)](https://github.com/supabase/postgrest-py)
 [![](https://img.shields.io/pypi/pyversions/postgrest-py)](https://pypi.org/project/postgrest-py)
 [![](https://img.shields.io/pypi/v/postgrest-py)](https://pypi.org/project/postgrest-py)
-[![](https://img.shields.io/travis/lqmanh/postgrest-py)](https://travis-ci.com/lqmanh/postgrest-py)
 
 # postgrest-py
 
@@ -79,7 +78,7 @@ await client.from_("countries").eq("name", "Việt Nam").delete().execute()
 ## DEVELOPMENT
 
 ```sh
-$ git clone https://github.com/lqmanh/postgrest-py.git
+$ git clone https://github.com/supabase/postgrest-py.git
 $ cd postgrest-py
 $ poetry install
 ```
@@ -92,14 +91,13 @@ $ poetry run pytest
 
 ## CHANGELOG
 
-Read more [here](https://github.com/lqmanh/postgrest-py/blob/master/CHANGELOG.md).
+Read more [here](https://github.com/supabase/postgrest-py/blob/master/CHANGELOG.md).
 
 ## TODO
 
-Read more [here](https://github.com/lqmanh/postgrest-py/blob/master/TODO.md).
+Read more [here](https://github.com/supabase/postgrest-py/blob/master/TODO.md).
 
-
-## Sponsors
+## SPONSORS
 
 We are building the features of Firebase using enterprise-grade, open source products. We support existing communities wherever possible, and if the products don’t exist we build them and open source them ourselves. Thanks to these sponsors who are making the OSS ecosystem better for everyone.
 
