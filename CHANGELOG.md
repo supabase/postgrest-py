@@ -1,5 +1,19 @@
 ## CHANGELOG
 
+### v0.3.2
+
+#### Added
+
+- Use Github Actions
+
+#### Changed
+
+- Move to a new home: [supabase/postgrest-py](https://github.com/supabase/postgrest-py)
+
+#### Removed
+
+- Remove Travis CI
+
 ### v0.3.1
 
 #### Removed
