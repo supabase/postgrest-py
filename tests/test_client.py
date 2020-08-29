@@ -1,6 +1,5 @@
 import pytest
-from httpx import AsyncClient, Headers
-
+from httpx import Headers
 from postgrest_py import PostgrestClient
 
 
