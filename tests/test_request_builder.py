@@ -9,56 +9,47 @@ async def request_builder():
         yield RequestBuilder(client, "/example_table")
 
 
-@pytest.mark.asyncio
 def test_constructor(request_builder):
     assert request_builder.path == "/example_table"
-    assert request_builder.json == {}
-    assert request_builder.http_method == "GET"
-    assert request_builder.negate_next == False
 
 
 def test_select(request_builder):
-    request_builder.select("col1", "col2")
+    builder = request_builder.select("col1", "col2")
 
-    assert request_builder.session.params["select"] == "col1,col2"
-    assert request_builder.http_method == "GET"
+    assert builder.session.params["select"] == "col1,col2"
+    assert builder.http_method == "GET"
+    assert builder.json == {}
 
 
 class TestInsert:
     def test_insert(self, request_builder):
-        request_builder.insert({"key1": "val1"})
+        builder = request_builder.insert({"key1": "val1"})
 
-        assert request_builder.session.headers["prefer"] == "return=representation"
-        assert request_builder.json == {"key1": "val1"}
-        assert request_builder.http_method == "POST"
+        assert builder.session.headers["prefer"] == "return=representation"
+        assert builder.http_method == "POST"
+        assert builder.json == {"key1": "val1"}
 
     def test_upsert(self, request_builder):
-        request_builder.insert({"key1": "val1"}, upsert=True)
+        builder = request_builder.insert({"key1": "val1"}, upsert=True)
 
         assert (
-            request_builder.session.headers["prefer"]
+            builder.session.headers["prefer"]
             == "return=representation,resolution=merge-duplicates"
         )
-        assert request_builder.json == {"key1": "val1"}
-        assert request_builder.http_method == "POST"
+        assert builder.http_method == "POST"
+        assert builder.json == {"key1": "val1"}
 
 
 def test_update(request_builder):
-    request_builder.update({"key1": "val1"})
+    builder = request_builder.update({"key1": "val1"})
 
-    assert request_builder.session.headers["prefer"] == "return=representation"
-    assert request_builder.json == {"key1": "val1"}
-    assert request_builder.http_method == "PATCH"
+    assert builder.session.headers["prefer"] == "return=representation"
+    assert builder.http_method == "PATCH"
+    assert builder.json == {"key1": "val1"}
 
 
 def test_delete(request_builder):
-    request_builder.delete()
+    builder = request_builder.delete()
 
-    assert request_builder.http_method == "DELETE"
-
-
-@pytest.mark.asyncio
-def test_not_(request_builder):
-    request_builder.not_
-
-    assert request_builder.negate_next == True
+    assert builder.http_method == "DELETE"
+    assert builder.json == {}

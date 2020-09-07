@@ -1,16 +1,50 @@
 from typing import Iterable, Tuple
 
-from httpx import AsyncClient, Response
+from deprecation import deprecated
+from httpx import AsyncClient
 
 from postgrest_py.utils import sanitize_param, sanitize_pattern_param
+from postgrest_py.__version__ import __version__
 
 
 class RequestBuilder:
-    def __init__(self, session: AsyncClient, path: str) -> None:
+    def __init__(self, session: AsyncClient, path: str):
         self.session = session
         self.path = path
-        self.json = {}
-        self.http_method = "GET"
+
+    def select(self, *columns: str):
+        self.session.params["select"] = ",".join(columns)
+        return SelectRequestBuilder(self.session, self.path, "GET", {})
+
+    def insert(self, json: dict, *, upsert=False):
+        self.session.headers[
+            "Prefer"
+        ] = f"return=representation{',resolution=merge-duplicates' if upsert else ''}"
+        return NonQueryRequestBuilder(self.session, self.path, "POST", json)
+
+    def update(self, json: dict):
+        self.session.headers["Prefer"] = "return=representation"
+        return QueryRequestBuilder(self.session, self.path, "PATCH", json)
+
+    def delete(self):
+        return QueryRequestBuilder(self.session, self.path, "DELETE", {})
+
+
+class NonQueryRequestBuilder:
+    def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
+        self.session = session
+        self.path = path
+        self.http_method = http_method
+        self.json = json
+
+    async def execute(self):
+        r = await self.session.request(self.http_method, self.path, json=self.json)
+        return r.json()
+
+
+class QueryRequestBuilder(NonQueryRequestBuilder):
+    def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
+        super().__init__(session, path, http_method, json)
 
         self.negate_next = False
 
@@ -18,33 +52,6 @@ class RequestBuilder:
     def not_(self):
         self.negate_next = True
         return self
-
-    def select(self, *columns: str):
-        self.session.params["select"] = ",".join(columns)
-        self.http_method = "GET"
-        return GetRequestBuilder.from_request_builder(self)
-
-    def insert(self, json: dict, *, upsert=False):
-        self.session.headers[
-            "Prefer"
-        ] = f"return=representation{',resolution=merge-duplicates' if upsert else ''}"
-        self.json = json
-        self.http_method = "POST"
-        return self
-
-    def update(self, json: dict):
-        self.session.headers["Prefer"] = "return=representation"
-        self.json = json
-        self.http_method = "PATCH"
-        return self
-
-    def delete(self):
-        self.http_method = "DELETE"
-        return self
-
-    async def execute(self) -> Response:
-        r = await self.session.request(self.http_method, self.path, json=self.json)
-        return r
 
     def filter(self, column: str, operator: str, criteria: str):
         """Either filter in or filter out based on Self.negate_next."""
@@ -129,18 +136,15 @@ class RequestBuilder:
         return self.filter(column, "adj", f"({range[0]},{range[1]})")
 
 
-class GetRequestBuilder(RequestBuilder):
-    @classmethod
-    def from_request_builder(cls, builder: RequestBuilder):
-        result = cls(builder.session, builder.path)
-        result.json = builder.json
-        result.http_method = builder.http_method
-        return result
+class SelectRequestBuilder(QueryRequestBuilder):
+    def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
+        super().__init__(session, path, http_method, json)
 
     def order(self, column: str, *, desc=False, nullsfirst=False):
-        self.session.params.setdefault("order", []).append(
-            f"{column}{'.desc' if desc else ''}{'.nullsfirst' if nullsfirst else ''}"
-        )
+        self.session.params[
+            "order"
+        ] = f"{column}{'.desc' if desc else ''}{'.nullsfirst' if nullsfirst else ''}"
+
         return self
 
     def limit(self, size: int, *, start=0):
@@ -156,3 +160,11 @@ class GetRequestBuilder(RequestBuilder):
     def single(self):
         self.session.headers["Accept"] = "application/vnd.pgrst.object+json"
         return self
+
+
+class GetRequestBuilder(SelectRequestBuilder):
+    """Alias to SelectRequestBuilder."""
+
+    @deprecated("0.4.0", "1.0.0", __version__, "Use SelectRequestBuilder instead")
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
