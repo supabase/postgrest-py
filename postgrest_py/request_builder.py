@@ -20,17 +20,17 @@ class RequestBuilder:
         self.session.headers[
             "Prefer"
         ] = f"return=representation{',resolution=merge-duplicates' if upsert else ''}"
-        return NonQueryRequestBuilder(self.session, self.path, "POST", json)
+        return QueryRequestBuilder(self.session, self.path, "POST", json)
 
     def update(self, json: dict):
         self.session.headers["Prefer"] = "return=representation"
-        return QueryRequestBuilder(self.session, self.path, "PATCH", json)
+        return FilterRequestBuilder(self.session, self.path, "PATCH", json)
 
     def delete(self):
-        return QueryRequestBuilder(self.session, self.path, "DELETE", {})
+        return FilterRequestBuilder(self.session, self.path, "DELETE", {})
 
 
-class NonQueryRequestBuilder:
+class QueryRequestBuilder:
     def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
         self.session = session
         self.path = path
@@ -42,7 +42,7 @@ class NonQueryRequestBuilder:
         return r.json()
 
 
-class QueryRequestBuilder(NonQueryRequestBuilder):
+class FilterRequestBuilder(QueryRequestBuilder):
     def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
         super().__init__(session, path, http_method, json)
 
@@ -136,7 +136,7 @@ class QueryRequestBuilder(NonQueryRequestBuilder):
         return self.filter(column, "adj", f"({range[0]},{range[1]})")
 
 
-class SelectRequestBuilder(QueryRequestBuilder):
+class SelectRequestBuilder(FilterRequestBuilder):
     def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
         super().__init__(session, path, http_method, json)
 
