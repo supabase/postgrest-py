@@ -1,5 +1,5 @@
 import pytest
-from httpx import AsyncClient, QueryParams
+from httpx import AsyncClient
 from postgrest_py.request_builder import FilterRequestBuilder
 
 
