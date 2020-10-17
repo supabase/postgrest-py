@@ -1,5 +1,5 @@
 import pytest
-from httpx import AsyncClient
+from httpx import AsyncClient, QueryParams
 from postgrest_py.request_builder import FilterRequestBuilder
 
 
@@ -28,3 +28,9 @@ def test_filter(filter_request_builder):
     builder = filter_request_builder.filter(":col.name", "eq", "val")
 
     assert builder.session.params['":col.name"'] == "eq.val"
+
+
+def test_multivalued_param(filter_request_builder):
+    builder = filter_request_builder.lte("x", "a").gte("x", "b")
+
+    assert str(builder.session.params) == "x=lte.a&x=gte.b"
