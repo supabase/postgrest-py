@@ -60,7 +60,7 @@ class FilterRequestBuilder(QueryRequestBuilder):
             operator = f"not.{operator}"
         key, val = sanitize_param(column), f"{operator}.{criteria}"
         if key in self.session.params:
-            self.session.params.update({key: self.session.params.getlist(key) + [val]})
+            self.session.params.update({key: self.session.params.get_list(key) + [val]})
         else:
             self.session.params[key] = val
         return self

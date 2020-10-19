@@ -1,5 +1,5 @@
 import pytest
-from httpx import Headers
+from httpx import BasicAuth
 from postgrest_py import PostgrestClient
 
 
@@ -14,14 +14,13 @@ def test_constructor(postgrest_client):
     session = postgrest_client.session
 
     assert session.base_url == "https://example.com"
-    assert session.headers == Headers(
-        {
-            "accept": "application/json",
-            "content-type": "application/json",
-            "accept-profile": "public",
-            "content-profile": "public",
-        }
-    )
+    default_headers = {
+        "accept": "application/json",
+        "content-type": "application/json",
+        "accept-profile": "public",
+        "content-profile": "public",
+    }
+    assert default_headers.items() <= session.headers.items()
 
 
 class TestAuth:
@@ -37,7 +36,7 @@ class TestAuth:
         postgrest_client.auth(None, username="admin", password="s3cr3t")
         session = postgrest_client.session
 
-        assert session.auth == ("admin", "s3cr3t")
+        assert session.auth._auth_header == BasicAuth("admin", "s3cr3t")._auth_header
 
 
 @pytest.mark.asyncio
