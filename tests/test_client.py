@@ -1,4 +1,5 @@
 import pytest
+from httpx import BasicAuth
 from postgrest_py import PostgrestClient
 
 
@@ -35,7 +36,7 @@ class TestAuth:
         postgrest_client.auth(None, username="admin", password="s3cr3t")
         session = postgrest_client.session
 
-        assert session.auth == ("admin", "s3cr3t")
+        assert session.auth._auth_header == BasicAuth("admin", "s3cr3t")._auth_header
 
 
 @pytest.mark.asyncio

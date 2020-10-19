@@ -1,7 +1,7 @@
 from typing import Union
 
 from deprecation import deprecated
-from httpx import AsyncClient, Response
+from httpx import AsyncClient, BasicAuth, Response
 
 from postgrest_py.__version__ import __version__
 from postgrest_py.request_builder import RequestBuilder
@@ -33,11 +33,11 @@ class PostgrestClient:
         token: str,
         *,
         username: Union[str, bytes] = None,
-        password: Union[str, bytes] = None,
+        password: Union[str, bytes] = "",
     ):
         """Authenticate the client with either bearer token or basic authentication."""
         if username:
-            self.session.auth = (username, password)
+            self.session.auth = BasicAuth(username, password)
         else:
             self.session.headers["Authorization"] = f"Bearer {token}"
         return self
