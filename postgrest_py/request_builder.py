@@ -55,10 +55,14 @@ class FilterRequestBuilder(QueryRequestBuilder):
 
     def filter(self, column: str, operator: str, criteria: str):
         """Either filter in or filter out based on Self.negate_next."""
-        if self.negate_next == True:
+        if self.negate_next is True:
             self.negate_next = False
             operator = f"not.{operator}"
-        self.session.params[sanitize_param(column)] = f"{operator}.{criteria}"
+        key, val = sanitize_param(column), f"{operator}.{criteria}"
+        if key in self.session.params:
+            self.session.params.update({key: self.session.params.getlist(key) + [val]})
+        else:
+            self.session.params[key] = val
         return self
 
     def eq(self, column: str, value: str):
