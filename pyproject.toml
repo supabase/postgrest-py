@@ -8,7 +8,7 @@ readme = "README.md"
 repository = "https://github.com/supabase/postgrest-py"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.6"
 httpx = "^0.16.1"
 deprecation = "^2.1.0"
 
