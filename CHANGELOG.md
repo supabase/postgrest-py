@@ -1,5 +1,16 @@
 ## CHANGELOG
 
+### v0.4.0
+
+#### Added
+
+- Add some tests
+- Allow multivalued query parameters
+
+#### Changed
+
+- Internal changes & improvements
+
 ### v0.3.2
 
 #### Added
