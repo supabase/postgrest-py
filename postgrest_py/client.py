@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Dict, Union
 
 from deprecation import deprecated
 from httpx import AsyncClient, BasicAuth, Response
@@ -6,14 +6,24 @@ from httpx import AsyncClient, BasicAuth, Response
 from postgrest_py.__version__ import __version__
 from postgrest_py.request_builder import RequestBuilder
 
+DEFAULT_POSTGREST_CLIENT_HEADERS: Dict[str, str] = {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
 
 class PostgrestClient:
     """PostgREST client."""
 
-    def __init__(self, base_url: str, *, schema="public") -> None:
+    def __init__(
+        self,
+        base_url: str,
+        *,
+        schema: str = "public",
+        headers: Dict[str, str] = DEFAULT_POSTGREST_CLIENT_HEADERS,
+    ) -> None:
         headers = {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            **headers,
             "Accept-Profile": schema,
             "Content-Profile": schema,
         }
@@ -32,7 +42,7 @@ class PostgrestClient:
         self,
         token: str,
         *,
-        username: Union[str, bytes] = None,
+        username: Union[str, bytes, None] = None,
         password: Union[str, bytes] = "",
     ):
         """Authenticate the client with either bearer token or basic authentication."""
@@ -44,9 +54,7 @@ class PostgrestClient:
 
     def schema(self, schema: str):
         """Switch to another schema."""
-        self.session.headers.update(
-            {"Accept-Profile": schema, "Content-Profile": schema}
-        )
+        self.session.headers.update({"Accept-Profile": schema, "Content-Profile": schema})
         return self
 
     def from_(self, table: str) -> RequestBuilder:
