@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### _Unreleased_
+
+#### Added
+
+- Allow setting headers in `PostgrestClient`'s constructor
+
 ### v0.4.0
 
 #### Added
