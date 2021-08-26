@@ -3,8 +3,8 @@ from typing import Iterable, Tuple
 from deprecation import deprecated
 from httpx import AsyncClient
 
-from postgrest_py.utils import sanitize_param, sanitize_pattern_param
 from postgrest_py.__version__ import __version__
+from postgrest_py.utils import sanitize_param, sanitize_pattern_param
 
 
 class RequestBuilder:
@@ -13,7 +13,7 @@ class RequestBuilder:
         self.path = path
 
     def select(self, *columns: str):
-        self.session.params["select"] = ",".join(columns)
+        self.session.params = self.session.params.set("select", ",".join(columns))
         return SelectRequestBuilder(self.session, self.path, "GET", {})
 
     def insert(self, json: dict, *, upsert=False):
@@ -59,10 +59,7 @@ class FilterRequestBuilder(QueryRequestBuilder):
             self.negate_next = False
             operator = f"not.{operator}"
         key, val = sanitize_param(column), f"{operator}.{criteria}"
-        if key in self.session.params:
-            self.session.params.update({key: self.session.params.get_list(key) + [val]})
-        else:
-            self.session.params[key] = val
+        self.session.params = self.session.params.add(key, val)
         return self
 
     def eq(self, column: str, value: str):
