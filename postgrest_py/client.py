@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from deprecation import deprecated
 from httpx import AsyncClient, BasicAuth, Response
@@ -40,16 +40,25 @@ class PostgrestClient:
 
     def auth(
         self,
-        token: str,
+        token: Optional[str],
         *,
         username: Union[str, bytes, None] = None,
         password: Union[str, bytes] = "",
     ):
-        """Authenticate the client with either bearer token or basic authentication."""
-        if username:
+        """
+        Authenticate the client with either bearer token or basic authentication.
+
+        Raise `ValueError` if neither authentication scheme is provided.
+        Bearer token is preferred if both ones are provided.
+        """
+        if token:
+            self.session.headers["Authorization"] = f"Bearer {token}"
+        elif username:
             self.session.auth = BasicAuth(username, password)
         else:
-            self.session.headers["Authorization"] = f"Bearer {token}"
+            raise ValueError(
+                "Neither bearer token or basic authentication scheme is provided"
+            )
         return self
 
     def schema(self, schema: str):
