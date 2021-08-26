@@ -1,10 +1,17 @@
-## CHANGELOG
+# CHANGELOG
 
 ### _Unreleased_
 
-#### Added
+#### Features
 
 - Allow setting headers in `PostgrestClient`'s constructor
+- Improve `PostgrestClient.auth()` behavior
+
+#### Internal
+
+- Require Poetry >= 1.0.0
+- Update CI workflow
+- Use Dependabot
 
 ### v0.4.0
 
