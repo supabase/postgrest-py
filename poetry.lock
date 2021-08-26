@@ -1,4 +1,22 @@
 [[package]]
+name = "anyio"
+version = "3.3.0"
+description = "High level compatibility layer for multiple asynchronous event loop implementations"
+category = "main"
+optional = false
+python-versions = ">=3.6.2"
+
+[package.dependencies]
+idna = ">=2.8"
+sniffio = ">=1.1"
+typing-extensions = {version = "*", markers = "python_version < \"3.8\""}
+
+[package.extras]
+doc = ["sphinx-rtd-theme", "sphinx-autodoc-typehints (>=1.2.0)"]
+test = ["coverage[toml] (>=4.5)", "hypothesis (>=4.0)", "pytest (>=6.0)", "pytest-mock (>=3.6.1)", "trustme", "uvloop (<0.15)", "mock (>=4)", "uvloop (>=0.15)"]
+trio = ["trio (>=0.16)"]
+
+[[package]]
 name = "appdirs"
 version = "1.4.4"
 description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
@@ -61,6 +79,17 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "charset-normalizer"
+version = "2.0.4"
+description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
+category = "main"
+optional = false
+python-versions = ">=3.5.0"
+
+[package.extras]
+unicode_backport = ["unicodedata2"]
+
+[[package]]
 name = "click"
 version = "8.0.1"
 description = "Composable command line interface toolkit"
@@ -112,14 +141,15 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "httpcore"
-version = "0.12.3"
+version = "0.13.6"
 description = "A minimal low-level HTTP client."
 category = "main"
 optional = false
 python-versions = ">=3.6"
 
 [package.dependencies]
-h11 = "<1.0.0"
+anyio = ">=3.0.0,<4.0.0"
+h11 = ">=0.11,<0.13"
 sniffio = ">=1.0.0,<2.0.0"
 
 [package.extras]
@@ -127,7 +157,7 @@ http2 = ["h2 (>=3,<5)"]
 
 [[package]]
 name = "httpx"
-version = "0.16.1"
+version = "0.19.0"
 description = "The next generation HTTP client."
 category = "main"
 optional = false
@@ -135,13 +165,14 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 certifi = "*"
-httpcore = ">=0.12.0,<0.13.0"
+charset-normalizer = "*"
+httpcore = ">=0.13.3,<0.14.0"
 rfc3986 = {version = ">=1.3,<2", extras = ["idna2008"]}
 sniffio = "*"
 
 [package.extras]
-brotli = ["brotlipy (>=0.7.0,<0.8.0)"]
-http2 = ["h2 (>=3.0.0,<4.0.0)"]
+brotli = ["brotlicffi", "brotli"]
+http2 = ["h2 (>=3,<5)"]
 
 [[package]]
 name = "idna"
@@ -361,7 +392,7 @@ python-versions = "*"
 name = "typing-extensions"
 version = "3.10.0.0"
 description = "Backported and Experimental Type Hints for Python 3.5+"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -380,9 +411,13 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "2014d862ec6ae0b65d919b5bdd643e25b9d602c13aeea2effea4cf05e083e8d5"
+content-hash = "70ffdb137de2b698a1fdc65d43d352e1d4472d8dff222b0fdfb18140a119a8ff"
 
 [metadata.files]
+anyio = [
+    {file = "anyio-3.3.0-py3-none-any.whl", hash = "sha256:929a6852074397afe1d989002aa96d457e3e1e5441357c60d03e7eea0e65e1b0"},
+    {file = "anyio-3.3.0.tar.gz", hash = "sha256:ae57a67583e5ff8b4af47666ff5651c3732d45fd26c929253748e796af860374"},
+]
 appdirs = [
     {file = "appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"},
     {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
@@ -402,6 +437,10 @@ black = [
 certifi = [
     {file = "certifi-2021.5.30-py2.py3-none-any.whl", hash = "sha256:50b1e4f8446b06f41be7dd6338db18e0990601dce795c2b1686458aa7e8fa7d8"},
     {file = "certifi-2021.5.30.tar.gz", hash = "sha256:2bbf76fd432960138b3ef6dda3dde0544f27cbf8546c458e60baf371917ba9ee"},
+]
+charset-normalizer = [
+    {file = "charset-normalizer-2.0.4.tar.gz", hash = "sha256:f23667ebe1084be45f6ae0538e4a5a865206544097e4e8bbcacf42cd02a348f3"},
+    {file = "charset_normalizer-2.0.4-py3-none-any.whl", hash = "sha256:0c8911edd15d19223366a194a513099a302055a962bca2cec0f54b8b63175d8b"},
 ]
 click = [
     {file = "click-8.0.1-py3-none-any.whl", hash = "sha256:fba402a4a47334742d782209a7c79bc448911afe1149d07bdabdf480b3e2f4b6"},
@@ -474,12 +513,12 @@ h11 = [
     {file = "h11-0.12.0.tar.gz", hash = "sha256:47222cb6067e4a307d535814917cd98fd0a57b6788ce715755fa2b6c28b56042"},
 ]
 httpcore = [
-    {file = "httpcore-0.12.3-py3-none-any.whl", hash = "sha256:93e822cd16c32016b414b789aeff4e855d0ccbfc51df563ee34d4dbadbb3bcdc"},
-    {file = "httpcore-0.12.3.tar.gz", hash = "sha256:37ae835fb370049b2030c3290e12ed298bf1473c41bb72ca4aa78681eba9b7c9"},
+    {file = "httpcore-0.13.6-py3-none-any.whl", hash = "sha256:db4c0dcb8323494d01b8c6d812d80091a31e520033e7b0120883d6f52da649ff"},
+    {file = "httpcore-0.13.6.tar.gz", hash = "sha256:b0d16f0012ec88d8cc848f5a55f8a03158405f4bca02ee49bc4ca2c1fda49f3e"},
 ]
 httpx = [
-    {file = "httpx-0.16.1-py3-none-any.whl", hash = "sha256:9cffb8ba31fac6536f2c8cde30df859013f59e4bcc5b8d43901cb3654a8e0a5b"},
-    {file = "httpx-0.16.1.tar.gz", hash = "sha256:126424c279c842738805974687e0518a94c7ae8d140cd65b9c4f77ac46ffa537"},
+    {file = "httpx-0.19.0-py3-none-any.whl", hash = "sha256:9bd728a6c5ec0a9e243932a9983d57d3cc4a87bb4f554e1360fce407f78f9435"},
+    {file = "httpx-0.19.0.tar.gz", hash = "sha256:92ecd2c00c688b529eda11cedb15161eaf02dee9116712f621c70d9a40b2cdd0"},
 ]
 idna = [
     {file = "idna-3.2-py3-none-any.whl", hash = "sha256:14475042e284991034cb48e06f6851428fb14c4dc953acd9be9a5e95c7b6dd7a"},
