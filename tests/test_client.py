@@ -1,5 +1,5 @@
 import pytest
-from httpx import BasicAuth
+from httpx import BasicAuth, Headers
 from postgrest_py import PostgrestClient
 
 
@@ -9,33 +9,54 @@ async def postgrest_client():
         yield client
 
 
-@pytest.mark.asyncio
-def test_constructor(postgrest_client):
-    session = postgrest_client.session
+class TestConstructor:
+    @pytest.mark.asyncio
+    def test_simple(self, postgrest_client: PostgrestClient):
+        session = postgrest_client.session
 
-    assert session.base_url == "https://example.com"
-    default_headers = {
-        "accept": "application/json",
-        "content-type": "application/json",
-        "accept-profile": "public",
-        "content-profile": "public",
-    }
-    assert default_headers.items() <= session.headers.items()
+        assert session.base_url == "https://example.com"
+        headers = Headers(
+            {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Accept-Profile": "public",
+                "Content-Profile": "public",
+            }
+        )
+        assert session.headers.items() >= headers.items()
+
+    @pytest.mark.asyncio
+    async def test_custom_headers(self):
+        async with PostgrestClient(
+            "https://example.com", schema="pub", headers={"Custom-Header": "value"}
+        ) as client:
+            session = client.session
+
+            assert session.base_url == "https://example.com"
+            headers = Headers(
+                {
+                    "Accept-Profile": "pub",
+                    "Content-Profile": "pub",
+                    "Custom-Header": "value",
+                }
+            )
+            assert session.headers.items() >= headers.items()
 
 
 class TestAuth:
     @pytest.mark.asyncio
-    def test_auth_token(self, postgrest_client):
+    def test_auth_token(self, postgrest_client: PostgrestClient):
         postgrest_client.auth("s3cr3t")
         session = postgrest_client.session
 
         assert session.headers["Authorization"] == "Bearer s3cr3t"
 
     @pytest.mark.asyncio
-    def test_auth_basic(self, postgrest_client):
+    def test_auth_basic(self, postgrest_client: PostgrestClient):
         postgrest_client.auth(None, username="admin", password="s3cr3t")
         session = postgrest_client.session
 
+        assert isinstance(session.auth, BasicAuth)
         assert session.auth._auth_header == BasicAuth("admin", "s3cr3t")._auth_header
 
 
