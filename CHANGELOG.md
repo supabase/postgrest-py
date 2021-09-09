@@ -1,6 +1,6 @@
 # CHANGELOG
 
-### _Unreleased_
+### v0.5.0
 
 #### Features
 

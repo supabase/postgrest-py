@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "postgrest-py"
 description = "PostgREST client for Python. This library provides an ORM interface to PostgREST."
-version = "0.4.0"
+version = "0.5.0"
 authors = ["Lương Quang Mạnh <luongquangmanh85@gmail.com>"]
 license = "MIT"
 readme = "README.md"
@@ -18,7 +18,7 @@ pytest = "^6.2.4"
 pytest-asyncio = "^0.15.1"
 pytest-cov = "^2.12.1"
 mypy = "^0.902"
-black = {version = "^21.7b0", allow-prereleases = true}
+black = { version = "^21.7b0", allow-prereleases = true }
 
 [tool.black]
 line-length = 90
