@@ -34,3 +34,8 @@ def test_multivalued_param(filter_request_builder):
     builder = filter_request_builder.lte("x", "a").gte("x", "b")
 
     assert str(builder.session.params) == "x=lte.a&x=gte.b"
+
+
+def test_match(filter_request_builder):
+    builder = filter_request_builder.match({'id': '1', 'done': 'false'})
+    assert str(builder.session.params) == 'id=eq.1&done=eq.false'

@@ -1,4 +1,4 @@
-from typing import Iterable, Tuple
+from typing import Any, Iterable, Tuple, Dict, Optional
 
 from deprecation import deprecated
 from httpx import AsyncClient
@@ -13,7 +13,8 @@ class RequestBuilder:
         self.path = path
 
     def select(self, *columns: str):
-        self.session.params = self.session.params.set("select", ",".join(columns))
+        self.session.params = self.session.params.set(
+            "select", ",".join(columns))
         return SelectRequestBuilder(self.session, self.path, "GET", {})
 
     def insert(self, json: dict, *, upsert=False):
@@ -136,6 +137,13 @@ class FilterRequestBuilder(QueryRequestBuilder):
     def adj(self, column: str, range: Tuple[int, int]):
         return self.filter(column, "adj", f"({range[0]},{range[1]})")
 
+    def match(self, query: Dict[str, Any]):
+        updated_query = None
+        for key in query.keys():
+            value = query.get(key, '')
+            updated_query = self.eq(key, value)
+        return updated_query
+
 
 class SelectRequestBuilder(FilterRequestBuilder):
     def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
@@ -166,6 +174,6 @@ class SelectRequestBuilder(FilterRequestBuilder):
 class GetRequestBuilder(SelectRequestBuilder):
     """Alias to SelectRequestBuilder."""
 
-    @deprecated("0.4.0", "1.0.0", __version__, "Use SelectRequestBuilder instead")
+    @ deprecated("0.4.0", "1.0.0", __version__, "Use SelectRequestBuilder instead")
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
