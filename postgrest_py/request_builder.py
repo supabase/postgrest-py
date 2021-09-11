@@ -174,6 +174,6 @@ class SelectRequestBuilder(FilterRequestBuilder):
 class GetRequestBuilder(SelectRequestBuilder):
     """Alias to SelectRequestBuilder."""
 
-    @ deprecated("0.4.0", "1.0.0", __version__, "Use SelectRequestBuilder instead")
+    @deprecated("0.4.0", "1.0.0", __version__, "Use SelectRequestBuilder instead")
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
