@@ -16,6 +16,12 @@ Status: **Unstable**
 - PostgreSQL >= 12
 - PostgREST >= 7
 
+### Local Postgrest Server 
+If you want to use local postgrest server use docker-compose to start one.
+```sh
+docker-compose up
+```
+
 ### Instructions
 
 #### With Poetry (recommended)
