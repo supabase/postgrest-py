@@ -27,7 +27,7 @@ def test_not_(filter_request_builder):
 def test_filter(filter_request_builder):
     builder = filter_request_builder.filter(":col.name", "eq", "val")
 
-    assert builder.session.params['":col.name"'] == "eq.val"
+    assert builder.session.params['%22:col.name%22'] == "eq.val"
 
 
 def test_multivalued_param(filter_request_builder):
