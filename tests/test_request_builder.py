@@ -13,12 +13,22 @@ def test_constructor(request_builder):
     assert request_builder.path == "/example_table"
 
 
-def test_select(request_builder):
-    builder = request_builder.select("col1", "col2")
+class TestSelect:
+    def test_select(self, request_builder: RequestBuilder):
+        builder = request_builder.select("col1", "col2")
 
-    assert builder.session.params["select"] == "col1,col2"
-    assert builder.http_method == "GET"
-    assert builder.json == {}
+        assert builder.session.params["select"] == "col1,col2"
+        assert builder.session.headers.get("prefer") == None
+        assert builder.http_method == "GET"
+        assert builder.json == {}
+
+    def test_select_with_count(self, request_builder: RequestBuilder):
+        builder = request_builder.select("col1", "col2", count="exact", head=True)
+
+        assert builder.session.params["select"] == "col1,col2"
+        assert builder.session.headers["prefer"] == "count=exact"
+        assert builder.http_method == "HEAD"
+        assert builder.json == {}
 
 
 class TestInsert:
