@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Tuple, Dict, Optional
+from typing import Any, Dict, Iterable, Literal, Tuple, Union
 
 from deprecation import deprecated
 from httpx import AsyncClient
@@ -6,16 +6,20 @@ from httpx import AsyncClient
 from postgrest_py.__version__ import __version__
 from postgrest_py.utils import sanitize_param, sanitize_pattern_param
 
+CountMethod = Union[Literal["exact"], Literal["planned"], Literal["estimated"], None]
+
 
 class RequestBuilder:
     def __init__(self, session: AsyncClient, path: str):
         self.session = session
         self.path = path
 
-    def select(self, *columns: str):
-        self.session.params = self.session.params.set(
-            "select", ",".join(columns))
-        return SelectRequestBuilder(self.session, self.path, "GET", {})
+    def select(self, *columns: str, count: CountMethod = None, head: bool = False):
+        method = "HEAD" if head else "GET"
+        self.session.params = self.session.params.set("select", ",".join(columns))
+        if count:
+            self.session.headers["Prefer"] = f"count={count}"
+        return SelectRequestBuilder(self.session, self.path, method, {})
 
     def insert(self, json: dict, *, upsert=False):
         self.session.headers[
@@ -140,7 +144,7 @@ class FilterRequestBuilder(QueryRequestBuilder):
     def match(self, query: Dict[str, Any]):
         updated_query = None
         for key in query.keys():
-            value = query.get(key, '')
+            value = query.get(key, "")
             updated_query = self.eq(key, value)
         return updated_query
 
