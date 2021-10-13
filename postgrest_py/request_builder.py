@@ -1,11 +1,11 @@
+import re
 import sys
+from typing import Any, Dict, Iterable, Optional, Tuple, Union
 
 if sys.version_info < (3, 8):
     from typing_extensions import Literal
 else:
     from typing import Literal
-
-from typing import Any, Dict, Iterable, Tuple, Union
 
 from deprecation import deprecated
 from httpx import AsyncClient
@@ -54,9 +54,21 @@ class QueryRequestBuilder:
         self.http_method = http_method
         self.json = json
 
-    async def execute(self):
+    async def execute(self) -> Tuple[Any, Optional[int]]:
         r = await self.session.request(self.http_method, self.path, json=self.json)
-        return r.json()
+
+        count = None
+        try:
+            count_header_match = re.search(
+                "count=(exact|planned|estimated)", self.session.headers["prefer"]
+            )
+            content_range = r.headers["content-range"].split("/")
+            if count_header_match and len(content_range) >= 2:
+                count = int(content_range[1])
+        except KeyError:
+            ...
+
+        return r.json(), count
 
 
 class FilterRequestBuilder(QueryRequestBuilder):
