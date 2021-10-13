@@ -21,11 +21,16 @@ class RequestBuilder:
         self.session = session
         self.path = path
 
-    def select(self, *columns: str, count: CountMethod = None, head: bool = False):
-        method = "HEAD" if head else "GET"
-        self.session.params = self.session.params.set("select", ",".join(columns))
+    def select(self, *columns: str, count: CountMethod = None):
+        if columns:
+            method = "GET"
+            self.session.params = self.session.params.set("select", ",".join(columns))
+        else:
+            method = "HEAD"
+
         if count:
             self.session.headers["Prefer"] = f"count={count}"
+
         return SelectRequestBuilder(self.session, self.path, method, {})
 
     def insert(self, json: dict, *, upsert=False):
