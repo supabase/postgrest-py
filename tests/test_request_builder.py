@@ -32,34 +32,73 @@ class TestSelect:
 
 
 class TestInsert:
-    def test_insert(self, request_builder):
+    def test_insert(self, request_builder: RequestBuilder):
         builder = request_builder.insert({"key1": "val1"})
 
-        assert builder.session.headers["prefer"] == "return=representation"
+        assert builder.session.headers.get_list("prefer", True) == [
+            "return=representation"
+        ]
         assert builder.http_method == "POST"
         assert builder.json == {"key1": "val1"}
 
-    def test_upsert(self, request_builder):
+    def test_insert_with_count(self, request_builder: RequestBuilder):
+        builder = request_builder.insert({"key1": "val1"}, count="exact")
+
+        assert builder.session.headers.get_list("prefer", True) == [
+            "return=representation",
+            "count=exact",
+        ]
+        assert builder.http_method == "POST"
+        assert builder.json == {"key1": "val1"}
+
+    def test_upsert(self, request_builder: RequestBuilder):
         builder = request_builder.insert({"key1": "val1"}, upsert=True)
 
-        assert (
-            builder.session.headers["prefer"]
-            == "return=representation,resolution=merge-duplicates"
-        )
+        assert builder.session.headers.get_list("prefer", True) == [
+            "return=representation",
+            "resolution=merge-duplicates",
+        ]
         assert builder.http_method == "POST"
         assert builder.json == {"key1": "val1"}
 
 
-def test_update(request_builder):
-    builder = request_builder.update({"key1": "val1"})
+class TestUpdate:
+    def test_update(self, request_builder: RequestBuilder):
+        builder = request_builder.update({"key1": "val1"})
 
-    assert builder.session.headers["prefer"] == "return=representation"
-    assert builder.http_method == "PATCH"
-    assert builder.json == {"key1": "val1"}
+        assert builder.session.headers.get_list("prefer", True) == [
+            "return=representation"
+        ]
+        assert builder.http_method == "PATCH"
+        assert builder.json == {"key1": "val1"}
+
+    def test_update_with_count(self, request_builder: RequestBuilder):
+        builder = request_builder.update({"key1": "val1"}, count="exact")
+
+        assert builder.session.headers.get_list("prefer", True) == [
+            "return=representation",
+            "count=exact",
+        ]
+        assert builder.http_method == "PATCH"
+        assert builder.json == {"key1": "val1"}
 
 
-def test_delete(request_builder):
-    builder = request_builder.delete()
+class TestDelete:
+    def test_delete(self, request_builder: RequestBuilder):
+        builder = request_builder.delete()
 
-    assert builder.http_method == "DELETE"
-    assert builder.json == {}
+        assert builder.session.headers.get_list("prefer", True) == [
+            "return=representation"
+        ]
+        assert builder.http_method == "DELETE"
+        assert builder.json == {}
+
+    def test_delete_with_count(self, request_builder: RequestBuilder):
+        builder = request_builder.delete(count="exact")
+
+        assert builder.session.headers.get_list("prefer", True) == [
+            "return=representation",
+            "count=exact",
+        ]
+        assert builder.http_method == "DELETE"
+        assert builder.json == {}
