@@ -13,7 +13,7 @@ from httpx import AsyncClient
 from postgrest_py.__version__ import __version__
 from postgrest_py.utils import sanitize_param, sanitize_pattern_param
 
-CountMethod = Union[Literal["exact"], Literal["planned"], Literal["estimated"], None]
+CountMethod = Union[Literal["exact"], Literal["planned"], Literal["estimated"]]
 
 
 class RequestBuilder:
@@ -21,7 +21,7 @@ class RequestBuilder:
         self.session = session
         self.path = path
 
-    def select(self, *columns: str, count: CountMethod = None):
+    def select(self, *columns: str, count: Optional[CountMethod] = None):
         if columns:
             method = "GET"
             self.session.params = self.session.params.set("select", ",".join(columns))
@@ -33,7 +33,7 @@ class RequestBuilder:
 
         return SelectRequestBuilder(self.session, self.path, method, {})
 
-    def insert(self, json: dict, *, count: CountMethod = None, upsert=False):
+    def insert(self, json: dict, *, count: Optional[CountMethod] = None, upsert=False):
         prefer_headers = ["return=representation"]
         if count:
             prefer_headers.append(f"count={count}")
@@ -42,14 +42,14 @@ class RequestBuilder:
         self.session.headers["prefer"] = ",".join(prefer_headers)
         return QueryRequestBuilder(self.session, self.path, "POST", json)
 
-    def update(self, json: dict, *, count: CountMethod = None):
+    def update(self, json: dict, *, count: Optional[CountMethod] = None):
         prefer_headers = ["return=representation"]
         if count:
             prefer_headers.append(f"count={count}")
         self.session.headers["prefer"] = ",".join(prefer_headers)
         return FilterRequestBuilder(self.session, self.path, "PATCH", json)
 
-    def delete(self, *, count: CountMethod = None):
+    def delete(self, *, count: Optional[CountMethod] = None):
         prefer_headers = ["return=representation"]
         if count:
             prefer_headers.append(f"count={count}")
