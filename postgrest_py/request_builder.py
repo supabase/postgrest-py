@@ -33,17 +33,27 @@ class RequestBuilder:
 
         return SelectRequestBuilder(self.session, self.path, method, {})
 
-    def insert(self, json: dict, *, upsert=False):
-        self.session.headers[
-            "Prefer"
-        ] = f"return=representation{',resolution=merge-duplicates' if upsert else ''}"
+    def insert(self, json: dict, *, count: CountMethod = None, upsert=False):
+        prefer_headers = ["return=representation"]
+        if count:
+            prefer_headers.append(f"count={count}")
+        if upsert:
+            prefer_headers.append("resolution=merge-duplicates")
+        self.session.headers["prefer"] = ",".join(prefer_headers)
         return QueryRequestBuilder(self.session, self.path, "POST", json)
 
-    def update(self, json: dict):
-        self.session.headers["Prefer"] = "return=representation"
+    def update(self, json: dict, *, count: CountMethod = None):
+        prefer_headers = ["return=representation"]
+        if count:
+            prefer_headers.append(f"count={count}")
+        self.session.headers["prefer"] = ",".join(prefer_headers)
         return FilterRequestBuilder(self.session, self.path, "PATCH", json)
 
-    def delete(self):
+    def delete(self, *, count: CountMethod = None):
+        prefer_headers = ["return=representation"]
+        if count:
+            prefer_headers.append(f"count={count}")
+        self.session.headers["prefer"] = ",".join(prefer_headers)
         return FilterRequestBuilder(self.session, self.path, "DELETE", {})
 
 
