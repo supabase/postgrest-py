@@ -1,4 +1,11 @@
-from typing import Any, Iterable, Tuple, Dict, Optional
+import re
+import sys
+from typing import Any, Dict, Iterable, Optional, Tuple, Union
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Literal
+else:
+    from typing import Literal
 
 from deprecation import deprecated
 from httpx import AsyncClient
@@ -6,28 +13,47 @@ from httpx import AsyncClient
 from postgrest_py.__version__ import __version__
 from postgrest_py.utils import sanitize_param, sanitize_pattern_param
 
+CountMethod = Union[Literal["exact"], Literal["planned"], Literal["estimated"]]
+
 
 class RequestBuilder:
     def __init__(self, session: AsyncClient, path: str):
         self.session = session
         self.path = path
 
-    def select(self, *columns: str):
-        self.session.params = self.session.params.set(
-            "select", ",".join(columns))
-        return SelectRequestBuilder(self.session, self.path, "GET", {})
+    def select(self, *columns: str, count: Optional[CountMethod] = None):
+        if columns:
+            method = "GET"
+            self.session.params = self.session.params.set("select", ",".join(columns))
+        else:
+            method = "HEAD"
 
-    def insert(self, json: dict, *, upsert=False):
-        self.session.headers[
-            "Prefer"
-        ] = f"return=representation{',resolution=merge-duplicates' if upsert else ''}"
+        if count:
+            self.session.headers["Prefer"] = f"count={count}"
+
+        return SelectRequestBuilder(self.session, self.path, method, {})
+
+    def insert(self, json: dict, *, count: Optional[CountMethod] = None, upsert=False):
+        prefer_headers = ["return=representation"]
+        if count:
+            prefer_headers.append(f"count={count}")
+        if upsert:
+            prefer_headers.append("resolution=merge-duplicates")
+        self.session.headers["prefer"] = ",".join(prefer_headers)
         return QueryRequestBuilder(self.session, self.path, "POST", json)
 
-    def update(self, json: dict):
-        self.session.headers["Prefer"] = "return=representation"
+    def update(self, json: dict, *, count: Optional[CountMethod] = None):
+        prefer_headers = ["return=representation"]
+        if count:
+            prefer_headers.append(f"count={count}")
+        self.session.headers["prefer"] = ",".join(prefer_headers)
         return FilterRequestBuilder(self.session, self.path, "PATCH", json)
 
-    def delete(self):
+    def delete(self, *, count: Optional[CountMethod] = None):
+        prefer_headers = ["return=representation"]
+        if count:
+            prefer_headers.append(f"count={count}")
+        self.session.headers["prefer"] = ",".join(prefer_headers)
         return FilterRequestBuilder(self.session, self.path, "DELETE", {})
 
 
@@ -38,9 +64,21 @@ class QueryRequestBuilder:
         self.http_method = http_method
         self.json = json
 
-    async def execute(self):
+    async def execute(self) -> Tuple[Any, Optional[int]]:
         r = await self.session.request(self.http_method, self.path, json=self.json)
-        return r.json()
+
+        count = None
+        try:
+            count_header_match = re.search(
+                "count=(exact|planned|estimated)", self.session.headers["prefer"]
+            )
+            content_range = r.headers["content-range"].split("/")
+            if count_header_match and len(content_range) >= 2:
+                count = int(content_range[1])
+        except KeyError:
+            ...
+
+        return r.json(), count
 
 
 class FilterRequestBuilder(QueryRequestBuilder):
@@ -140,7 +178,7 @@ class FilterRequestBuilder(QueryRequestBuilder):
     def match(self, query: Dict[str, Any]):
         updated_query = None
         for key in query.keys():
-            value = query.get(key, '')
+            value = query.get(key, "")
             updated_query = self.eq(key, value)
         return updated_query
 
