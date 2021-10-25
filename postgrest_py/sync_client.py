@@ -1,15 +1,15 @@
 from typing import Dict, Optional, Union
 
 from deprecation import deprecated
-from httpx import AsyncClient, BasicAuth, Response
+from httpx import Client, BasicAuth, Response
 
 from postgrest_py.__version__ import __version__
 from postgrest_py.constants import DEFAULT_POSTGREST_CLIENT_HEADERS
 from postgrest_py.request_builder import RequestBuilder
 
 
-class AsyncPostgrestClient:
-    """Asyncio compatible PostgREST client."""
+class PostgrestClient:
+    """Synchronous PostgREST client."""
 
     def __init__(
         self,
@@ -23,16 +23,17 @@ class AsyncPostgrestClient:
             "Accept-Profile": schema,
             "Content-Profile": schema,
         }
-        self.session = AsyncClient(base_url=base_url, headers=headers)
+        self.session = Client(base_url=base_url, headers=headers)
 
-    async def __aenter__(self):
+    def __enter__(self) -> "PostgrestClient":
         return self
 
-    async def __aexit__(self, exc_type, exc, tb) -> None:
-        await self.aclose()
+    def __exit__(self, exc_type, exc, tb) -> None:
+        self.session.close()
 
-    async def aclose(self) -> None:
-        await self.session.aclose()
+    def close(self) -> None:
+        """Close the underlying HTTP transport and proxies."""
+        self.session.close()
 
     def auth(
         self,
@@ -40,7 +41,7 @@ class AsyncPostgrestClient:
         *,
         username: Union[str, bytes, None] = None,
         password: Union[str, bytes] = "",
-    ) -> "AsyncPostgrestClient":
+    ) -> "PostgrestClient":
         """
         Authenticate the client with either bearer token or basic authentication.
 
@@ -57,7 +58,7 @@ class AsyncPostgrestClient:
             )
         return self
 
-    def schema(self, schema: str) -> "AsyncPostgrestClient":
+    def schema(self, schema: str) -> "PostgrestClient":
         """Switch to another schema."""
         self.session.headers.update({"Accept-Profile": schema, "Content-Profile": schema})
         return self
@@ -71,16 +72,8 @@ class AsyncPostgrestClient:
         """Alias to Self.from_()."""
         return self.from_(table)
 
-    async def rpc(self, func: str, params: dict) -> Response:
+    def rpc(self, func: str, params: dict) -> Response:
         """Perform a stored procedure call."""
         path = f"/rpc/{func}"
-        r = await self.session.post(path, json=params)
+        r = self.session.post(path, json=params)
         return r
-
-
-class Client(AsyncPostgrestClient):
-    """Alias to PostgrestClient."""
-
-    @deprecated("0.2.0", "1.0.0", __version__, "Use PostgrestClient instead")
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
