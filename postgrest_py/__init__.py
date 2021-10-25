@@ -1,2 +1,4 @@
 from postgrest_py.__version__ import __version__
-from postgrest_py.client import DEFAULT_POSTGREST_CLIENT_HEADERS, Client, PostgrestClient
+from postgrest_py.client import DEFAULT_POSTGREST_CLIENT_HEADERS as DEFAULT_POSTGREST_CLIENT_HEADERS
+from postgrest_py.client import Client as Client
+from postgrest_py.client import PostgrestClient as PostgrestClient
