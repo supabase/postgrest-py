@@ -1,6 +1,7 @@
 import re
 import sys
-from typing import Any, Dict, Iterable, Optional, Tuple, Union
+from contextlib import suppress
+from typing import Any, Awaitable, Dict, Iterable, Optional, Tuple, Union
 
 if sys.version_info < (3, 8):
     from typing_extensions import Literal
@@ -8,16 +9,19 @@ else:
     from typing import Literal
 
 from deprecation import deprecated
-from httpx import AsyncClient
+from httpx import AsyncClient, Client, Response
 
 from postgrest_py.__version__ import __version__
 from postgrest_py.utils import sanitize_param, sanitize_pattern_param
 
-CountMethod = Union[Literal["exact"], Literal["planned"], Literal["estimated"]]
+
+CountMethod = Literal["exact", "planned", "estimated"]
+RequestMethod = Literal["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"]
+TableResponse = Tuple[Any, Optional[int]]
 
 
 class RequestBuilder:
-    def __init__(self, session: AsyncClient, path: str):
+    def __init__(self, session: Union[AsyncClient, Client], path: str):
         self.session = session
         self.path = path
 
@@ -58,31 +62,49 @@ class RequestBuilder:
 
 
 class QueryRequestBuilder:
-    def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
+    def __init__(self, session: Union[AsyncClient, Client], path: str, http_method: RequestMethod, json: dict):
         self.session = session
         self.path = path
-        self.http_method = http_method
+        self.http_method: RequestMethod = http_method
         self.json = json
 
-    async def execute(self) -> Tuple[Any, Optional[int]]:
-        r = await self.session.request(self.http_method, self.path, json=self.json)
+    def _sync_request(self, method: RequestMethod, path: str, json: dict) -> Optional[TableResponse]:
+        if isinstance(self.session, AsyncClient):
+            return
 
+        r = self.session.request(method, path, json=json)
+        return self._handle_response(r)
+
+    async def _async_request(self, method: RequestMethod, path: str, json: dict) -> Optional[TableResponse]:
+        if isinstance(self.session, Client):
+            return
+
+        r = await self.session.request(method, path, json=json)
+        return self._handle_response(r)
+
+    def _handle_response(self, r: Response) -> Tuple[Any, Optional[int]]:
         count = None
-        try:
+        
+        with suppress(KeyError):
             count_header_match = re.search(
                 "count=(exact|planned|estimated)", self.session.headers["prefer"]
             )
             content_range = r.headers["content-range"].split("/")
             if count_header_match and len(content_range) >= 2:
                 count = int(content_range[1])
-        except KeyError:
-            ...
 
         return r.json(), count
 
+    def execute(self) -> Union[TableResponse, Awaitable[Optional[TableResponse]], None]:
+        """Execute a query."""
+        if isinstance(self.session, AsyncClient):
+            return self._async_request(self.http_method, self.path, json=self.json)
+        else:
+            return self._sync_request(self.http_method, self.path, json=self.json)
+
 
 class FilterRequestBuilder(QueryRequestBuilder):
-    def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
+    def __init__(self, session: Union[AsyncClient, Client], path: str, http_method: RequestMethod, json: dict):
         super().__init__(session, path, http_method, json)
 
         self.negate_next = False
@@ -184,9 +206,6 @@ class FilterRequestBuilder(QueryRequestBuilder):
 
 
 class SelectRequestBuilder(FilterRequestBuilder):
-    def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
-        super().__init__(session, path, http_method, json)
-
     def order(self, column: str, *, desc=False, nullsfirst=False):
         self.session.params[
             "order"
