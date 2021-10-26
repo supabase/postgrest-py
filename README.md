@@ -87,6 +87,7 @@ await client.from_("countries").eq("name", "Việt Nam").delete().execute()
 $ git clone https://github.com/supabase/postgrest-py.git
 $ cd postgrest-py
 $ poetry install
+$ poetry run pre-commit install
 ```
 
 ### Testing
