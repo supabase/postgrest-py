@@ -49,6 +49,7 @@ class PostgrestClient:
         Bearer token is preferred if both ones are provided.
         """
         if token:
+            self.session.headers["apiKey"] = token
             self.session.headers["Authorization"] = f"Bearer {token}"
         elif username:
             self.session.auth = BasicAuth(username, password)
