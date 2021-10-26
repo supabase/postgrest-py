@@ -16,11 +16,15 @@ Status: **Unstable**
 - PostgreSQL >= 12
 - PostgREST >= 7
 
-### Local Postgrest Server 
-If you want to use local postgrest server for development use docker-compose to start local server. Once docker-compose process started, postgrest is accessible at http://localhost:3000
+### Local PostgREST server
+
+If you want to use a local PostgREST server for development, you can use our preconfigured instance via Docker Compose.
+
 ```sh
 docker-compose up
 ```
+
+Once Docker Compose started, PostgREST is accessible at http://localhost:3000.
 
 ### Instructions
 

@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   server:
     image: postgrest/postgrest
@@ -7,7 +7,7 @@ services:
     environment:
       PGRST_DB_URI: postgres://app_user:password@db:5432/app_db
       PGRST_DB_SCHEMA: public
-      PGRST_DB_ANON_ROLE: app_user #In production this role should not be the same as the one used for the connection
+      PGRST_DB_ANON_ROLE: app_user # In production this role should not be the same as the one used for connection
       PGRST_OPENAPI_SERVER_PROXY_URI: "http://127.0.0.1:3000"
     depends_on:
       - db
@@ -19,10 +19,7 @@ services:
       POSTGRES_DB: app_db
       POSTGRES_USER: app_user
       POSTGRES_PASSWORD: password
-#   Uncomment this if you want to persist the data.
-#   create your boostrap sql file in root directory
+# Uncomment this if you want to persist the data. Create your boostrap SQL file in the project root
 #    volumes:
 #      - "./pgdata:/var/lib/postgresql/data"
 #      - "./init.sql:/docker-entrypoint-initdb.d/init.sql"
-
-
