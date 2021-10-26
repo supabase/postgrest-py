@@ -42,10 +42,10 @@ $ pip install postgrest-py
 
 ```py
 import asyncio
-from postgrest_py import PostgrestClient
+from postgrest_py import AsyncPostgrestClient
 
 async def main():
-    async with PostgrestClient("http://localhost:3000") as client:
+    async with AsyncPostgrestClient("http://localhost:3000") as client:
         r = await client.from_("countries").select("*").execute()
         countries = r.json()
 
@@ -62,7 +62,7 @@ await client.from_("countries").insert({ "name": "Việt Nam", "capital": "Hà N
 
 ```py
 r = await client.from_("countries").select("id", "name").execute()
-countries = r.json()
+countries = r[0]
 ```
 
 ### Update
@@ -80,7 +80,16 @@ await client.from_("countries").eq("name", "Việt Nam").delete().execute()
 ### General filters
 
 ### Stored procedures (RPC)
+```py
+r = await client.rpc("hello_world")
+r.json()
+```
+```py
+r = await client.rpc("echo_city", params={"name": "The Shire"})
+r.json()
+```
 
+All above methods also have synchronous counterparts, under `postgrest_py.PostgrestClient`.
 ## DEVELOPMENT
 
 ```sh
