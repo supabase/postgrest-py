@@ -47,7 +47,7 @@ from postgrest_py import AsyncPostgrestClient
 async def main():
     async with AsyncPostgrestClient("http://localhost:3000") as client:
         r = await client.from_("countries").select("*").execute()
-        countries = r.json()
+        countries = r[0]
 
 asyncio.run(main())
 ```
