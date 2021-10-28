@@ -1,12 +1,12 @@
 import pytest
-from httpx import AsyncClient
-from postgrest_py.request_builder import QueryRequestBuilder
+from postgrest_py.utils import AsyncClient
+from postgrest_py import AsyncQueryRequestBuilder
 
 
 @pytest.fixture
 async def query_request_builder():
     async with AsyncClient() as client:
-        yield QueryRequestBuilder(client, "/example_table", "GET", {})
+        yield AsyncQueryRequestBuilder(client, "/example_table", "GET", {})
 
 
 def test_constructor(query_request_builder):

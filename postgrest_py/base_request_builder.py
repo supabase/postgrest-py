@@ -8,83 +8,99 @@ else:
     from typing import Literal
 
 from deprecation import deprecated
-from httpx import AsyncClient
+from httpx import Response
 
 from postgrest_py.__version__ import __version__
-from postgrest_py.utils import sanitize_param, sanitize_pattern_param
+from postgrest_py.utils import (
+    AsyncClient,
+    SyncClient,
+    sanitize_param,
+    sanitize_pattern_param,
+)
 
 CountMethod = Union[Literal["exact"], Literal["planned"], Literal["estimated"]]
 
 
-class RequestBuilder:
-    def __init__(self, session: AsyncClient, path: str):
+def pre_select(
+    session: Union[AsyncClient, SyncClient],
+    path: str,
+    *columns: str,
+    count: Optional[CountMethod] = None,
+) -> Tuple[str, dict]:
+    if columns:
+        method = "GET"
+        session.params = session.params.set("select", ",".join(columns))
+    else:
+        method = "HEAD"
+    if count:
+        session.headers["Prefer"] = f"count={count}"
+    return method, {}
+
+
+def pre_insert(
+    session: Union[AsyncClient, SyncClient],
+    path: str,
+    json: dict,
+    *,
+    count: Optional[CountMethod] = None,
+    upsert=False,
+) -> Tuple[str, dict]:
+    prefer_headers = ["return=representation"]
+    if count:
+        prefer_headers.append(f"count={count}")
+    if upsert:
+        prefer_headers.append("resolution=merge-duplicates")
+    session.headers["prefer"] = ",".join(prefer_headers)
+    return "POST", json
+
+
+def pre_update(
+    session: Union[AsyncClient, SyncClient],
+    path: str,
+    json: dict,
+    *,
+    count: Optional[CountMethod] = None,
+) -> Tuple[str, dict]:
+    prefer_headers = ["return=representation"]
+    if count:
+        prefer_headers.append(f"count={count}")
+    session.headers["prefer"] = ",".join(prefer_headers)
+    return "PATCH", json
+
+
+def pre_delete(
+    session: Union[AsyncClient, SyncClient],
+    path: str,
+    *,
+    count: Optional[CountMethod] = None,
+) -> Tuple[str, dict]:
+    prefer_headers = ["return=representation"]
+    if count:
+        prefer_headers.append(f"count={count}")
+    session.headers["prefer"] = ",".join(prefer_headers)
+    return "DELETE", {}
+
+
+def process_response(
+    session: Union[AsyncClient, SyncClient],
+    r: Response,
+) -> Tuple[Any, Optional[int]]:
+    count = None
+    try:
+        count_header_match = re.search(
+            "count=(exact|planned|estimated)", session.headers["prefer"]
+        )
+        content_range = r.headers["content-range"].split("/")
+        if count_header_match and len(content_range) >= 2:
+            count = int(content_range[1])
+    except KeyError:
+        pass
+    return r.json(), count
+
+
+class BaseFilterRequestBuilder:
+    def __init__(self, session: Union[AsyncClient, SyncClient]):
         self.session = session
-        self.path = path
-
-    def select(self, *columns: str, count: Optional[CountMethod] = None):
-        if columns:
-            method = "GET"
-            self.session.params = self.session.params.set("select", ",".join(columns))
-        else:
-            method = "HEAD"
-
-        if count:
-            self.session.headers["Prefer"] = f"count={count}"
-
-        return SelectRequestBuilder(self.session, self.path, method, {})
-
-    def insert(self, json: dict, *, count: Optional[CountMethod] = None, upsert=False):
-        prefer_headers = ["return=representation"]
-        if count:
-            prefer_headers.append(f"count={count}")
-        if upsert:
-            prefer_headers.append("resolution=merge-duplicates")
-        self.session.headers["prefer"] = ",".join(prefer_headers)
-        return QueryRequestBuilder(self.session, self.path, "POST", json)
-
-    def update(self, json: dict, *, count: Optional[CountMethod] = None):
-        prefer_headers = ["return=representation"]
-        if count:
-            prefer_headers.append(f"count={count}")
-        self.session.headers["prefer"] = ",".join(prefer_headers)
-        return FilterRequestBuilder(self.session, self.path, "PATCH", json)
-
-    def delete(self, *, count: Optional[CountMethod] = None):
-        prefer_headers = ["return=representation"]
-        if count:
-            prefer_headers.append(f"count={count}")
-        self.session.headers["prefer"] = ",".join(prefer_headers)
-        return FilterRequestBuilder(self.session, self.path, "DELETE", {})
-
-
-class QueryRequestBuilder:
-    def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
-        self.session = session
-        self.path = path
-        self.http_method = http_method
-        self.json = json
-
-    async def execute(self) -> Tuple[Any, Optional[int]]:
-        r = await self.session.request(self.http_method, self.path, json=self.json)
-
-        count = None
-        try:
-            count_header_match = re.search(
-                "count=(exact|planned|estimated)", self.session.headers["prefer"]
-            )
-            content_range = r.headers["content-range"].split("/")
-            if count_header_match and len(content_range) >= 2:
-                count = int(content_range[1])
-        except KeyError:
-            ...
-
-        return r.json(), count
-
-
-class FilterRequestBuilder(QueryRequestBuilder):
-    def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
-        super().__init__(session, path, http_method, json)
-
         self.negate_next = False
 
     @property
@@ -183,9 +199,9 @@ class FilterRequestBuilder(QueryRequestBuilder):
         return updated_query
 
 
-class SelectRequestBuilder(FilterRequestBuilder):
-    def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
-        super().__init__(session, path, http_method, json)
+class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
+    def __init__(self, session: Union[AsyncClient, SyncClient]):
+        BaseFilterRequestBuilder.__init__(self, session)
 
     def order(self, column: str, *, desc=False, nullsfirst=False):
         self.session.params[
@@ -207,11 +223,3 @@ class SelectRequestBuilder(FilterRequestBuilder):
     def single(self):
         self.session.headers["Accept"] = "application/vnd.pgrst.object+json"
         return self
-
-
-class GetRequestBuilder(SelectRequestBuilder):
-    """Alias to SelectRequestBuilder."""
-
-    @deprecated("0.4.0", "1.0.0", __version__, "Use SelectRequestBuilder instead")
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
