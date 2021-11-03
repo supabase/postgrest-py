@@ -1,18 +1,16 @@
 from typing import Dict, Optional, Union
 
 from deprecation import deprecated
-from httpx import AsyncClient, BasicAuth, Response
+from httpx import BasicAuth, Response
 
 from postgrest_py.__version__ import __version__
-from postgrest_py.request_builder import RequestBuilder
+from postgrest_py.config import DEFAULT_POSTGREST_CLIENT_HEADERS
+from postgrest_py.utils import AsyncClient
 
-DEFAULT_POSTGREST_CLIENT_HEADERS: Dict[str, str] = {
-    "Accept": "application/json",
-    "Content-Type": "application/json",
-}
+from .request_builder import AsyncRequestBuilder
 
 
-class PostgrestClient:
+class AsyncPostgrestClient:
     """PostgREST client."""
 
     def __init__(
@@ -66,12 +64,12 @@ class PostgrestClient:
         self.session.headers.update({"Accept-Profile": schema, "Content-Profile": schema})
         return self
 
-    def from_(self, table: str) -> RequestBuilder:
+    def from_(self, table: str) -> AsyncRequestBuilder:
         """Perform a table operation."""
-        return RequestBuilder(self.session, f"/{table}")
+        return AsyncRequestBuilder(self.session, f"/{table}")
 
     @deprecated("0.2.0", "1.0.0", __version__, "Use PostgrestClient.from_() instead")
-    def from_table(self, table: str) -> RequestBuilder:
+    def from_table(self, table: str) -> AsyncRequestBuilder:
         """Alias to Self.from_()."""
         return self.from_(table)
 
@@ -80,11 +78,3 @@ class PostgrestClient:
         path = f"/rpc/{func}"
         r = await self.session.post(path, json=params)
         return r
-
-
-class Client(PostgrestClient):
-    """Alias to PostgrestClient."""
-
-    @deprecated("0.2.0", "1.0.0", __version__, "Use PostgrestClient instead")
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)

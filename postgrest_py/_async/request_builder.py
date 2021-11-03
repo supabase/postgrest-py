@@ -7,16 +7,12 @@ if sys.version_info < (3, 8):
 else:
     from typing import Literal
 
-from deprecation import deprecated
-from httpx import AsyncClient
-
-from postgrest_py.__version__ import __version__
-from postgrest_py.utils import sanitize_param, sanitize_pattern_param
+from postgrest_py.utils import AsyncClient, sanitize_param, sanitize_pattern_param
 
 CountMethod = Union[Literal["exact"], Literal["planned"], Literal["estimated"]]
 
 
-class RequestBuilder:
+class AsyncRequestBuilder:
     def __init__(self, session: AsyncClient, path: str):
         self.session = session
         self.path = path
@@ -31,7 +27,7 @@ class RequestBuilder:
         if count:
             self.session.headers["Prefer"] = f"count={count}"
 
-        return SelectRequestBuilder(self.session, self.path, method, {})
+        return AsyncSelectRequestBuilder(self.session, self.path, method, {})
 
     def insert(self, json: dict, *, count: Optional[CountMethod] = None, upsert=False):
         prefer_headers = ["return=representation"]
@@ -40,24 +36,24 @@ class RequestBuilder:
         if upsert:
             prefer_headers.append("resolution=merge-duplicates")
         self.session.headers["prefer"] = ",".join(prefer_headers)
-        return QueryRequestBuilder(self.session, self.path, "POST", json)
+        return AsyncQueryRequestBuilder(self.session, self.path, "POST", json)
 
     def update(self, json: dict, *, count: Optional[CountMethod] = None):
         prefer_headers = ["return=representation"]
         if count:
             prefer_headers.append(f"count={count}")
         self.session.headers["prefer"] = ",".join(prefer_headers)
-        return FilterRequestBuilder(self.session, self.path, "PATCH", json)
+        return AsyncFilterRequestBuilder(self.session, self.path, "PATCH", json)
 
     def delete(self, *, count: Optional[CountMethod] = None):
         prefer_headers = ["return=representation"]
         if count:
             prefer_headers.append(f"count={count}")
         self.session.headers["prefer"] = ",".join(prefer_headers)
-        return FilterRequestBuilder(self.session, self.path, "DELETE", {})
+        return AsyncFilterRequestBuilder(self.session, self.path, "DELETE", {})
 
 
-class QueryRequestBuilder:
+class AsyncQueryRequestBuilder:
     def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
         self.session = session
         self.path = path
@@ -81,7 +77,7 @@ class QueryRequestBuilder:
         return r.json(), count
 
 
-class FilterRequestBuilder(QueryRequestBuilder):
+class AsyncFilterRequestBuilder(AsyncQueryRequestBuilder):
     def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
         super().__init__(session, path, http_method, json)
 
@@ -183,7 +179,7 @@ class FilterRequestBuilder(QueryRequestBuilder):
         return updated_query
 
 
-class SelectRequestBuilder(FilterRequestBuilder):
+class AsyncSelectRequestBuilder(AsyncFilterRequestBuilder):
     def __init__(self, session: AsyncClient, path: str, http_method: str, json: dict):
         super().__init__(session, path, http_method, json)
 
@@ -207,11 +203,3 @@ class SelectRequestBuilder(FilterRequestBuilder):
     def single(self):
         self.session.headers["Accept"] = "application/vnd.pgrst.object+json"
         return self
-
-
-class GetRequestBuilder(SelectRequestBuilder):
-    """Alias to SelectRequestBuilder."""
-
-    @deprecated("0.4.0", "1.0.0", __version__, "Use SelectRequestBuilder instead")
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
