@@ -1,12 +1,13 @@
 import pytest
-from httpx import AsyncClient
-from postgrest_py.request_builder import RequestBuilder
+
+from postgrest_py import SyncRequestBuilder
+from postgrest_py.utils import SyncClient
 
 
 @pytest.fixture
-async def request_builder():
-    async with AsyncClient() as client:
-        yield RequestBuilder(client, "/example_table")
+def request_builder():
+    with SyncClient() as client:
+        yield SyncRequestBuilder(client, "/example_table")
 
 
 def test_constructor(request_builder):
@@ -14,7 +15,7 @@ def test_constructor(request_builder):
 
 
 class TestSelect:
-    def test_select(self, request_builder: RequestBuilder):
+    def test_select(self, request_builder: SyncRequestBuilder):
         builder = request_builder.select("col1", "col2")
 
         assert builder.session.params["select"] == "col1,col2"
@@ -22,7 +23,7 @@ class TestSelect:
         assert builder.http_method == "GET"
         assert builder.json == {}
 
-    def test_select_with_count(self, request_builder: RequestBuilder):
+    def test_select_with_count(self, request_builder: SyncRequestBuilder):
         builder = request_builder.select(count="exact")
 
         assert builder.session.params.get("select") == None
@@ -32,7 +33,7 @@ class TestSelect:
 
 
 class TestInsert:
-    def test_insert(self, request_builder: RequestBuilder):
+    def test_insert(self, request_builder: SyncRequestBuilder):
         builder = request_builder.insert({"key1": "val1"})
 
         assert builder.session.headers.get_list("prefer", True) == [
@@ -41,7 +42,7 @@ class TestInsert:
         assert builder.http_method == "POST"
         assert builder.json == {"key1": "val1"}
 
-    def test_insert_with_count(self, request_builder: RequestBuilder):
+    def test_insert_with_count(self, request_builder: SyncRequestBuilder):
         builder = request_builder.insert({"key1": "val1"}, count="exact")
 
         assert builder.session.headers.get_list("prefer", True) == [
@@ -51,7 +52,7 @@ class TestInsert:
         assert builder.http_method == "POST"
         assert builder.json == {"key1": "val1"}
 
-    def test_upsert(self, request_builder: RequestBuilder):
+    def test_upsert(self, request_builder: SyncRequestBuilder):
         builder = request_builder.insert({"key1": "val1"}, upsert=True)
 
         assert builder.session.headers.get_list("prefer", True) == [
@@ -63,7 +64,7 @@ class TestInsert:
 
 
 class TestUpdate:
-    def test_update(self, request_builder: RequestBuilder):
+    def test_update(self, request_builder: SyncRequestBuilder):
         builder = request_builder.update({"key1": "val1"})
 
         assert builder.session.headers.get_list("prefer", True) == [
@@ -72,7 +73,7 @@ class TestUpdate:
         assert builder.http_method == "PATCH"
         assert builder.json == {"key1": "val1"}
 
-    def test_update_with_count(self, request_builder: RequestBuilder):
+    def test_update_with_count(self, request_builder: SyncRequestBuilder):
         builder = request_builder.update({"key1": "val1"}, count="exact")
 
         assert builder.session.headers.get_list("prefer", True) == [
@@ -84,7 +85,7 @@ class TestUpdate:
 
 
 class TestDelete:
-    def test_delete(self, request_builder: RequestBuilder):
+    def test_delete(self, request_builder: SyncRequestBuilder):
         builder = request_builder.delete()
 
         assert builder.session.headers.get_list("prefer", True) == [
@@ -93,7 +94,7 @@ class TestDelete:
         assert builder.http_method == "DELETE"
         assert builder.json == {}
 
-    def test_delete_with_count(self, request_builder: RequestBuilder):
+    def test_delete_with_count(self, request_builder: SyncRequestBuilder):
         builder = request_builder.delete(count="exact")
 
         assert builder.session.headers.get_list("prefer", True) == [
