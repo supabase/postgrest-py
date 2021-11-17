@@ -76,5 +76,4 @@ class AsyncPostgrestClient:
     async def rpc(self, func: str, params: dict) -> Response:
         """Perform a stored procedure call."""
         path = f"/rpc/{func}"
-        r = await self.session.post(path, json=params)
-        return r
+        return await self.session.post(path, json=params)

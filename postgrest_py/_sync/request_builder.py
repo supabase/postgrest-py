@@ -144,17 +144,17 @@ class SyncFilterRequestBuilder(SyncQueryRequestBuilder):
     def cs(self, column: str, values: Iterable[str]):
         values = map(sanitize_param, values)
         values = ",".join(values)
-        return self.filter(column, "cs", f"{{values}}")
+        return self.filter(column, "cs", f"{{{values}}}")
 
     def cd(self, column: str, values: Iterable[str]):
         values = map(sanitize_param, values)
         values = ",".join(values)
-        return self.filter(column, "cd", f"{{values}}")
+        return self.filter(column, "cd", f"{{{values}}}")
 
     def ov(self, column: str, values: Iterable[str]):
         values = map(sanitize_param, values)
         values = ",".join(values)
-        return self.filter(column, "ov", f"{{values}}")
+        return self.filter(column, "ov", f"{{{values}}}")
 
     def sl(self, column: str, range: Tuple[int, int]):
         return self.filter(column, "sl", f"({range[0]},{range[1]})")
@@ -173,7 +173,7 @@ class SyncFilterRequestBuilder(SyncQueryRequestBuilder):
 
     def match(self, query: Dict[str, Any]):
         updated_query = None
-        for key in query.keys():
+        for key in query:
             value = query.get(key, "")
             updated_query = self.eq(key, value)
         return updated_query
