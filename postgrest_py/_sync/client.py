@@ -76,5 +76,4 @@ class SyncPostgrestClient:
     def rpc(self, func: str, params: dict) -> Response:
         """Perform a stored procedure call."""
         path = f"/rpc/{func}"
-        r = self.session.post(path, json=params)
-        return r
+        return self.session.post(path, json=params)
