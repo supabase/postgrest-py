@@ -192,7 +192,7 @@ class BaseFilterRequestBuilder:
 
     def match(self, query: Dict[str, Any]):
         updated_query = None
-        for key in query.keys():
+        for key in query:
             value = query.get(key, "")
             updated_query = self.eq(key, value)
         return updated_query
