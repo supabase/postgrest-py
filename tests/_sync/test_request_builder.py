@@ -53,8 +53,18 @@ class TestInsert:
         assert builder.http_method == "POST"
         assert builder.json == {"key1": "val1"}
 
-    def test_upsert(self, request_builder: SyncRequestBuilder):
+    def test_insert_with_upsert(self, request_builder: SyncRequestBuilder):
         builder = request_builder.insert({"key1": "val1"}, upsert=True)
+
+        assert builder.session.headers.get_list("prefer", True) == [
+            "return=representation",
+            "resolution=merge-duplicates",
+        ]
+        assert builder.http_method == "POST"
+        assert builder.json == {"key1": "val1"}
+
+    def test_upsert(self, request_builder: SyncRequestBuilder):
+        builder = request_builder.upsert({"key1": "val1"})
 
         assert builder.session.headers.get_list("prefer", True) == [
             "return=representation",

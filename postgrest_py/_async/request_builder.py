@@ -8,6 +8,7 @@ from postgrest_py.base_request_builder import (
     pre_insert,
     pre_select,
     pre_update,
+    pre_upsert,
     process_response,
 )
 from postgrest_py.utils import AsyncClient
@@ -85,6 +86,22 @@ class AsyncRequestBuilder:
             json,
             count=count,
             upsert=upsert,
+        )
+        return AsyncQueryRequestBuilder(self.session, self.path, method, json)
+
+    def upsert(
+        self,
+        json: dict,
+        *,
+        count: Optional[CountMethod] = None,
+        ignore_duplicates=False,
+    ) -> AsyncQueryRequestBuilder:
+        method, json = pre_upsert(
+            self.session,
+            self.path,
+            json,
+            count=count,
+            ignore_duplicates=ignore_duplicates,
         )
         return AsyncQueryRequestBuilder(self.session, self.path, method, json)
 

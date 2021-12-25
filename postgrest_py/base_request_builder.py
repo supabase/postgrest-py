@@ -45,6 +45,23 @@ def pre_insert(
     return RequestMethod.POST, json
 
 
+def pre_upsert(
+    session: Union[AsyncClient, SyncClient],
+    path: str,
+    json: dict,
+    *,
+    count: Optional[CountMethod] = None,
+    ignore_duplicates=False,
+) -> Tuple[RequestMethod, dict]:
+    prefer_headers = ["return=representation"]
+    if count:
+        prefer_headers.append(f"count={count}")
+    resolution = "ignore" if ignore_duplicates else "merge"
+    prefer_headers.append(f"resolution={resolution}-duplicates")
+    session.headers["prefer"] = ",".join(prefer_headers)
+    return RequestMethod.POST, json
+
+
 def pre_update(
     session: Union[AsyncClient, SyncClient],
     path: str,
