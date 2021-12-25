@@ -23,7 +23,8 @@ class AsyncPostgrestClient(BasePostgrestClient):
         schema: str = "public",
         headers: Dict[str, str] = DEFAULT_POSTGREST_CLIENT_HEADERS,
     ) -> None:
-        super().__init__(base_url, schema=schema, headers=headers)
+        BasePostgrestClient.__init__(self, base_url, schema=schema, headers=headers)
+        self.session = cast(AsyncClient, self.session)
 
     def create_session(
         self,
@@ -39,11 +40,11 @@ class AsyncPostgrestClient(BasePostgrestClient):
         await self.aclose()
 
     async def aclose(self) -> None:
-        await cast(AsyncClient, self.session).aclose()
+        await self.session.aclose()
 
     def from_(self, table: str) -> AsyncRequestBuilder:
         """Perform a table operation."""
-        return AsyncRequestBuilder(cast(AsyncClient, self.session), f"/{table}")
+        return AsyncRequestBuilder(self.session, f"/{table}")
 
     @deprecated("0.2.0", "1.0.0", __version__, "Use self.from_() instead")
     def from_table(self, table: str) -> AsyncRequestBuilder:
