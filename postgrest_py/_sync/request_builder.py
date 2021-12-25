@@ -1,4 +1,4 @@
-from typing import Any, Optional, Tuple, cast
+from typing import Any, Optional, Tuple
 
 from postgrest_py.base_request_builder import (
     BaseFilterRequestBuilder,
@@ -27,7 +27,7 @@ class SyncQueryRequestBuilder:
         self.json = json
 
     def execute(self) -> Tuple[Any, Optional[int]]:
-        r = cast(SyncClient, self.session).request(
+        r = self.session.request(
             self.http_method,
             self.path,
             json=self.json,

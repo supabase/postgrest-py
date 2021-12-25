@@ -23,7 +23,8 @@ class SyncPostgrestClient(BasePostgrestClient):
         schema: str = "public",
         headers: Dict[str, str] = DEFAULT_POSTGREST_CLIENT_HEADERS,
     ) -> None:
-        super().__init__(base_url, schema=schema, headers=headers)
+        BasePostgrestClient.__init__(self, base_url, schema=schema, headers=headers)
+        self.session = cast(SyncClient, self.session)
 
     def create_session(
         self,
@@ -39,11 +40,11 @@ class SyncPostgrestClient(BasePostgrestClient):
         self.aclose()
 
     def aclose(self) -> None:
-        cast(SyncClient, self.session).aclose()
+        self.session.aclose()
 
     def from_(self, table: str) -> SyncRequestBuilder:
         """Perform a table operation."""
-        return SyncRequestBuilder(cast(SyncClient, self.session), f"/{table}")
+        return SyncRequestBuilder(self.session, f"/{table}")
 
     @deprecated("0.2.0", "1.0.0", __version__, "Use self.from_() instead")
     def from_table(self, table: str) -> SyncRequestBuilder:
