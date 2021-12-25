@@ -1,6 +1,7 @@
 import pytest
 
 from postgrest_py import AsyncRequestBuilder
+from postgrest_py.constants import CountMethod
 from postgrest_py.utils import AsyncClient
 
 
@@ -24,7 +25,7 @@ class TestSelect:
         assert builder.json == {}
 
     def test_select_with_count(self, request_builder: AsyncRequestBuilder):
-        builder = request_builder.select(count="exact")
+        builder = request_builder.select(count=CountMethod.exact)
 
         assert builder.session.params.get("select") is None
         assert builder.session.headers["prefer"] == "count=exact"
@@ -43,7 +44,7 @@ class TestInsert:
         assert builder.json == {"key1": "val1"}
 
     def test_insert_with_count(self, request_builder: AsyncRequestBuilder):
-        builder = request_builder.insert({"key1": "val1"}, count="exact")
+        builder = request_builder.insert({"key1": "val1"}, count=CountMethod.exact)
 
         assert builder.session.headers.get_list("prefer", True) == [
             "return=representation",
@@ -74,7 +75,7 @@ class TestUpdate:
         assert builder.json == {"key1": "val1"}
 
     def test_update_with_count(self, request_builder: AsyncRequestBuilder):
-        builder = request_builder.update({"key1": "val1"}, count="exact")
+        builder = request_builder.update({"key1": "val1"}, count=CountMethod.exact)
 
         assert builder.session.headers.get_list("prefer", True) == [
             "return=representation",
@@ -95,7 +96,7 @@ class TestDelete:
         assert builder.json == {}
 
     def test_delete_with_count(self, request_builder: AsyncRequestBuilder):
-        builder = request_builder.delete(count="exact")
+        builder = request_builder.delete(count=CountMethod.exact)
 
         assert builder.session.headers.get_list("prefer", True) == [
             "return=representation",
