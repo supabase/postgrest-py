@@ -45,6 +45,10 @@ class SyncPostgrestClient(BasePostgrestClient):
     def from_(self, table: str) -> SyncRequestBuilder:
         """Perform a table operation."""
         return SyncRequestBuilder(self.session, f"/{table}")
+    
+    def table(self, table: str) -> SyncRequestBuilder:
+        """Alias to self.from_()."""
+        return self.from_(table)
 
     @deprecated("0.2.0", "1.0.0", __version__, "Use self.from_() instead")
     def from_table(self, table: str) -> SyncRequestBuilder:
