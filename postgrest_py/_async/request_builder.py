@@ -1,4 +1,4 @@
-from typing import Any, Optional, Tuple, cast
+from typing import Any, Optional, Tuple
 
 from postgrest_py.base_request_builder import (
     BaseFilterRequestBuilder,
@@ -27,7 +27,7 @@ class AsyncQueryRequestBuilder:
         self.json = json
 
     async def execute(self) -> Tuple[Any, Optional[int]]:
-        r = await cast(AsyncClient, self.session).request(
+        r = await self.session.request(
             self.http_method,
             self.path,
             json=self.json,
