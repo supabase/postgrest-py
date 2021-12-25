@@ -1,10 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Optional, Union
 
-from deprecation import deprecated
-from httpx import AsyncClient, BasicAuth, Response
+from httpx import BasicAuth
 
-from postgrest_py.__version__ import __version__
 from postgrest_py.utils import AsyncClient, SyncClient
 
 DEFAULT_POSTGREST_CLIENT_HEADERS: Dict[str, str] = {
