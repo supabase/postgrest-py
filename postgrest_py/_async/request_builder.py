@@ -11,6 +11,7 @@ from postgrest_py.base_request_builder import (
     pre_upsert,
     process_response,
 )
+from postgrest_py.types import ReturnMethod
 from postgrest_py.utils import AsyncClient
 
 
@@ -78,6 +79,7 @@ class AsyncRequestBuilder:
         json: dict,
         *,
         count: Optional[CountMethod] = None,
+        returning: ReturnMethod = ReturnMethod.representation,
         upsert=False,
     ) -> AsyncQueryRequestBuilder:
         method, json = pre_insert(
@@ -85,6 +87,7 @@ class AsyncRequestBuilder:
             self.path,
             json,
             count=count,
+            returning=returning,
             upsert=upsert,
         )
         return AsyncQueryRequestBuilder(self.session, self.path, method, json)
@@ -94,6 +97,7 @@ class AsyncRequestBuilder:
         json: dict,
         *,
         count: Optional[CountMethod] = None,
+        returning: ReturnMethod = ReturnMethod.representation,
         ignore_duplicates=False,
     ) -> AsyncQueryRequestBuilder:
         method, json = pre_upsert(
@@ -101,6 +105,7 @@ class AsyncRequestBuilder:
             self.path,
             json,
             count=count,
+            returning=returning,
             ignore_duplicates=ignore_duplicates,
         )
         return AsyncQueryRequestBuilder(self.session, self.path, method, json)
@@ -110,10 +115,27 @@ class AsyncRequestBuilder:
         json: dict,
         *,
         count: Optional[CountMethod] = None,
+        returning: ReturnMethod = ReturnMethod.representation,
     ) -> AsyncFilterRequestBuilder:
-        method, json = pre_update(self.session, self.path, json, count=count)
+        method, json = pre_update(
+            self.session,
+            self.path,
+            json,
+            count=count,
+            returning=returning,
+        )
         return AsyncFilterRequestBuilder(self.session, self.path, method, json)
 
-    def delete(self, *, count: Optional[CountMethod] = None) -> AsyncFilterRequestBuilder:
-        method, json = pre_delete(self.session, self.path, count=count)
+    def delete(
+        self,
+        *,
+        count: Optional[CountMethod] = None,
+        returning: ReturnMethod = ReturnMethod.representation,
+    ) -> AsyncFilterRequestBuilder:
+        method, json = pre_delete(
+            self.session,
+            self.path,
+            count=count,
+            returning=returning,
+        )
         return AsyncFilterRequestBuilder(self.session, self.path, method, json)

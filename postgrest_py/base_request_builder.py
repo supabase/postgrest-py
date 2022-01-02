@@ -3,7 +3,7 @@ from typing import Any, Dict, Iterable, Optional, Tuple, Union
 
 from httpx import Response
 
-from postgrest_py.constants import CountMethod, Filters, RequestMethod
+from postgrest_py.types import CountMethod, Filters, RequestMethod, ReturnMethod
 from postgrest_py.utils import (
     AsyncClient,
     SyncClient,
@@ -33,10 +33,11 @@ def pre_insert(
     path: str,
     json: dict,
     *,
-    count: Optional[CountMethod] = None,
-    upsert=False,
+    count: Optional[CountMethod],
+    returning: ReturnMethod,
+    upsert: bool,
 ) -> Tuple[RequestMethod, dict]:
-    prefer_headers = ["return=representation"]
+    prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
     if upsert:
@@ -50,8 +51,9 @@ def pre_upsert(
     path: str,
     json: dict,
     *,
-    count: Optional[CountMethod] = None,
-    ignore_duplicates=False,
+    count: Optional[CountMethod],
+    returning: ReturnMethod,
+    ignore_duplicates: bool,
 ) -> Tuple[RequestMethod, dict]:
     prefer_headers = ["return=representation"]
     if count:
@@ -67,9 +69,10 @@ def pre_update(
     path: str,
     json: dict,
     *,
-    count: Optional[CountMethod] = None,
+    count: Optional[CountMethod],
+    returning: ReturnMethod,
 ) -> Tuple[RequestMethod, dict]:
-    prefer_headers = ["return=representation"]
+    prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
     session.headers["prefer"] = ",".join(prefer_headers)
@@ -80,9 +83,10 @@ def pre_delete(
     session: Union[AsyncClient, SyncClient],
     path: str,
     *,
-    count: Optional[CountMethod] = None,
+    count: Optional[CountMethod],
+    returning: ReturnMethod,
 ) -> Tuple[RequestMethod, dict]:
-    prefer_headers = ["return=representation"]
+    prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
     session.headers["prefer"] = ",".join(prefer_headers)
