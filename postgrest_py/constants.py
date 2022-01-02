@@ -40,3 +40,8 @@ class RequestMethod(str, Enum):
     PUT = "PUT"
     DELETE = "DELETE"
     HEAD = "HEAD"
+
+
+class ReturnMethod(str, Enum):
+    minimal = "minimal"
+    representation = "representation"
