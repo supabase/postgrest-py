@@ -125,61 +125,61 @@ class BaseFilterRequestBuilder:
         self.session.params = self.session.params.add(key, val)
         return self
 
-    def eq(self, column: str, value: str):
+    def eq(self, column: str, value: Any):
         return self.filter(column, Filters.EQ, sanitize_param(value))
 
-    def neq(self, column: str, value: str):
+    def neq(self, column: str, value: Any):
         return self.filter(column, Filters.NEQ, sanitize_param(value))
 
-    def gt(self, column: str, value: str):
+    def gt(self, column: str, value: Any):
         return self.filter(column, Filters.GT, sanitize_param(value))
 
-    def gte(self, column: str, value: str):
+    def gte(self, column: str, value: Any):
         return self.filter(column, Filters.GTE, sanitize_param(value))
 
-    def lt(self, column: str, value: str):
+    def lt(self, column: str, value: Any):
         return self.filter(column, Filters.LT, sanitize_param(value))
 
-    def lte(self, column: str, value: str):
+    def lte(self, column: str, value: Any):
         return self.filter(column, Filters.LTE, sanitize_param(value))
 
-    def is_(self, column: str, value: str):
+    def is_(self, column: str, value: Any):
         return self.filter(column, Filters.IS, sanitize_param(value))
 
-    def like(self, column: str, pattern: str):
+    def like(self, column: str, pattern: Any):
         return self.filter(column, Filters.LIKE, sanitize_pattern_param(pattern))
 
-    def ilike(self, column: str, pattern: str):
+    def ilike(self, column: str, pattern: Any):
         return self.filter(column, Filters.ILIKE, sanitize_pattern_param(pattern))
 
-    def fts(self, column: str, query: str):
+    def fts(self, column: str, query: Any):
         return self.filter(column, Filters.FTS, sanitize_param(query))
 
-    def plfts(self, column: str, query: str):
+    def plfts(self, column: str, query: Any):
         return self.filter(column, Filters.PLFTS, sanitize_param(query))
 
-    def phfts(self, column: str, query: str):
+    def phfts(self, column: str, query: Any):
         return self.filter(column, Filters.PHFTS, sanitize_param(query))
 
-    def wfts(self, column: str, query: str):
+    def wfts(self, column: str, query: Any):
         return self.filter(column, Filters.WFTS, sanitize_param(query))
 
-    def in_(self, column: str, values: Iterable[str]):
+    def in_(self, column: str, values: Iterable[Any]):
         values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, Filters.IN, f"({values})")
 
-    def cs(self, column: str, values: Iterable[str]):
+    def cs(self, column: str, values: Iterable[Any]):
         values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, Filters.CS, f"{{{values}}}")
 
-    def cd(self, column: str, values: Iterable[str]):
+    def cd(self, column: str, values: Iterable[Any]):
         values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, Filters.CD, f"{{{values}}}")
 
-    def ov(self, column: str, values: Iterable[str]):
+    def ov(self, column: str, values: Iterable[Any]):
         values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, Filters.OV, f"{{{values}}}")
