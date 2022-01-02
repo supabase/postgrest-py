@@ -44,8 +44,12 @@ class SyncPostgrestClient(BasePostgrestClient):
 
     def from_(self, table: str) -> SyncRequestBuilder:
         """Perform a table operation."""
-        return SyncRequestBuilder(self.session, f"/{table}")
-    
+        base_url = str(self.session.base_url)
+        headers = {k: v for k, v in self.session.headers.items()}
+        session = self.create_session(base_url, headers)
+        session.auth = self.session.auth
+        return SyncRequestBuilder(session, f"/{table}")
+
     def table(self, table: str) -> SyncRequestBuilder:
         """Alias to self.from_()."""
         return self.from_(table)
