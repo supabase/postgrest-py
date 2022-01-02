@@ -44,7 +44,11 @@ class AsyncPostgrestClient(BasePostgrestClient):
 
     def from_(self, table: str) -> AsyncRequestBuilder:
         """Perform a table operation."""
-        return AsyncRequestBuilder(self.session, f"/{table}")
+        base_url = str(self.session.base_url)
+        headers = dict(self.session.headers.items())
+        session = self.create_session(base_url, headers)
+        session.auth = self.session.auth
+        return AsyncRequestBuilder(session, f"/{table}")
 
     def table(self, table: str) -> AsyncRequestBuilder:
         """Alias to self.from_()."""
