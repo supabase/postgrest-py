@@ -11,7 +11,7 @@ from postgrest_py.base_request_builder import (
     pre_upsert,
     process_response,
 )
-from postgrest_py.constants import ReturnMethod
+from postgrest_py.types import ReturnMethod
 from postgrest_py.utils import AsyncClient
 
 

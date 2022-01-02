@@ -3,7 +3,7 @@ from typing import Any, Dict, Iterable, Optional, Tuple, Union
 
 from httpx import Response
 
-from postgrest_py.constants import CountMethod, Filters, RequestMethod, ReturnMethod
+from postgrest_py.types import CountMethod, Filters, RequestMethod, ReturnMethod
 from postgrest_py.utils import (
     AsyncClient,
     SyncClient,
