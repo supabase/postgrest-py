@@ -1,7 +1,6 @@
+from __future__ import annotations
 from re import search
 from typing import Any, Dict, Iterable, Optional, Tuple, Union
-
-from httpx import Response
 
 from postgrest_py.types import CountMethod, Filters, RequestMethod, ReturnMethod
 from postgrest_py.utils import (
@@ -10,6 +9,8 @@ from postgrest_py.utils import (
     sanitize_param,
     sanitize_pattern_param,
 )
+from pydantic import BaseModel
+from httpx import Response as RequestResponse
 
 
 def pre_select(
@@ -93,21 +94,33 @@ def pre_delete(
     return RequestMethod.DELETE, {}
 
 
-def process_response(
-    session: Union[AsyncClient, SyncClient],
-    r: Response,
-) -> Tuple[Any, Optional[int]]:
-    count = None
-    prefer_header = session.headers.get("prefer")
-    if prefer_header:
+class APIResponse(BaseModel):
+    data: Any
+    count: Optional[int] = None
+
+    @staticmethod
+    def get_count_from_http_request_response_if_exists(
+        request_response: RequestResponse,
+    ) -> Optional[int]:
+        prefer_header: Optional[str] = request_response.request.headers.get("prefer")
+        if not prefer_header:
+            return None
         pattern = f"count=({'|'.join([cm.value for cm in CountMethod])})"
         count_header_match = search(pattern, prefer_header)
-        content_range_header = r.headers.get("content-range")
+        content_range_header: Optional[str] = request_response.headers.get(
+            "content-range"
+        )
         if count_header_match and content_range_header:
             content_range = content_range_header.split("/")
             if len(content_range) >= 2:
-                count = int(content_range[1])
-    return r.json(), count
+                return content_range[1]
+        return None
+
+    @classmethod
+    def from_http_request_response(cls: APIResponse, request_response: RequestResponse):
+        count = cls.get_count_from_http_request_response_if_exists(request_response)
+        data = request_response.json()
+        return cls(data=data, count=count)
 
 
 class BaseFilterRequestBuilder:
