@@ -13,7 +13,7 @@ def sanitize_param(param: Any) -> str:
     param_str = str(param)
     reserved_chars = ",.:()"
     if any(char in param_str for char in reserved_chars):
-        return f"\"{param_str}\""
+        return f'"{param_str}"'
     return param_str
 
 
