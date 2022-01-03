@@ -12,6 +12,7 @@ repository = "https://github.com/supabase/postgrest-py"
 python = "^3.7"
 httpx = ">=0.19,<0.22"
 deprecation = "^2.1.0"
+pydantic = "^1.9.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
