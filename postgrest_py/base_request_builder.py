@@ -1,6 +1,10 @@
 from __future__ import annotations
+
 from re import search
 from typing import Any, Dict, Iterable, Optional, Tuple, Union
+
+from httpx import Response as RequestResponse
+from pydantic import BaseModel
 
 from postgrest_py.types import CountMethod, Filters, RequestMethod, ReturnMethod
 from postgrest_py.utils import (
@@ -9,8 +13,6 @@ from postgrest_py.utils import (
     sanitize_param,
     sanitize_pattern_param,
 )
-from pydantic import BaseModel
-from httpx import Response as RequestResponse
 
 
 def pre_select(

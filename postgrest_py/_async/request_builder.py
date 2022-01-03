@@ -1,6 +1,7 @@
 from typing import Any, Optional, Tuple
 
 from postgrest_py.base_request_builder import (
+    APIResponse,
     BaseFilterRequestBuilder,
     BaseSelectRequestBuilder,
     CountMethod,
@@ -9,7 +10,6 @@ from postgrest_py.base_request_builder import (
     pre_select,
     pre_update,
     pre_upsert,
-    APIResponse,
 )
 from postgrest_py.types import ReturnMethod
 from postgrest_py.utils import AsyncClient
