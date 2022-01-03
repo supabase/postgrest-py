@@ -16,19 +16,19 @@ def test_constructor(filter_request_builder):
     assert builder.path == "/example_table"
     assert builder.http_method == "GET"
     assert builder.json == {}
-    assert builder.negate_next == False
+    assert not builder.negate_next
 
 
 def test_not_(filter_request_builder):
     builder = filter_request_builder.not_
 
-    assert builder.negate_next == True
+    assert builder.negate_next
 
 
 def test_filter(filter_request_builder):
     builder = filter_request_builder.filter(":col.name", "eq", "val")
 
-    assert builder.session.params["%22:col.name%22"] == "eq.val"
+    assert builder.session.params['":col.name"'] == "eq.val"
 
 
 def test_multivalued_param(filter_request_builder):
