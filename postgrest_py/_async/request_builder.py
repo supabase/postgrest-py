@@ -9,7 +9,7 @@ from postgrest_py.base_request_builder import (
     pre_select,
     pre_update,
     pre_upsert,
-    process_response,
+    APIResponse,
 )
 from postgrest_py.types import ReturnMethod
 from postgrest_py.utils import AsyncClient
@@ -34,7 +34,7 @@ class AsyncQueryRequestBuilder:
             self.path,
             json=self.json,
         )
-        return process_response(self.session, r)
+        return APIResponse.from_http_request_response(r)
 
 
 class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuilder):
