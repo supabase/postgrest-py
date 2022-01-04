@@ -130,7 +130,7 @@ class APIResponse(BaseModel):
     @classmethod
     def from_http_request_response(
         cls: Type[APIResponse], request_response: RequestResponse
-    ):
+    ) -> APIResponse:
         data = request_response.json()
         count = cls.get_count_from_http_request_response(request_response)
         return cls(data=data, count=count)

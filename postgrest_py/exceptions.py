@@ -17,7 +17,7 @@ class APIError(Exception):
         self.details = error["details"]
         super().__init__(str(self))
 
-    def __str__(self):
+    def __repr__(self) -> str:
         error_text = f"Error {self.code}:" if self.code else ""
         message_text = f"\nMessage: {self.message}" if self.message else ""
         hint_text = f"\nHint: {self.hint}" if self.hint else ""
@@ -25,5 +25,5 @@ class APIError(Exception):
         complete_error_text = f"{error_text}{message_text}{hint_text}{details_text}"
         return complete_error_text or "Empty error"
 
-    def json(self):
+    def json(self) -> dict[str, str]:
         return self._raw_error
