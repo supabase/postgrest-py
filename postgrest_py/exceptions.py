@@ -1,5 +1,6 @@
 from typing import Dict
 
+
 class APIError(Exception):
     """
     Base exception for all API errors.
