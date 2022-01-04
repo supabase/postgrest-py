@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Optional, Tuple
+
 from postgrest_py.exceptions import APIError
 
 from ..base_request_builder import (
@@ -77,7 +78,7 @@ class AsyncRequestBuilder:
         *columns: str,
         count: Optional[CountMethod] = None,
     ) -> AsyncSelectRequestBuilder:
-        method, json = pre_select(self.session, self.path, *columns, count=count)
+        method, json = pre_select(self.session, *columns, count=count)
         return AsyncSelectRequestBuilder(self.session, self.path, method, json)
 
     def insert(
