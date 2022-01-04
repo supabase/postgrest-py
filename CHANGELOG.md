@@ -1,99 +1,107 @@
-# CHANGELOG
+# Changelog
 
-### v0.5.0
+<!--next-version-placeholder-->
 
-#### Features
+## v0.7.1 (2022-01-04)
+### Performance
+* Sync configurations with gotrue-py ([#66](https://github.com/supabase-community/postgrest-py/issues/66)) ([`d5a97da`](https://github.com/supabase-community/postgrest-py/commit/d5a97daad42a431b2d36f16e3969b38b9dded288))
 
-- Allow setting headers in `PostgrestClient`'s constructor
-- Improve `PostgrestClient.auth()` behavior
+**[See all commits in this version](https://github.com/supabase-community/postgrest-py/compare/v0.7.0...v0.7.1)**
 
-#### Internal
+## v0.5.0
 
-- Require Poetry >= 1.0.0
-- Update CI workflow
-- Use Dependabot
-- Update httpx to v0.19.0
+### Features
 
-### v0.4.0
+* Allow setting headers in `PostgrestClient`'s constructor
+* Improve `PostgrestClient.auth()` behavior
 
-#### Added
+### Internal
 
-- Add some tests
-- Allow multivalued query parameters
+* Require Poetry >= 1.0.0
+* Update CI workflow
+* Use Dependabot
+* Update httpx to v0.19.0
 
-#### Changed
+## v0.4.0
 
-- Internal changes & improvements
+### Added
 
-### v0.3.2
+* Add some tests
+* Allow multivalued query parameters
 
-#### Added
+### Changed
 
-- Use Github Actions
+* Internal changes & improvements
 
-#### Changed
+## v0.3.2
 
-- Move to a new home: [supabase/postgrest-py](https://github.com/supabase/postgrest-py)
+### Added
 
-#### Removed
+* Use Github Actions
 
-- Remove Travis CI
+### Changed
 
-### v0.3.1
+* Move to a new home: [supabase/postgrest-py](https://github.com/supabase/postgrest-py)
 
-#### Removed
+### Removed
 
-- Remove dummy test cases
-- Remove PyPy3 from Travis CI
+* Remove Travis CI
 
-### v0.3.0
+## v0.3.1
 
-#### Added
+### Removed
 
-- Add some basic test cases for `PostgrestClient`
-- Use Travis CI
+* Remove dummy test cases
+* Remove PyPy3 from Travis CI
 
-#### Changed
+## v0.3.0
 
-- Change behavior of `RequestBuilder.filter()`
-- Change signature of general filters
+### Added
 
-#### Removed
+* Add some basic test cases for `PostgrestClient`
+* Use Travis CI
 
-- Remove `RequestBuilder.filter_in()` and `RequestBuilder.filter_out()`
+### Changed
 
-#### Fixed
+* Change behavior of `RequestBuilder.filter()`
+* Change signature of general filters
 
-- Fix `PostgrestClient.schema()` not actually work
+### Removed
 
-### v0.2.0
+* Remove `RequestBuilder.filter_in()` and `RequestBuilder.filter_out()`
 
-#### Added
+### Fixed
 
-- Support basic authentication
-- Support stored procedures (RPC)
-- `RequestBuilder.select()` now accepts `columns` as variable-length arguments
-- Add `RequestBuilder.not_` getter
-- Add `RequestBuilder.ov()`
+* Fix `PostgrestClient.schema()` not actually work
 
-#### Changed
+## v0.2.0
 
-- Rename `Client` to `PostgrestClient` and deprecate the old name
-- Deprecate `PostgrestClient.from_table()`
+### Added
 
-#### Removed
+* Support basic authentication
+* Support stored procedures (RPC)
+* `RequestBuilder.select()` now accepts `columns` as variable-length arguments
+* Add `RequestBuilder.not_` getter
+* Add `RequestBuilder.ov()`
 
-- Remove `RequestBuilder.not_()`
-- Remove `RequestBuilder.ova()` and `RequestBuilder.ovr()`
+### Changed
 
-### v0.1.1
+* Rename `Client` to `PostgrestClient` and deprecate the old name
+* Deprecate `PostgrestClient.from_table()`
 
-#### Fixed
+### Removed
 
-- Fix a typo in `Client.from_()`
+* Remove `RequestBuilder.not_()`
+* Remove `RequestBuilder.ova()` and `RequestBuilder.ovr()`
 
-### v0.1.0
+## v0.1.1
 
-#### Added
+### Fixed
 
-- Add basic features
+* Fix a typo in `Client.from_()`
+
+## v0.1.0
+
+### Added
+
+* Add basic features

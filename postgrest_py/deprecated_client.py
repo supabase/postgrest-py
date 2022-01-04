@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from deprecation import deprecated
 
-from postgrest_py.__version__ import __version__
-from postgrest_py._async.client import AsyncPostgrestClient
+from . import __version__
+from ._async.client import AsyncPostgrestClient
 
 
 class Client(AsyncPostgrestClient):

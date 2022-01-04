@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from typing import Any, Optional, Tuple
 from postgrest_py.exceptions import APIError
 
-from postgrest_py.base_request_builder import (
+from ..base_request_builder import (
     APIResponse,
     BaseFilterRequestBuilder,
     BaseSelectRequestBuilder,
@@ -12,8 +14,8 @@ from postgrest_py.base_request_builder import (
     pre_update,
     pre_upsert,
 )
-from postgrest_py.types import ReturnMethod
-from postgrest_py.utils import AsyncClient
+from ..types import ReturnMethod
+from ..utils import AsyncClient
 
 
 class AsyncQueryRequestBuilder:
@@ -88,7 +90,6 @@ class AsyncRequestBuilder:
     ) -> AsyncQueryRequestBuilder:
         method, json = pre_insert(
             self.session,
-            self.path,
             json,
             count=count,
             returning=returning,
@@ -106,7 +107,6 @@ class AsyncRequestBuilder:
     ) -> AsyncQueryRequestBuilder:
         method, json = pre_upsert(
             self.session,
-            self.path,
             json,
             count=count,
             returning=returning,
@@ -123,7 +123,6 @@ class AsyncRequestBuilder:
     ) -> AsyncFilterRequestBuilder:
         method, json = pre_update(
             self.session,
-            self.path,
             json,
             count=count,
             returning=returning,
@@ -138,7 +137,6 @@ class AsyncRequestBuilder:
     ) -> AsyncFilterRequestBuilder:
         method, json = pre_delete(
             self.session,
-            self.path,
             count=count,
             returning=returning,
         )
