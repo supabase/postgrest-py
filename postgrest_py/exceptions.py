@@ -1,15 +1,17 @@
+from typing import Dict
+
 class APIError(Exception):
     """
     Base exception for all API errors.
     """
 
-    _raw_error: dict[str, str]
+    _raw_error: Dict[str, str]
     message: str
     code: str
     hint: str
     details: str
 
-    def __init__(self, error: dict[str, str]) -> None:
+    def __init__(self, error: Dict[str, str]) -> None:
         self._raw_error = error
         self.message = error["message"]
         self.code = error["code"]
@@ -25,5 +27,5 @@ class APIError(Exception):
         complete_error_text = f"{error_text}{message_text}{hint_text}{details_text}"
         return complete_error_text or "Empty error"
 
-    def json(self) -> dict[str, str]:
+    def json(self) -> Dict[str, str]:
         return self._raw_error
