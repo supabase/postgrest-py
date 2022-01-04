@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from re import search
-from typing import Any, Dict, Iterable, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, Optional, Tuple, Type, Union
 
 from httpx import Response as RequestResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 from postgrest_py.types import CountMethod, Filters, RequestMethod, ReturnMethod
 from postgrest_py.utils import (
@@ -100,27 +100,48 @@ class APIResponse(BaseModel):
     data: Any
     count: Optional[int] = None
 
+    @validator("data")
+    @classmethod
+    def raise_when_api_error(cls: Type[APIResponse], value: Any) -> Any:
+        if isinstance(value, dict) and value.get("message"):
+            raise ValueError("You are passing an API error to the data field.")
+        return value
+
     @staticmethod
-    def get_count_from_http_request_response_if_exists(
+    def get_count_from_content_range_header(
+        content_range_header: str,
+    ) -> Optional[int]:
+        content_range = content_range_header.split("/")
+        if len(content_range) < 2:
+            return None
+        return int(content_range[1])
+
+    @staticmethod
+    def is_count_in_prefer_header(prefer_header: str) -> bool:
+        pattern = f"count=({'|'.join([cm.value for cm in CountMethod])})"
+        return bool(search(pattern, prefer_header))
+
+    @classmethod
+    def get_count_from_http_request_response(
+        cls: Type[APIResponse],
         request_response: RequestResponse,
     ) -> Optional[int]:
         prefer_header: Optional[str] = request_response.request.headers.get("prefer")
         if not prefer_header:
             return None
-        pattern = f"count=({'|'.join([cm.value for cm in CountMethod])})"
-        count_header_match = search(pattern, prefer_header)
+        is_count_in_prefer_header = cls.is_count_in_prefer_header(prefer_header)
         content_range_header: Optional[str] = request_response.headers.get(
             "content-range"
         )
-        if count_header_match and content_range_header:
-            content_range = content_range_header.split("/")
-            if len(content_range) >= 2:
-                return content_range[1]
+        if is_count_in_prefer_header and content_range_header:
+            return cls.get_count_from_content_range_header(content_range_header)
         return None
 
     @classmethod
-    def from_http_request_response(cls: APIResponse, request_response: RequestResponse):
-        count = cls.get_count_from_http_request_response_if_exists(request_response)
+    def from_http_request_response(
+        cls: Type[APIResponse], request_response: RequestResponse
+    ):
+        count = cls.get_count_from_http_request_response(request_response)
         data = request_response.json()
         return cls(data=data, count=count)
 
