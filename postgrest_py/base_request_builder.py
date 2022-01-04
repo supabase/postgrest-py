@@ -17,7 +17,6 @@ from postgrest_py.utils import (
 
 def pre_select(
     session: Union[AsyncClient, SyncClient],
-    path: str,
     *columns: str,
     count: Optional[CountMethod] = None,
 ) -> Tuple[RequestMethod, dict]:
@@ -33,7 +32,6 @@ def pre_select(
 
 def pre_insert(
     session: Union[AsyncClient, SyncClient],
-    path: str,
     json: dict,
     *,
     count: Optional[CountMethod],
@@ -51,14 +49,13 @@ def pre_insert(
 
 def pre_upsert(
     session: Union[AsyncClient, SyncClient],
-    path: str,
     json: dict,
     *,
     count: Optional[CountMethod],
     returning: ReturnMethod,
     ignore_duplicates: bool,
 ) -> Tuple[RequestMethod, dict]:
-    prefer_headers = ["return=representation"]
+    prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
     resolution = "ignore" if ignore_duplicates else "merge"
@@ -69,7 +66,6 @@ def pre_upsert(
 
 def pre_update(
     session: Union[AsyncClient, SyncClient],
-    path: str,
     json: dict,
     *,
     count: Optional[CountMethod],
@@ -84,7 +80,6 @@ def pre_update(
 
 def pre_delete(
     session: Union[AsyncClient, SyncClient],
-    path: str,
     *,
     count: Optional[CountMethod],
     returning: ReturnMethod,
