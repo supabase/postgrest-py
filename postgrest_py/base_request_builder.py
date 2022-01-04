@@ -3,7 +3,7 @@ from typing import Any, Dict, Iterable, Optional, Tuple, Union
 
 from httpx import Response
 
-from postgrest_py.constants import CountMethod, Filters, RequestMethod
+from postgrest_py.types import CountMethod, Filters, RequestMethod, ReturnMethod
 from postgrest_py.utils import (
     AsyncClient,
     SyncClient,
@@ -33,10 +33,11 @@ def pre_insert(
     path: str,
     json: dict,
     *,
-    count: Optional[CountMethod] = None,
-    upsert=False,
+    count: Optional[CountMethod],
+    returning: ReturnMethod,
+    upsert: bool,
 ) -> Tuple[RequestMethod, dict]:
-    prefer_headers = ["return=representation"]
+    prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
     if upsert:
@@ -50,8 +51,9 @@ def pre_upsert(
     path: str,
     json: dict,
     *,
-    count: Optional[CountMethod] = None,
-    ignore_duplicates=False,
+    count: Optional[CountMethod],
+    returning: ReturnMethod,
+    ignore_duplicates: bool,
 ) -> Tuple[RequestMethod, dict]:
     prefer_headers = ["return=representation"]
     if count:
@@ -67,9 +69,10 @@ def pre_update(
     path: str,
     json: dict,
     *,
-    count: Optional[CountMethod] = None,
+    count: Optional[CountMethod],
+    returning: ReturnMethod,
 ) -> Tuple[RequestMethod, dict]:
-    prefer_headers = ["return=representation"]
+    prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
     session.headers["prefer"] = ",".join(prefer_headers)
@@ -80,9 +83,10 @@ def pre_delete(
     session: Union[AsyncClient, SyncClient],
     path: str,
     *,
-    count: Optional[CountMethod] = None,
+    count: Optional[CountMethod],
+    returning: ReturnMethod,
 ) -> Tuple[RequestMethod, dict]:
-    prefer_headers = ["return=representation"]
+    prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
     session.headers["prefer"] = ",".join(prefer_headers)
@@ -125,61 +129,61 @@ class BaseFilterRequestBuilder:
         self.session.params = self.session.params.add(key, val)
         return self
 
-    def eq(self, column: str, value: str):
+    def eq(self, column: str, value: Any):
         return self.filter(column, Filters.EQ, sanitize_param(value))
 
-    def neq(self, column: str, value: str):
+    def neq(self, column: str, value: Any):
         return self.filter(column, Filters.NEQ, sanitize_param(value))
 
-    def gt(self, column: str, value: str):
+    def gt(self, column: str, value: Any):
         return self.filter(column, Filters.GT, sanitize_param(value))
 
-    def gte(self, column: str, value: str):
+    def gte(self, column: str, value: Any):
         return self.filter(column, Filters.GTE, sanitize_param(value))
 
-    def lt(self, column: str, value: str):
+    def lt(self, column: str, value: Any):
         return self.filter(column, Filters.LT, sanitize_param(value))
 
-    def lte(self, column: str, value: str):
+    def lte(self, column: str, value: Any):
         return self.filter(column, Filters.LTE, sanitize_param(value))
 
-    def is_(self, column: str, value: str):
+    def is_(self, column: str, value: Any):
         return self.filter(column, Filters.IS, sanitize_param(value))
 
-    def like(self, column: str, pattern: str):
+    def like(self, column: str, pattern: Any):
         return self.filter(column, Filters.LIKE, sanitize_pattern_param(pattern))
 
-    def ilike(self, column: str, pattern: str):
+    def ilike(self, column: str, pattern: Any):
         return self.filter(column, Filters.ILIKE, sanitize_pattern_param(pattern))
 
-    def fts(self, column: str, query: str):
+    def fts(self, column: str, query: Any):
         return self.filter(column, Filters.FTS, sanitize_param(query))
 
-    def plfts(self, column: str, query: str):
+    def plfts(self, column: str, query: Any):
         return self.filter(column, Filters.PLFTS, sanitize_param(query))
 
-    def phfts(self, column: str, query: str):
+    def phfts(self, column: str, query: Any):
         return self.filter(column, Filters.PHFTS, sanitize_param(query))
 
-    def wfts(self, column: str, query: str):
+    def wfts(self, column: str, query: Any):
         return self.filter(column, Filters.WFTS, sanitize_param(query))
 
-    def in_(self, column: str, values: Iterable[str]):
+    def in_(self, column: str, values: Iterable[Any]):
         values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, Filters.IN, f"({values})")
 
-    def cs(self, column: str, values: Iterable[str]):
+    def cs(self, column: str, values: Iterable[Any]):
         values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, Filters.CS, f"{{{values}}}")
 
-    def cd(self, column: str, values: Iterable[str]):
+    def cd(self, column: str, values: Iterable[Any]):
         values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, Filters.CD, f"{{{values}}}")
 
-    def ov(self, column: str, values: Iterable[str]):
+    def ov(self, column: str, values: Iterable[Any]):
         values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, Filters.OV, f"{{{values}}}")
@@ -212,9 +216,10 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         BaseFilterRequestBuilder.__init__(self, session)
 
     def order(self, column: str, *, desc=False, nullsfirst=False):
-        self.session.params[
-            "order"
-        ] = f"{column}{'.desc' if desc else ''}{'.nullsfirst' if nullsfirst else ''}"
+        self.session.params.add(
+            "order",
+            f"{column}{'.desc' if desc else ''}{'.nullsfirst' if nullsfirst else ''}",
+        )
         return self
 
     def limit(self, size: int, *, start=0):

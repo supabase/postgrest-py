@@ -11,6 +11,7 @@ from postgrest_py.base_request_builder import (
     pre_upsert,
     process_response,
 )
+from postgrest_py.types import ReturnMethod
 from postgrest_py.utils import SyncClient
 
 
@@ -78,6 +79,7 @@ class SyncRequestBuilder:
         json: dict,
         *,
         count: Optional[CountMethod] = None,
+        returning: ReturnMethod = ReturnMethod.representation,
         upsert=False,
     ) -> SyncQueryRequestBuilder:
         method, json = pre_insert(
@@ -85,6 +87,7 @@ class SyncRequestBuilder:
             self.path,
             json,
             count=count,
+            returning=returning,
             upsert=upsert,
         )
         return SyncQueryRequestBuilder(self.session, self.path, method, json)
@@ -94,6 +97,7 @@ class SyncRequestBuilder:
         json: dict,
         *,
         count: Optional[CountMethod] = None,
+        returning: ReturnMethod = ReturnMethod.representation,
         ignore_duplicates=False,
     ) -> SyncQueryRequestBuilder:
         method, json = pre_upsert(
@@ -101,6 +105,7 @@ class SyncRequestBuilder:
             self.path,
             json,
             count=count,
+            returning=returning,
             ignore_duplicates=ignore_duplicates,
         )
         return SyncQueryRequestBuilder(self.session, self.path, method, json)
@@ -110,10 +115,27 @@ class SyncRequestBuilder:
         json: dict,
         *,
         count: Optional[CountMethod] = None,
+        returning: ReturnMethod = ReturnMethod.representation,
     ) -> SyncFilterRequestBuilder:
-        method, json = pre_update(self.session, self.path, json, count=count)
+        method, json = pre_update(
+            self.session,
+            self.path,
+            json,
+            count=count,
+            returning=returning,
+        )
         return SyncFilterRequestBuilder(self.session, self.path, method, json)
 
-    def delete(self, *, count: Optional[CountMethod] = None) -> SyncFilterRequestBuilder:
-        method, json = pre_delete(self.session, self.path, count=count)
+    def delete(
+        self,
+        *,
+        count: Optional[CountMethod] = None,
+        returning: ReturnMethod = ReturnMethod.representation,
+    ) -> SyncFilterRequestBuilder:
+        method, json = pre_delete(
+            self.session,
+            self.path,
+            count=count,
+            returning=returning,
+        )
         return SyncFilterRequestBuilder(self.session, self.path, method, json)

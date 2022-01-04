@@ -1,7 +1,7 @@
 import pytest
 
 from postgrest_py import AsyncRequestBuilder
-from postgrest_py.constants import CountMethod
+from postgrest_py.types import CountMethod
 from postgrest_py.utils import AsyncClient
 
 

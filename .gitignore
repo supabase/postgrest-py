@@ -133,3 +133,6 @@ dmypy.json
 
 # Visual Studio Code
 .vscode/
+
+# Poetry local config
+poetry.toml
