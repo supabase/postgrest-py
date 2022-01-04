@@ -37,7 +37,7 @@ class AsyncQueryRequestBuilder:
         return APIResponse.from_http_request_response(r)
 
 
-class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuilder):
+class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
         session: AsyncClient,
@@ -49,7 +49,7 @@ class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuild
         AsyncQueryRequestBuilder.__init__(self, session, path, http_method, json)
 
 
-class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuilder):
+class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
         session: AsyncClient,
