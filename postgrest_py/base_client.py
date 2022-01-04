@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Dict, Optional, Union
 
 from httpx import BasicAuth
 
-from postgrest_py.utils import AsyncClient, SyncClient
+from .utils import AsyncClient, SyncClient
 
 DEFAULT_POSTGREST_CLIENT_HEADERS: Dict[str, str] = {
     "Accept": "application/json",
@@ -54,5 +56,10 @@ class BasePostgrestClient(ABC):
 
     def schema(self, schema: str):
         """Switch to another schema."""
-        self.session.headers.update({"Accept-Profile": schema, "Content-Profile": schema})
+        self.session.headers.update(
+            {
+                "Accept-Profile": schema,
+                "Content-Profile": schema,
+            }
+        )
         return self

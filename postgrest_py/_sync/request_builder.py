@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from typing import Any, Optional, Tuple
 
-from postgrest_py.base_request_builder import (
+from ..base_request_builder import (
     BaseFilterRequestBuilder,
     BaseSelectRequestBuilder,
     CountMethod,
@@ -11,8 +13,8 @@ from postgrest_py.base_request_builder import (
     pre_upsert,
     process_response,
 )
-from postgrest_py.types import ReturnMethod
-from postgrest_py.utils import SyncClient
+from ..types import ReturnMethod
+from ..utils import SyncClient
 
 
 class SyncQueryRequestBuilder:

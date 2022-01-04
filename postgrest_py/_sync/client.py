@@ -1,15 +1,13 @@
+from __future__ import annotations
+
 from typing import Dict, cast
 
 from deprecation import deprecated
 from httpx import Response
 
-from postgrest_py.__version__ import __version__
-from postgrest_py.base_client import (
-    DEFAULT_POSTGREST_CLIENT_HEADERS,
-    BasePostgrestClient,
-)
-from postgrest_py.utils import SyncClient
-
+from .. import __version__
+from ..base_client import DEFAULT_POSTGREST_CLIENT_HEADERS, BasePostgrestClient
+from ..utils import SyncClient
 from .request_builder import SyncRequestBuilder
 
 
@@ -33,7 +31,7 @@ class SyncPostgrestClient(BasePostgrestClient):
     ) -> SyncClient:
         return SyncClient(base_url=base_url, headers=headers)
 
-    def __enter__(self) -> "SyncPostgrestClient":
+    def __enter__(self) -> SyncPostgrestClient:
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:

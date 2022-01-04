@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from deprecation import deprecated
 
-from postgrest_py.__version__ import __version__
-from postgrest_py._async.request_builder import AsyncSelectRequestBuilder
+from . import __version__
+from ._async.request_builder import AsyncSelectRequestBuilder
 
 
 class GetRequestBuilder(AsyncSelectRequestBuilder):

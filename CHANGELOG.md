@@ -1,5 +1,7 @@
 # CHANGELOG
 
+<!--next-version-placeholder-->
+
 ### v0.5.0
 
 #### Features
