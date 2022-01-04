@@ -4,7 +4,7 @@
 [![CI](https://github.com/supabase-community/postgrest-py/actions/workflows/ci.yml/badge.svg)](https://github.com/supabase-community/postgrest-py/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/pypi/pyversions/postgrest-py)](https://pypi.org/project/postgrest-py)
 [![Version](https://img.shields.io/pypi/v/postgrest-py?color=%2334D058)](https://pypi.org/project/postgrest-py)
-[![Codecov](https://codecov.io/gh/supabase-community/postgrest-py/branch/main/graph/badge.svg)](https://codecov.io/gh/supabase-community/postgrest-py)
+[![Codecov](https://codecov.io/gh/supabase-community/postgrest-py/branch/master/graph/badge.svg)](https://codecov.io/gh/supabase-community/postgrest-py)
 [![Last commit](https://img.shields.io/github/last-commit/supabase-community/postgrest-py.svg?style=flat)](https://github.com/supabase-community/postgrest-py/commits)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/supabase-community/postgrest-py)](https://github.com/supabase-community/postgrest-py/commits)
 [![Github Stars](https://img.shields.io/github/stars/supabase-community/postgrest-py?style=flat&logo=github)](https://github.com/supabase-community/postgrest-py/stargazers)
