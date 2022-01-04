@@ -31,7 +31,7 @@ class SyncPostgrestClient(BasePostgrestClient):
     ) -> SyncClient:
         return SyncClient(base_url=base_url, headers=headers)
 
-    def __enter__(self) -> "SyncPostgrestClient":
+    def __enter__(self) -> SyncPostgrestClient:
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
