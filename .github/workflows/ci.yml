@@ -1,0 +1,45 @@
+name: CI/CD
+
+on: [pull_request, push, workflow_dispatch]
+
+jobs:
+  test:
+    name: Test / OS ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.7, 3.8, 3.9, '3.10']
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Clone Repository
+      uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Set up Poetry
+      uses: abatilo/actions-poetry@v2.1.4
+      with:
+        poetry-version: 1.1.12
+    - name: Run Tests
+      run: make run_tests
+    - name: Upload Coverage
+      uses: codecov/codecov-action@v1
+
+  publish:
+    needs: test
+    if: ${{ !startsWith(github.event.head_commit.message, 'bump') && !startsWith(github.event.head_commit.message, 'chore') && github.ref == 'refs/heads/master' && github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    name: "Bump version, create changelog and publish"
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+      - name: Python Semantic Release
+        uses: relekang/python-semantic-release@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository_username: __token__
+          repository_password: ${{ secrets.PYPI_TOKEN }}

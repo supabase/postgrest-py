@@ -1,15 +1,13 @@
+from __future__ import annotations
+
 from typing import Dict, cast
 
 from deprecation import deprecated
 from httpx import Response
 
-from postgrest_py.__version__ import __version__
-from postgrest_py.base_client import (
-    DEFAULT_POSTGREST_CLIENT_HEADERS,
-    BasePostgrestClient,
-)
-from postgrest_py.utils import AsyncClient
-
+from .. import __version__
+from ..base_client import DEFAULT_POSTGREST_CLIENT_HEADERS, BasePostgrestClient
+from ..utils import AsyncClient
 from .request_builder import AsyncRequestBuilder
 
 

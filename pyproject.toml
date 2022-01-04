@@ -1,29 +1,46 @@
 [tool.poetry]
 name = "postgrest-py"
+version = "0.7.1"
 description = "PostgREST client for Python. This library provides an ORM interface to PostgREST."
-version = "0.7.0"
 authors = ["Lương Quang Mạnh <luongquangmanh85@gmail.com>"]
-license = "MIT"
-readme = "README.md"
 homepage = "https://github.com/supabase/postgrest-py"
 repository = "https://github.com/supabase/postgrest-py"
+documentation = "https://github.com/supabase/postgrest-py"
+readme = "README.md"
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-httpx = ">=0.19,<0.22"
+httpx = ">=0.20,<0.22"
 deprecation = "^2.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
-pytest-asyncio = "^0.16.0"
-pytest-cov = "^3.0.0"
-mypy = "^0.930"
-black = { version = "^21.12b0", allow-prereleases = true }
+Sphinx = "^4.3.2"
+flake8 = "^4.0.1"
+black = "^21.12b0"
+isort = "^5.9.3"
 pre-commit = "^2.16.0"
+pytest-cov = "^3.0.0"
+pytest-depends = "^1.0.1"
+pytest-asyncio = "^0.16.0"
 unasync-cli = "^0.0.9"
+python-semantic-release = "^7.23.0"
 
-[tool.black]
-line-length = 90
+[tool.semantic_release]
+version_variable = "postgrest_py/__init__.py:__version__"
+version_toml = "pyproject.toml:tool.poetry.version"
+major_on_zero = false
+commit_subject = "chore(release): bump version to v{version}"
+build_command = "curl -sSL https://install.python-poetry.org | python - && export PATH=\"/github/home/.local/bin:$PATH\" && poetry install && poetry build"
+upload_to_repository = false
+branch = "master"
+changelog_components = "semantic_release.changelog.changelog_headers,semantic_release.changelog.compare_url"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
