@@ -1,4 +1,5 @@
 from typing import Any, Optional, Tuple
+from postgrest_py.exceptions import APIError
 
 from postgrest_py.base_request_builder import (
     APIResponse,
@@ -34,7 +35,10 @@ class AsyncQueryRequestBuilder:
             self.path,
             json=self.json,
         )
-        return APIResponse.from_http_request_response(r)
+        try:
+            return APIResponse.from_http_request_response(r)
+        except ValueError as e:
+            raise APIError(r.json()) from e
 
 
 class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
