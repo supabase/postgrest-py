@@ -28,7 +28,7 @@ jobs:
 
   publish:
     needs: test
-    if: ${{ !startsWith(github.event.head_commit.message, 'bump') && !startsWith(github.event.head_commit.message, 'chore') && github.ref == 'refs/heads/master' && github.event_name == 'push' }}
+    if: ${{ !startsWith(github.event.head_commit.message, 'bump') && !startsWith(github.event.head_commit.message, 'chore') && github.ref == 'refs/heads/master' && github.event_name == 'push' && github.repository_owner == 'supabase-community' }}
     runs-on: ubuntu-latest
     name: "Bump version, create changelog and publish"
     steps:
