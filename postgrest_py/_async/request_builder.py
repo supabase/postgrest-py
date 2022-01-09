@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import Optional
 
-from postgrest_py.exceptions import APIError
-
 from ..base_request_builder import (
     APIResponse,
     BaseFilterRequestBuilder,
@@ -15,6 +13,7 @@ from ..base_request_builder import (
     pre_update,
     pre_upsert,
 )
+from ..exceptions import APIError
 from ..types import ReturnMethod
 from ..utils import AsyncClient
 
