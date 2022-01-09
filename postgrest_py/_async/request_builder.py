@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Tuple
+from typing import Optional
 
 from postgrest_py.exceptions import APIError
 
@@ -32,7 +32,7 @@ class AsyncQueryRequestBuilder:
         self.http_method = http_method
         self.json = json
 
-    async def execute(self) -> Tuple[Any, Optional[int]]:
+    async def execute(self) -> APIResponse:
         r = await self.session.request(
             self.http_method,
             self.path,
