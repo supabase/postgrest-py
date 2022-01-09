@@ -43,6 +43,7 @@ class AsyncQueryRequestBuilder:
             raise APIError(r.json()) from e
 
 
+# ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
 class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
@@ -55,6 +56,7 @@ class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuild
         AsyncQueryRequestBuilder.__init__(self, session, path, http_method, json)
 
 
+# ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
 class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
