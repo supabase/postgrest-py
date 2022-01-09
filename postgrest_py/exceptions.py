@@ -18,7 +18,7 @@ class APIError(Exception):
         self.code = error["code"]
         self.hint = error["hint"]
         self.details = error["details"]
-        super().__init__(str(self))
+        Exception.__init__(self, str(self))
 
     def __repr__(self) -> str:
         error_text = f"Error {self.code}:" if self.code else ""
