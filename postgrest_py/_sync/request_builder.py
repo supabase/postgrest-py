@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Tuple
-
-from postgrest_py.exceptions import APIError
+from typing import Optional
 
 from ..base_request_builder import (
     APIResponse,
@@ -15,6 +13,7 @@ from ..base_request_builder import (
     pre_update,
     pre_upsert,
 )
+from ..exceptions import APIError
 from ..types import ReturnMethod
 from ..utils import SyncClient
 
@@ -32,7 +31,7 @@ class SyncQueryRequestBuilder:
         self.http_method = http_method
         self.json = json
 
-    def execute(self) -> Tuple[Any, Optional[int]]:
+    def execute(self) -> APIResponse:
         r = self.session.request(
             self.http_method,
             self.path,
@@ -44,6 +43,7 @@ class SyncQueryRequestBuilder:
             raise APIError(r.json()) from e
 
 
+# ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
 class SyncFilterRequestBuilder(BaseFilterRequestBuilder, SyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
@@ -56,6 +56,7 @@ class SyncFilterRequestBuilder(BaseFilterRequestBuilder, SyncQueryRequestBuilder
         SyncQueryRequestBuilder.__init__(self, session, path, http_method, json)
 
 
+# ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
 class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
