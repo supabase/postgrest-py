@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Dict, Optional, Union
 
-from httpx import BasicAuth
+from httpx import BasicAuth, Timeout
 
 from .utils import AsyncClient, SyncClient
 
@@ -16,19 +16,22 @@ DEFAULT_POSTGREST_CLIENT_HEADERS: Dict[str, str] = {
 class BasePostgrestClient(ABC):
     """Base PostgREST client."""
 
-    def __init__(self, base_url: str, *, schema: str, headers: Dict[str, str]) -> None:
+    def __init__(
+        self, base_url: str, *, schema: str, headers: Dict[str, str], timeout: Timeout
+    ) -> None:
         headers = {
             **headers,
             "Accept-Profile": schema,
             "Content-Profile": schema,
         }
-        self.session = self.create_session(base_url, headers)
+        self.session = self.create_session(base_url, headers, timeout)
 
     @abstractmethod
     def create_session(
         self,
         base_url: str,
         headers: Dict[str, str],
+        timeout: Timeout,
     ) -> Union[SyncClient, AsyncClient]:
         raise NotImplementedError()
 
