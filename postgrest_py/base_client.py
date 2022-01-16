@@ -12,12 +12,19 @@ DEFAULT_POSTGREST_CLIENT_HEADERS: Dict[str, str] = {
     "Content-Type": "application/json",
 }
 
+DEFAULT_POSTGREST_CLIENT_TIMEOUT: int = 5
+
 
 class BasePostgrestClient(ABC):
     """Base PostgREST client."""
 
     def __init__(
-        self, base_url: str, *, schema: str, headers: Dict[str, str], timeout: Timeout
+        self,
+        base_url: str,
+        *,
+        schema: str,
+        headers: Dict[str, str],
+        timeout: Union[int, float, Timeout],
     ) -> None:
         headers = {
             **headers,
@@ -31,7 +38,7 @@ class BasePostgrestClient(ABC):
         self,
         base_url: str,
         headers: Dict[str, str],
-        timeout: Timeout,
+        timeout: Union[int, float, Timeout],
     ) -> Union[SyncClient, AsyncClient]:
         raise NotImplementedError()
 
