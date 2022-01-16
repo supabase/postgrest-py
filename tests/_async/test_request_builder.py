@@ -1,6 +1,9 @@
+from typing import Dict, List
+
 import pytest
 
 from postgrest_py import AsyncRequestBuilder
+from postgrest_py.base_request_builder import APIResponse
 from postgrest_py.types import CountMethod
 from postgrest_py.utils import AsyncClient
 
@@ -114,3 +117,45 @@ class TestDelete:
         ]
         assert builder.http_method == "DELETE"
         assert builder.json == {}
+
+
+@pytest.fixture
+def api_response_with_error():
+    return {
+        "message": "Route GET:/countries?select=%2A not found",
+        "error": "Not Found",
+        "statusCode": 404,
+    }
+
+
+@pytest.fixture
+def api_response():
+    return [
+        {
+            "id": 1,
+            "name": "Bonaire, Sint Eustatius and Saba",
+            "iso2": "BQ",
+            "iso3": "BES",
+            "local_name": None,
+            "continent": None,
+        },
+        {
+            "id": 2,
+            "name": "Curaçao",
+            "iso2": "CW",
+            "iso3": "CUW",
+            "local_name": None,
+            "continent": None,
+        },
+    ]
+
+
+class TestApiResponse:
+    def test_raises_when_api_error(
+        self, api_response_with_error: Dict[str, str], api_response: List[Dict[str, str]]
+    ):
+        # TODO[Joel]: test converstion with APIResponse.from_http_request_response
+        with pytest.raises(ValueError):
+            result = APIResponse.raise_when_api_error(api_response_with_error)
+        result = APIResponse.raise_when_api_error(api_response)
+        assert result == api_response
