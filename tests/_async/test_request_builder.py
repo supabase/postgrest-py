@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import pytest
 
@@ -120,7 +120,7 @@ class TestDelete:
 
 
 @pytest.fixture
-def api_response_with_error():
+def api_response_with_error() -> dict[str, Any]:
     return {
         "message": "Route GET:/countries?select=%2A not found",
         "error": "Not Found",
@@ -129,7 +129,7 @@ def api_response_with_error():
 
 
 @pytest.fixture
-def api_response():
+def api_response() -> List[Dict[str, Any]]:
     return [
         {
             "id": 1,
@@ -150,12 +150,67 @@ def api_response():
     ]
 
 
+@pytest.fixture
+def content_range_header_with_count():
+    return "0-1/2"
+
+
+@pytest.fixture
+def content_range_header_without_count():
+    return "0-1"
+
+
+@pytest.fixture
+def prefer_header_with_count():
+    return "count=exact"
+
+
+@pytest.fixture
+def prefer_header_without_count():
+    return "random prefer header"
+
+
 class TestApiResponse:
-    def test_raises_when_api_error(
-        self, api_response_with_error: Dict[str, str], api_response: List[Dict[str, str]]
+    def test_response_raises_when_api_error(
+        self, api_response_with_error: Dict[str, Any]
     ):
-        # TODO[Joel]: test converstion with APIResponse.from_http_request_response
         with pytest.raises(ValueError):
-            result = APIResponse.raise_when_api_error(api_response_with_error)
-        result = APIResponse.raise_when_api_error(api_response)
-        assert result == api_response
+            APIResponse(data=api_response_with_error)
+
+    def test_parses_valid_response_only_data(self, api_response: List[Dict[str, Any]]):
+        result = APIResponse(data=api_response)
+        assert result.data == api_response
+
+    def test_parses_valid_response_data_and_count(
+        self, api_response: List[Dict[str, Any]]
+    ):
+        count = len(api_response)
+        result = APIResponse(data=api_response, count=count)
+        assert result.data == api_response
+        assert result.count == count
+
+    def test_get_count_from_content_range_header_with_count(
+        self, content_range_header_with_count
+    ):
+        assert (
+            APIResponse.get_count_from_content_range_header(
+                content_range_header_with_count
+            )
+            == 2
+        )
+
+    def test_get_count_from_content_range_header_without_count(
+        self, content_range_header_without_count
+    ):
+        assert (
+            APIResponse.get_count_from_content_range_header(
+                content_range_header_without_count
+            )
+            is None
+        )
+
+    def test_is_count_in_prefer_header_true(self, prefer_header_with_count):
+        assert APIResponse.is_count_in_prefer_header(prefer_header_with_count)
+
+    def test_is_count_in_prefer_header_false(self, prefer_header_without_count):
+        assert not APIResponse.is_count_in_prefer_header(prefer_header_without_count)
