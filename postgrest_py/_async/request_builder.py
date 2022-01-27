@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Optional
 
+from pydantic import ValidationError
+
 from ..base_request_builder import (
     APIResponse,
     BaseFilterRequestBuilder,
@@ -39,7 +41,7 @@ class AsyncQueryRequestBuilder:
         )
         try:
             return APIResponse.from_http_request_response(r)
-        except ValueError as e:
+        except ValidationError as e:
             raise APIError(r.json()) from e
 
 
