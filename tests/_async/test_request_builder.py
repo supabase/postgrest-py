@@ -120,7 +120,7 @@ class TestDelete:
 
 
 @pytest.fixture
-def api_response_with_error() -> dict[str, Any]:
+def api_response_with_error() -> Dict[str, Any]:
     return {
         "message": "Route GET:/countries?select=%2A not found",
         "error": "Not Found",
@@ -151,22 +151,22 @@ def api_response() -> List[Dict[str, Any]]:
 
 
 @pytest.fixture
-def content_range_header_with_count():
+def content_range_header_with_count() -> str:
     return "0-1/2"
 
 
 @pytest.fixture
-def content_range_header_without_count():
+def content_range_header_without_count() -> str:
     return "0-1"
 
 
 @pytest.fixture
-def prefer_header_with_count():
+def prefer_header_with_count() -> str:
     return "count=exact"
 
 
 @pytest.fixture
-def prefer_header_without_count():
+def prefer_header_without_count() -> str:
     return "random prefer header"
 
 
