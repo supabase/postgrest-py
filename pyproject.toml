@@ -16,7 +16,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-httpx = ">=0.20,<0.22"
+httpx = ">=0.20,<0.23"
 deprecation = "^2.1.0"
 
 [tool.poetry.dev-dependencies]
