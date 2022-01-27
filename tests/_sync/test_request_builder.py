@@ -1,6 +1,7 @@
 from typing import Any, Dict, List
 
 import pytest
+from httpx import Response
 
 from postgrest_py import SyncRequestBuilder
 from postgrest_py.base_request_builder import APIResponse
@@ -171,8 +172,24 @@ def prefer_header_without_count() -> str:
 
 
 @pytest.fixture
-def prefer_header_without_count() -> str:
-    return "random prefer header"
+def request_response_without_prefer_header() -> Response:
+    return Response(status_code=200)
+
+
+@pytest.fixture
+def request_response_with_prefer_header_without_count() -> Response:
+    return Response(status_code=200, headers={"prefer": prefer_header_without_count()})
+
+
+@pytest.fixture
+def request_response_with_prefer_header_with_count_and_content_range() -> Response:
+    return Response(
+        status_code=200,
+        headers={
+            "prefer": prefer_header_with_count(),
+            "content-range": content_range_header_with_count(),
+        },
+    )
 
 
 class TestApiResponse:
