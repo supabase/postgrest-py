@@ -2,6 +2,18 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.1 (2022-01-22)
+### Fix
+* Order filter ([`094dbad`](https://github.com/supabase-community/postgrest-py/commit/094dbadb26bef4238536579ede71d46a4ef67899))
+
+**[See all commits in this version](https://github.com/supabase-community/postgrest-py/compare/v0.8.0...v0.8.1)**
+
+## v0.8.0 (2022-01-16)
+### Feature
+* Add timeout as a parameter of clients ([#75](https://github.com/supabase-community/postgrest-py/issues/75)) ([`1ea965a`](https://github.com/supabase-community/postgrest-py/commit/1ea965a6cb32dacb5f41cd1198f8a970a24731b6))
+
+**[See all commits in this version](https://github.com/supabase-community/postgrest-py/compare/v0.7.1...v0.8.0)**
+
 ## v0.7.1 (2022-01-04)
 ### Performance
 * Sync configurations with gotrue-py ([#66](https://github.com/supabase-community/postgrest-py/issues/66)) ([`d5a97da`](https://github.com/supabase-community/postgrest-py/commit/d5a97daad42a431b2d36f16e3969b38b9dded288))

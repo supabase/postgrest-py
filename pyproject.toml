@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "postgrest-py"
-version = "0.7.1"
+version = "0.8.1"
 description = "PostgREST client for Python. This library provides an ORM interface to PostgREST."
 authors = ["Lương Quang Mạnh <luongquangmanh85@gmail.com>"]
 homepage = "https://github.com/supabase/postgrest-py"
@@ -16,7 +16,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-httpx = ">=0.20,<0.22"
+httpx = ">=0.20,<0.23"
 deprecation = "^2.1.0"
 pydantic = "^1.9.0"
 
@@ -26,12 +26,12 @@ Sphinx = "^4.3.2"
 flake8 = "^4.0.1"
 black = "^21.12b0"
 isort = "^5.9.3"
-pre-commit = "^2.16.0"
+pre-commit = "^2.17.0"
 pytest-cov = "^3.0.0"
 pytest-depends = "^1.0.1"
-pytest-asyncio = "^0.16.0"
+pytest-asyncio = "^0.17.2"
 unasync-cli = "^0.0.9"
-python-semantic-release = "^7.23.0"
+python-semantic-release = "^7.24.0"
 
 [tool.semantic_release]
 version_variable = "postgrest_py/__init__.py:__version__"
@@ -39,7 +39,7 @@ version_toml = "pyproject.toml:tool.poetry.version"
 major_on_zero = false
 commit_subject = "chore(release): bump version to v{version}"
 build_command = "curl -sSL https://install.python-poetry.org | python - && export PATH=\"/github/home/.local/bin:$PATH\" && poetry install && poetry build"
-upload_to_repository = false
+upload_to_repository = true
 branch = "master"
 changelog_components = "semantic_release.changelog.changelog_headers,semantic_release.changelog.compare_url"
 

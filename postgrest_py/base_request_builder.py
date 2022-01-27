@@ -242,7 +242,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         BaseFilterRequestBuilder.__init__(self, session)
 
     def order(self, column: str, *, desc=False, nullsfirst=False):
-        self.session.params.add(
+        self.session.params = self.session.params.add(
             "order",
             f"{column}{'.desc' if desc else ''}{'.nullsfirst' if nullsfirst else ''}",
         )
