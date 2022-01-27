@@ -123,9 +123,9 @@ class APIResponse(BaseModel):
         content_range_header: Optional[str] = request_response.headers.get(
             "content-range"
         )
-        if is_count_in_prefer_header and content_range_header:
-            return cls.get_count_from_content_range_header(content_range_header)
-        return None
+        if not (is_count_in_prefer_header and content_range_header):
+            return None
+        return cls.get_count_from_content_range_header(content_range_header)
 
     @classmethod
     def from_http_request_response(
