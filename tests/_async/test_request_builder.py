@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 
 import pytest
-from httpx import Response
+from httpx import Request, Response
 
 from postgrest_py import AsyncRequestBuilder
 from postgrest_py.base_request_builder import APIResponse
@@ -173,22 +173,55 @@ def prefer_header_without_count() -> str:
 
 @pytest.fixture
 def request_response_without_prefer_header() -> Response:
-    return Response(status_code=200)
+    return Response(
+        status_code=200, request=Request(method="GET", url="http://example.com")
+    )
 
 
 @pytest.fixture
-def request_response_with_prefer_header_without_count() -> Response:
-    return Response(status_code=200, headers={"prefer": prefer_header_without_count()})
-
-
-@pytest.fixture
-def request_response_with_prefer_header_with_count_and_content_range() -> Response:
+def request_response_with_prefer_header_without_count(
+    prefer_header_without_count: str,
+) -> Response:
     return Response(
         status_code=200,
-        headers={
-            "prefer": prefer_header_with_count(),
-            "content-range": content_range_header_with_count(),
-        },
+        request=Request(
+            method="GET",
+            url="http://example.com",
+            headers={"prefer": prefer_header_without_count},
+        ),
+    )
+
+
+@pytest.fixture
+def request_response_with_prefer_header_with_count_and_content_range(
+    prefer_header_with_count: str, content_range_header_with_count: str
+) -> Response:
+    return Response(
+        status_code=200,
+        headers={"content-range": content_range_header_with_count},
+        request=Request(
+            method="GET",
+            url="http://example.com",
+            headers={"prefer": prefer_header_with_count},
+        ),
+    )
+
+
+@pytest.fixture
+def request_response_with_data(
+    prefer_header_with_count: str,
+    content_range_header_with_count: str,
+    api_response: List[Dict[str, Any]],
+) -> Response:
+    return Response(
+        status_code=200,
+        headers={"content-range": content_range_header_with_count},
+        json=api_response,
+        request=Request(
+            method="GET",
+            url="http://example.com",
+            headers={"prefer": prefer_header_with_count},
+        ),
     )
 
 
@@ -212,7 +245,7 @@ class TestApiResponse:
         assert result.count == count
 
     def test_get_count_from_content_range_header_with_count(
-        self, content_range_header_with_count
+        self, content_range_header_with_count: str
     ):
         assert (
             APIResponse.get_count_from_content_range_header(
@@ -222,7 +255,7 @@ class TestApiResponse:
         )
 
     def test_get_count_from_content_range_header_without_count(
-        self, content_range_header_without_count
+        self, content_range_header_without_count: str
     ):
         assert (
             APIResponse.get_count_from_content_range_header(
@@ -231,8 +264,45 @@ class TestApiResponse:
             is None
         )
 
-    def test_is_count_in_prefer_header_true(self, prefer_header_with_count):
+    def test_is_count_in_prefer_header_true(self, prefer_header_with_count: str):
         assert APIResponse.is_count_in_prefer_header(prefer_header_with_count)
 
-    def test_is_count_in_prefer_header_false(self, prefer_header_without_count):
+    def test_is_count_in_prefer_header_false(self, prefer_header_without_count: str):
         assert not APIResponse.is_count_in_prefer_header(prefer_header_without_count)
+
+    def test_get_count_from_http_request_response_without_prefer_header(
+        self, request_response_without_prefer_header: Response
+    ):
+        assert (
+            APIResponse.get_count_from_http_request_response(
+                request_response_without_prefer_header
+            )
+            is None
+        )
+
+    def test_get_count_from_http_request_response_with_prefer_header_without_count(
+        self, request_response_with_prefer_header_without_count: Response
+    ):
+        assert (
+            APIResponse.get_count_from_http_request_response(
+                request_response_with_prefer_header_without_count
+            )
+            is None
+        )
+
+    def test_get_count_from_http_request_response_with_count_and_content_range(
+        self, request_response_with_prefer_header_with_count_and_content_range: Response
+    ):
+        assert (
+            APIResponse.get_count_from_http_request_response(
+                request_response_with_prefer_header_with_count_and_content_range
+            )
+            == 2
+        )
+
+    def test_from_http_request_response_constructor(
+        self, request_response_with_data: Response, api_response: List[Dict[str, Any]]
+    ):
+        result = APIResponse.from_http_request_response(request_response_with_data)
+        assert result.data == api_response
+        assert result.count == 2
