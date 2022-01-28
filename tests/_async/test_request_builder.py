@@ -248,7 +248,7 @@ class TestApiResponse:
         self, content_range_header_with_count: str
     ):
         assert (
-            APIResponse.get_count_from_content_range_header(
+            APIResponse._get_count_from_content_range_header(
                 content_range_header_with_count
             )
             == 2
@@ -258,23 +258,23 @@ class TestApiResponse:
         self, content_range_header_without_count: str
     ):
         assert (
-            APIResponse.get_count_from_content_range_header(
+            APIResponse._get_count_from_content_range_header(
                 content_range_header_without_count
             )
             is None
         )
 
     def test_is_count_in_prefer_header_true(self, prefer_header_with_count: str):
-        assert APIResponse.is_count_in_prefer_header(prefer_header_with_count)
+        assert APIResponse._is_count_in_prefer_header(prefer_header_with_count)
 
     def test_is_count_in_prefer_header_false(self, prefer_header_without_count: str):
-        assert not APIResponse.is_count_in_prefer_header(prefer_header_without_count)
+        assert not APIResponse._is_count_in_prefer_header(prefer_header_without_count)
 
     def test_get_count_from_http_request_response_without_prefer_header(
         self, request_response_without_prefer_header: Response
     ):
         assert (
-            APIResponse.get_count_from_http_request_response(
+            APIResponse._get_count_from_http_request_response(
                 request_response_without_prefer_header
             )
             is None
@@ -284,7 +284,7 @@ class TestApiResponse:
         self, request_response_with_prefer_header_without_count: Response
     ):
         assert (
-            APIResponse.get_count_from_http_request_response(
+            APIResponse._get_count_from_http_request_response(
                 request_response_with_prefer_header_without_count
             )
             is None
@@ -294,7 +294,7 @@ class TestApiResponse:
         self, request_response_with_prefer_header_with_count_and_content_range: Response
     ):
         assert (
-            APIResponse.get_count_from_http_request_response(
+            APIResponse._get_count_from_http_request_response(
                 request_response_with_prefer_header_with_count_and_content_range
             )
             == 2

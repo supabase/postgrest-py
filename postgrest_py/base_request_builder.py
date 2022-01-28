@@ -98,7 +98,7 @@ class APIResponse(BaseModel):
         return value
 
     @staticmethod
-    def get_count_from_content_range_header(
+    def _get_count_from_content_range_header(
         content_range_header: str,
     ) -> Optional[int]:
         content_range = content_range_header.split("/")
@@ -107,32 +107,32 @@ class APIResponse(BaseModel):
         return int(content_range[1])
 
     @staticmethod
-    def is_count_in_prefer_header(prefer_header: str) -> bool:
+    def _is_count_in_prefer_header(prefer_header: str) -> bool:
         pattern = f"count=({'|'.join([cm.value for cm in CountMethod])})"
         return bool(search(pattern, prefer_header))
 
     @classmethod
-    def get_count_from_http_request_response(
+    def _get_count_from_http_request_response(
         cls: Type[APIResponse],
         request_response: RequestResponse,
     ) -> Optional[int]:
         prefer_header: Optional[str] = request_response.request.headers.get("prefer")
         if not prefer_header:
             return None
-        is_count_in_prefer_header = cls.is_count_in_prefer_header(prefer_header)
+        is_count_in_prefer_header = cls._is_count_in_prefer_header(prefer_header)
         content_range_header: Optional[str] = request_response.headers.get(
             "content-range"
         )
         if not (is_count_in_prefer_header and content_range_header):
             return None
-        return cls.get_count_from_content_range_header(content_range_header)
+        return cls._get_count_from_content_range_header(content_range_header)
 
     @classmethod
     def from_http_request_response(
         cls: Type[APIResponse], request_response: RequestResponse
     ) -> APIResponse:
         data = request_response.json()
-        count = cls.get_count_from_http_request_response(request_response)
+        count = cls._get_count_from_http_request_response(request_response)
         return cls(data=data, count=count)
 
 
