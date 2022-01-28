@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Tuple
+from typing import Optional
 
 from ..base_request_builder import (
+    APIResponse,
     BaseFilterRequestBuilder,
     BaseSelectRequestBuilder,
     CountMethod,
@@ -11,8 +12,8 @@ from ..base_request_builder import (
     pre_select,
     pre_update,
     pre_upsert,
-    process_response,
 )
+from ..exceptions import APIError
 from ..types import ReturnMethod
 from ..utils import SyncClient
 
@@ -30,16 +31,20 @@ class SyncQueryRequestBuilder:
         self.http_method = http_method
         self.json = json
 
-    def execute(self) -> Tuple[Any, Optional[int]]:
+    def execute(self) -> APIResponse:
         r = self.session.request(
             self.http_method,
             self.path,
             json=self.json,
         )
-        return process_response(self.session, r)
+        try:
+            return APIResponse.from_http_request_response(r)
+        except ValueError as e:
+            raise APIError(r.json()) from e
 
 
-class SyncFilterRequestBuilder(BaseFilterRequestBuilder, SyncQueryRequestBuilder):
+# ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
+class SyncFilterRequestBuilder(BaseFilterRequestBuilder, SyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
         session: SyncClient,
@@ -51,7 +56,8 @@ class SyncFilterRequestBuilder(BaseFilterRequestBuilder, SyncQueryRequestBuilder
         SyncQueryRequestBuilder.__init__(self, session, path, http_method, json)
 
 
-class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder):
+# ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
+class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
         session: SyncClient,
@@ -73,7 +79,7 @@ class SyncRequestBuilder:
         *columns: str,
         count: Optional[CountMethod] = None,
     ) -> SyncSelectRequestBuilder:
-        method, json = pre_select(self.session, self.path, *columns, count=count)
+        method, json = pre_select(self.session, *columns, count=count)
         return SyncSelectRequestBuilder(self.session, self.path, method, json)
 
     def insert(
@@ -86,7 +92,6 @@ class SyncRequestBuilder:
     ) -> SyncQueryRequestBuilder:
         method, json = pre_insert(
             self.session,
-            self.path,
             json,
             count=count,
             returning=returning,
@@ -104,7 +109,6 @@ class SyncRequestBuilder:
     ) -> SyncQueryRequestBuilder:
         method, json = pre_upsert(
             self.session,
-            self.path,
             json,
             count=count,
             returning=returning,
@@ -121,7 +125,6 @@ class SyncRequestBuilder:
     ) -> SyncFilterRequestBuilder:
         method, json = pre_update(
             self.session,
-            self.path,
             json,
             count=count,
             returning=returning,
@@ -136,7 +139,6 @@ class SyncRequestBuilder:
     ) -> SyncFilterRequestBuilder:
         method, json = pre_delete(
             self.session,
-            self.path,
             count=count,
             returning=returning,
         )

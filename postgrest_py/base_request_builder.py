@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from re import search
-from typing import Any, Dict, Iterable, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, Optional, Tuple, Type, Union
 
-from httpx import Response
+from httpx import Response as RequestResponse
+from pydantic import BaseModel, validator
 
 from .types import CountMethod, Filters, RequestMethod, ReturnMethod
 from .utils import AsyncClient, SyncClient, sanitize_param, sanitize_pattern_param
@@ -11,7 +12,6 @@ from .utils import AsyncClient, SyncClient, sanitize_param, sanitize_pattern_par
 
 def pre_select(
     session: Union[AsyncClient, SyncClient],
-    path: str,
     *columns: str,
     count: Optional[CountMethod] = None,
 ) -> Tuple[RequestMethod, dict]:
@@ -27,7 +27,6 @@ def pre_select(
 
 def pre_insert(
     session: Union[AsyncClient, SyncClient],
-    path: str,
     json: dict,
     *,
     count: Optional[CountMethod],
@@ -45,14 +44,13 @@ def pre_insert(
 
 def pre_upsert(
     session: Union[AsyncClient, SyncClient],
-    path: str,
     json: dict,
     *,
     count: Optional[CountMethod],
     returning: ReturnMethod,
     ignore_duplicates: bool,
 ) -> Tuple[RequestMethod, dict]:
-    prefer_headers = ["return=representation"]
+    prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
     resolution = "ignore" if ignore_duplicates else "merge"
@@ -63,7 +61,6 @@ def pre_upsert(
 
 def pre_update(
     session: Union[AsyncClient, SyncClient],
-    path: str,
     json: dict,
     *,
     count: Optional[CountMethod],
@@ -78,7 +75,6 @@ def pre_update(
 
 def pre_delete(
     session: Union[AsyncClient, SyncClient],
-    path: str,
     *,
     count: Optional[CountMethod],
     returning: ReturnMethod,
@@ -90,21 +86,54 @@ def pre_delete(
     return RequestMethod.DELETE, {}
 
 
-def process_response(
-    session: Union[AsyncClient, SyncClient],
-    r: Response,
-) -> Tuple[Any, Optional[int]]:
-    count = None
-    prefer_header = session.headers.get("prefer")
-    if prefer_header:
+class APIResponse(BaseModel):
+    data: Any
+    count: Optional[int] = None
+
+    @validator("data")
+    @classmethod
+    def raise_when_api_error(cls: Type[APIResponse], value: Any) -> Any:
+        if isinstance(value, dict) and value.get("message"):
+            raise ValueError("You are passing an API error to the data field.")
+        return value
+
+    @staticmethod
+    def _get_count_from_content_range_header(
+        content_range_header: str,
+    ) -> Optional[int]:
+        content_range = content_range_header.split("/")
+        if len(content_range) < 2:
+            return None
+        return int(content_range[1])
+
+    @staticmethod
+    def _is_count_in_prefer_header(prefer_header: str) -> bool:
         pattern = f"count=({'|'.join([cm.value for cm in CountMethod])})"
-        count_header_match = search(pattern, prefer_header)
-        content_range_header = r.headers.get("content-range")
-        if count_header_match and content_range_header:
-            content_range = content_range_header.split("/")
-            if len(content_range) >= 2:
-                count = int(content_range[1])
-    return r.json(), count
+        return bool(search(pattern, prefer_header))
+
+    @classmethod
+    def _get_count_from_http_request_response(
+        cls: Type[APIResponse],
+        request_response: RequestResponse,
+    ) -> Optional[int]:
+        prefer_header: Optional[str] = request_response.request.headers.get("prefer")
+        if not prefer_header:
+            return None
+        is_count_in_prefer_header = cls._is_count_in_prefer_header(prefer_header)
+        content_range_header: Optional[str] = request_response.headers.get(
+            "content-range"
+        )
+        if not (is_count_in_prefer_header and content_range_header):
+            return None
+        return cls._get_count_from_content_range_header(content_range_header)
+
+    @classmethod
+    def from_http_request_response(
+        cls: Type[APIResponse], request_response: RequestResponse
+    ) -> APIResponse:
+        data = request_response.json()
+        count = cls._get_count_from_http_request_response(request_response)
+        return cls(data=data, count=count)
 
 
 class BaseFilterRequestBuilder:

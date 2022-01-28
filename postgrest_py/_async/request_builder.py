@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Tuple
+from typing import Optional
+
+from pydantic import ValidationError
 
 from ..base_request_builder import (
+    APIResponse,
     BaseFilterRequestBuilder,
     BaseSelectRequestBuilder,
     CountMethod,
@@ -11,8 +14,8 @@ from ..base_request_builder import (
     pre_select,
     pre_update,
     pre_upsert,
-    process_response,
 )
+from ..exceptions import APIError
 from ..types import ReturnMethod
 from ..utils import AsyncClient
 
@@ -30,16 +33,20 @@ class AsyncQueryRequestBuilder:
         self.http_method = http_method
         self.json = json
 
-    async def execute(self) -> Tuple[Any, Optional[int]]:
+    async def execute(self) -> APIResponse:
         r = await self.session.request(
             self.http_method,
             self.path,
             json=self.json,
         )
-        return process_response(self.session, r)
+        try:
+            return APIResponse.from_http_request_response(r)
+        except ValidationError as e:
+            raise APIError(r.json()) from e
 
 
-class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuilder):
+# ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
+class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
         session: AsyncClient,
@@ -51,7 +58,8 @@ class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuild
         AsyncQueryRequestBuilder.__init__(self, session, path, http_method, json)
 
 
-class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuilder):
+# ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
+class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
         session: AsyncClient,
@@ -73,7 +81,7 @@ class AsyncRequestBuilder:
         *columns: str,
         count: Optional[CountMethod] = None,
     ) -> AsyncSelectRequestBuilder:
-        method, json = pre_select(self.session, self.path, *columns, count=count)
+        method, json = pre_select(self.session, *columns, count=count)
         return AsyncSelectRequestBuilder(self.session, self.path, method, json)
 
     def insert(
@@ -86,7 +94,6 @@ class AsyncRequestBuilder:
     ) -> AsyncQueryRequestBuilder:
         method, json = pre_insert(
             self.session,
-            self.path,
             json,
             count=count,
             returning=returning,
@@ -104,7 +111,6 @@ class AsyncRequestBuilder:
     ) -> AsyncQueryRequestBuilder:
         method, json = pre_upsert(
             self.session,
-            self.path,
             json,
             count=count,
             returning=returning,
@@ -121,7 +127,6 @@ class AsyncRequestBuilder:
     ) -> AsyncFilterRequestBuilder:
         method, json = pre_update(
             self.session,
-            self.path,
             json,
             count=count,
             returning=returning,
@@ -136,7 +141,6 @@ class AsyncRequestBuilder:
     ) -> AsyncFilterRequestBuilder:
         method, json = pre_delete(
             self.session,
-            self.path,
             count=count,
             returning=returning,
         )
