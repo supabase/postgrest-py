@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.2 (2022-01-30)
+### Fix
+* Add-response-model ([`4c0259d`](https://github.com/supabase-community/postgrest-py/commit/4c0259d1658c07bf3e78fe03d98b304f7a6f0c7a))
+
+**[See all commits in this version](https://github.com/supabase-community/postgrest-py/compare/v0.8.1...v0.8.2)**
+
 ## v0.8.1 (2022-01-22)
 ### Fix
 * Order filter ([`094dbad`](https://github.com/supabase-community/postgrest-py/commit/094dbadb26bef4238536579ede71d46a4ef67899))
