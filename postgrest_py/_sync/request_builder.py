@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Dict, Optional, Type, TypeVar, Union
+
+from pydantic import BaseModel
 
 from ..base_request_builder import (
     APIResponse,
@@ -18,6 +20,9 @@ from ..types import ReturnMethod
 from ..utils import SyncClient
 
 
+ModelType = TypeVar("ModelType", bound=Union[BaseModel, Dict[str, Any]])
+
+
 class SyncQueryRequestBuilder:
     def __init__(
         self,
@@ -31,14 +36,14 @@ class SyncQueryRequestBuilder:
         self.http_method = http_method
         self.json = json
 
-    def execute(self) -> APIResponse:
+    def execute(self, *, model: Type[ModelType] = Dict[str, Any]) -> APIResponse[ModelType]:
         r = self.session.request(
             self.http_method,
             self.path,
             json=self.json,
         )
         try:
-            return APIResponse.from_http_request_response(r)
+            return APIResponse[model].from_http_request_response(r)
         except ValueError as e:
             raise APIError(r.json()) from e
 

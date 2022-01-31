@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from re import search
-from typing import Any, Dict, Iterable, Optional, Tuple, Type, Union
+from typing import Any, Dict, Generic, Iterable, List, Optional, Tuple, Type, TypeVar, Union
 
 from httpx import Response as RequestResponse
 from pydantic import BaseModel, validator
+from pydantic.generics import GenericModel
 
 from .types import CountMethod, Filters, RequestMethod, ReturnMethod
 from .utils import AsyncClient, SyncClient, sanitize_param, sanitize_pattern_param
@@ -86,8 +87,10 @@ def pre_delete(
     return RequestMethod.DELETE, {}
 
 
-class APIResponse(BaseModel):
-    data: Any
+_ModelOrJSON = TypeVar("_ModelOrJSON")  # a pydantic BaseModel, or Dict[str, Any]
+
+class APIResponse(GenericModel, Generic[_ModelOrJSON]):
+    data: List[_ModelOrJSON]
     count: Optional[int] = None
 
     @validator("data")

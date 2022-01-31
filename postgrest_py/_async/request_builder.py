@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Dict, Optional, Type, TypeVar, Union
 
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from ..base_request_builder import (
     APIResponse,
@@ -20,6 +20,9 @@ from ..types import ReturnMethod
 from ..utils import AsyncClient
 
 
+ModelType = TypeVar("ModelType", bound=Union[BaseModel, Dict[str, Any]])
+
+
 class AsyncQueryRequestBuilder:
     def __init__(
         self,
@@ -33,14 +36,14 @@ class AsyncQueryRequestBuilder:
         self.http_method = http_method
         self.json = json
 
-    async def execute(self) -> APIResponse:
+    async def execute(self, *, model: Type[ModelType] = Dict[str, Any]) -> APIResponse[ModelType]:
         r = await self.session.request(
             self.http_method,
             self.path,
             json=self.json,
         )
         try:
-            return APIResponse.from_http_request_response(r)
+            return APIResponse[model].from_http_request_response(r)
         except ValidationError as e:
             raise APIError(r.json()) from e
 
