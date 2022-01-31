@@ -19,7 +19,6 @@ from ..exceptions import APIError
 from ..types import ReturnMethod
 from ..utils import SyncClient
 
-
 ModelType = TypeVar("ModelType", bound=Union[BaseModel, Dict[str, Any]])
 
 
@@ -36,7 +35,9 @@ class SyncQueryRequestBuilder:
         self.http_method = http_method
         self.json = json
 
-    def execute(self, *, model: Type[ModelType] = Dict[str, Any]) -> APIResponse[ModelType]:
+    def execute(
+        self, *, model: Type[ModelType] = Dict[str, Any]
+    ) -> APIResponse[ModelType]:
         r = self.session.request(
             self.http_method,
             self.path,

@@ -19,7 +19,6 @@ from ..exceptions import APIError
 from ..types import ReturnMethod
 from ..utils import AsyncClient
 
-
 ModelType = TypeVar("ModelType", bound=Union[BaseModel, Dict[str, Any]])
 
 
@@ -36,7 +35,9 @@ class AsyncQueryRequestBuilder:
         self.http_method = http_method
         self.json = json
 
-    async def execute(self, *, model: Type[ModelType] = Dict[str, Any]) -> APIResponse[ModelType]:
+    async def execute(
+        self, *, model: Type[ModelType] = Dict[str, Any]
+    ) -> APIResponse[ModelType]:
         r = await self.session.request(
             self.http_method,
             self.path,
