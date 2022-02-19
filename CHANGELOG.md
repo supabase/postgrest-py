@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.9.0 (2022-02-19)
+### Feature
+* Export APIError and APIResponse ([`83e7799`](https://github.com/supabase-community/postgrest-py/commit/83e77991101c8e8aec42552344b02ce8db6bd04a))
+
+**[See all commits in this version](https://github.com/supabase-community/postgrest-py/compare/v0.8.2...v0.9.0)**
+
 ## v0.8.2 (2022-01-30)
 ### Fix
 * Add-response-model ([`4c0259d`](https://github.com/supabase-community/postgrest-py/commit/4c0259d1658c07bf3e78fe03d98b304f7a6f0c7a))
