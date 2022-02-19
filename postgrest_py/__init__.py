@@ -19,5 +19,7 @@ from ._sync.request_builder import (
     SyncSelectRequestBuilder,
 )
 from .base_client import DEFAULT_POSTGREST_CLIENT_HEADERS
+from .base_request_builder import APIResponse
 from .deprecated_client import Client, PostgrestClient
 from .deprecated_get_request_builder import GetRequestBuilder
+from .exceptions import APIError
