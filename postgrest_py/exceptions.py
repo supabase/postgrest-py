@@ -14,10 +14,10 @@ class APIError(Exception):
 
     def __init__(self, error: Dict[str, str]) -> None:
         self._raw_error = error
-        self.message = error["message"]
-        self.code = error["code"]
-        self.hint = error["hint"]
-        self.details = error["details"]
+        self.message = error.get("message")
+        self.code = error.get("code")
+        self.hint = error.get("hint")
+        self.details = error.get("details")
         Exception.__init__(self, str(self))
 
     def __repr__(self) -> str:
