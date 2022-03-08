@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.9.1 (2022-03-08)
+### Fix
+* Fix APIError ([#97](https://github.com/supabase-community/postgrest-py/issues/97)) ([`ff29024`](https://github.com/supabase-community/postgrest-py/commit/ff290240cf9364902ffca19e854604d6a40770f9))
+
+**[See all commits in this version](https://github.com/supabase-community/postgrest-py/compare/v0.9.0...v0.9.1)**
+
 ## v0.9.0 (2022-02-19)
 ### Feature
 * Export APIError and APIResponse ([`83e7799`](https://github.com/supabase-community/postgrest-py/commit/83e77991101c8e8aec42552344b02ce8db6bd04a))
