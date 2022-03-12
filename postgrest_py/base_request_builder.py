@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from re import search
 from typing import Any, Dict, Iterable, Optional, Tuple, Type, Union
 
@@ -208,6 +209,27 @@ class BaseFilterRequestBuilder:
         values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, Filters.CD, f"{{{values}}}")
+
+    def contains(self, column: str, value: Union[Iterable[Any], str, Dict[Any, Any]]):
+        if isinstance(value, str):
+            # range types can be inclusive '[', ']' or exclusive '(', ')' so just
+            # keep it simple and accept a string
+            return self.filter(column, Filters.CS, value)
+        if not isinstance(value, dict) and isinstance(value, Iterable):
+            # Expected to be some type of iterable
+            stringified_values = ",".join(value)
+            return self.filter(column, Filters.CS, f"{{{stringified_values}}}")
+        
+        return self.filter(column, Filters.CS, json.dumps(value))
+    
+    def contained_by(self, column: str, value: Union[Iterable[Any], str, Dict[Any, Any]]):
+        if isinstance(value, str):
+            # range
+            return self.filter(column, Filters.CD, value)
+        if not isinstance(value, dict) and isinstance(value, Iterable):
+            stringified_values = ",".join(value)
+            return self.filter(column, Filters.CD, f"{{{stringified_values}}}")
+        return self.filter(column, Filters.CD, json.dumps(value))
 
     def ov(self, column: str, values: Iterable[Any]):
         values = map(sanitize_param, values)
