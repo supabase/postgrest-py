@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 
 class APIError(Exception):
@@ -7,10 +7,10 @@ class APIError(Exception):
     """
 
     _raw_error: Dict[str, str]
-    message: str
-    code: str
-    hint: str
-    details: str
+    message: Optional[str]
+    code: Optional[str]
+    hint: Optional[str]
+    details: Optional[str]
 
     def __init__(self, error: Dict[str, str]) -> None:
         self._raw_error = error
