@@ -219,9 +219,9 @@ class BaseFilterRequestBuilder:
             # Expected to be some type of iterable
             stringified_values = ",".join(value)
             return self.filter(column, Filters.CS, f"{{{stringified_values}}}")
-        
+
         return self.filter(column, Filters.CS, json.dumps(value))
-    
+
     def contained_by(self, column: str, value: Union[Iterable[Any], str, Dict[Any, Any]]):
         if isinstance(value, str):
             # range
