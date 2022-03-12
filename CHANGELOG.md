@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.9.2 (2022-03-12)
+### Fix
+* Make api error properties optionals ([#101](https://github.com/supabase-community/postgrest-py/issues/101)) ([`eb92326`](https://github.com/supabase-community/postgrest-py/commit/eb92326db0088fbf2d96bb68b206160b03e63747))
+
+**[See all commits in this version](https://github.com/supabase-community/postgrest-py/compare/v0.9.1...v0.9.2)**
+
 ## v0.9.1 (2022-03-08)
 ### Fix
 * Fix APIError ([#97](https://github.com/supabase-community/postgrest-py/issues/97)) ([`ff29024`](https://github.com/supabase-community/postgrest-py/commit/ff290240cf9364902ffca19e854604d6a40770f9))
