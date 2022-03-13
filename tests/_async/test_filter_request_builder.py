@@ -51,22 +51,26 @@ def test_contains(filter_request_builder):
 def test_contains_dictionary(filter_request_builder):
     builder = filter_request_builder.contains("x", {"a": "b"})
 
+    # {"a":"b"}
     assert str(builder.session.params) == "x=cs.%7B%22a%22%3A+%22b%22%7D"
 
 
 def test_contains_any_item(filter_request_builder):
     builder = filter_request_builder.contains("x", ["a", "b"])
 
+    # {a,b}
     assert str(builder.session.params) == "x=cs.%7Ba%2Cb%7D"
 
 
 def test_contains_in_list(filter_request_builder):
     builder = filter_request_builder.contains("x", '[{"a": "b"}]')
 
+    # [{"a":+"b"}] (the + represents the space)
     assert str(builder.session.params) == "x=cs.%5B%7B%22a%22%3A+%22b%22%7D%5D"
 
 
 def test_contained_by_mixed_items(filter_request_builder):
     builder = filter_request_builder.contained_by("x", ["a", '["b", "c"]'])
 
+    # {a,["b",+"c"]}
     assert str(builder.session.params) == "x=cd.%7Ba%2C%5B%22b%22%2C+%22c%22%5D%7D"
