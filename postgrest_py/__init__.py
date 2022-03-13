@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__version__ = "0.9.2"
+__version__ = "0.10.0"
 
 from httpx import Timeout
 

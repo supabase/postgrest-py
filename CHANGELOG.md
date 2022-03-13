@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.10.0 (2022-03-13)
+### Feature
+* Add .contains and .contained_by operators to match JS client ([#100](https://github.com/supabase-community/postgrest-py/issues/100)) ([`7189e09`](https://github.com/supabase-community/postgrest-py/commit/7189e095bd792fcbc5b89e4f03ef7174e1dd30b7))
+
+**[See all commits in this version](https://github.com/supabase-community/postgrest-py/compare/v0.9.2...v0.10.0)**
+
 ## v0.9.2 (2022-03-12)
 ### Fix
 * Make api error properties optionals ([#101](https://github.com/supabase-community/postgrest-py/issues/101)) ([`eb92326`](https://github.com/supabase-community/postgrest-py/commit/eb92326db0088fbf2d96bb68b206160b03e63747))
