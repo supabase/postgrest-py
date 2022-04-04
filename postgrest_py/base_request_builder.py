@@ -152,7 +152,7 @@ class BaseFilterRequestBuilder:
         if self.negate_next is True:
             self.negate_next = False
             operator = f"{Filters.NOT}.{operator}"
-        key, val = column, f"{operator}.{criteria}"
+        key, val = sanitize_param(column), f"{operator}.{criteria}"
         self.session.params = self.session.params.add(key, val)
         return self
 
