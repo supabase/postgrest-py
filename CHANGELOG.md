@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.10.1 (2022-04-07)
+### Fix
+* Escape chars only when necessary ([#108](https://github.com/supabase-community/postgrest-py/issues/108)) ([`53f7d18`](https://github.com/supabase-community/postgrest-py/commit/53f7d18807aa292aa7326af573bd55828a3bb6e4))
+
+**[See all commits in this version](https://github.com/supabase-community/postgrest-py/compare/v0.10.0...v0.10.1)**
+
 ## v0.10.0 (2022-03-13)
 ### Feature
 * Add .contains and .contained_by operators to match JS client ([#100](https://github.com/supabase-community/postgrest-py/issues/100)) ([`7189e09`](https://github.com/supabase-community/postgrest-py/commit/7189e095bd792fcbc5b89e4f03ef7174e1dd30b7))
