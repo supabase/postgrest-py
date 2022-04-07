@@ -8,7 +8,7 @@ from httpx import Response as RequestResponse
 from pydantic import BaseModel, validator
 
 from .types import CountMethod, Filters, RequestMethod, ReturnMethod
-from .utils import AsyncClient, SyncClient, sanitize_param, sanitize_pattern_param
+from .utils import AsyncClient, SyncClient, sanitize_param
 
 
 def pre_select(
@@ -157,43 +157,43 @@ class BaseFilterRequestBuilder:
         return self
 
     def eq(self, column: str, value: Any):
-        return self.filter(column, Filters.EQ, sanitize_param(value))
+        return self.filter(column, Filters.EQ, value)
 
     def neq(self, column: str, value: Any):
-        return self.filter(column, Filters.NEQ, sanitize_param(value))
+        return self.filter(column, Filters.NEQ, value)
 
     def gt(self, column: str, value: Any):
-        return self.filter(column, Filters.GT, sanitize_param(value))
+        return self.filter(column, Filters.GT, value)
 
     def gte(self, column: str, value: Any):
-        return self.filter(column, Filters.GTE, sanitize_param(value))
+        return self.filter(column, Filters.GTE, value)
 
     def lt(self, column: str, value: Any):
-        return self.filter(column, Filters.LT, sanitize_param(value))
+        return self.filter(column, Filters.LT, value)
 
     def lte(self, column: str, value: Any):
-        return self.filter(column, Filters.LTE, sanitize_param(value))
+        return self.filter(column, Filters.LTE, value)
 
     def is_(self, column: str, value: Any):
-        return self.filter(column, Filters.IS, sanitize_param(value))
+        return self.filter(column, Filters.IS, value)
 
     def like(self, column: str, pattern: Any):
-        return self.filter(column, Filters.LIKE, sanitize_pattern_param(pattern))
+        return self.filter(column, Filters.LIKE, pattern)
 
     def ilike(self, column: str, pattern: Any):
-        return self.filter(column, Filters.ILIKE, sanitize_pattern_param(pattern))
+        return self.filter(column, Filters.ILIKE, pattern)
 
     def fts(self, column: str, query: Any):
-        return self.filter(column, Filters.FTS, sanitize_param(query))
+        return self.filter(column, Filters.FTS, query)
 
     def plfts(self, column: str, query: Any):
-        return self.filter(column, Filters.PLFTS, sanitize_param(query))
+        return self.filter(column, Filters.PLFTS, query)
 
     def phfts(self, column: str, query: Any):
-        return self.filter(column, Filters.PHFTS, sanitize_param(query))
+        return self.filter(column, Filters.PHFTS, query)
 
     def wfts(self, column: str, query: Any):
-        return self.filter(column, Filters.WFTS, sanitize_param(query))
+        return self.filter(column, Filters.WFTS, query)
 
     def in_(self, column: str, values: Iterable[Any]):
         values = map(sanitize_param, values)
@@ -201,12 +201,10 @@ class BaseFilterRequestBuilder:
         return self.filter(column, Filters.IN, f"({values})")
 
     def cs(self, column: str, values: Iterable[Any]):
-        values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, Filters.CS, f"{{{values}}}")
 
     def cd(self, column: str, values: Iterable[Any]):
-        values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, Filters.CD, f"{{{values}}}")
 
@@ -232,7 +230,6 @@ class BaseFilterRequestBuilder:
         return self.filter(column, Filters.CD, json.dumps(value))
 
     def ov(self, column: str, values: Iterable[Any]):
-        values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, Filters.OV, f"{{{values}}}")
 
