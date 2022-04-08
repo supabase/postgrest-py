@@ -8,9 +8,13 @@ class APIError(Exception):
 
     _raw_error: Dict[str, str]
     message: Optional[str]
+    """The error message."""
     code: Optional[str]
+    """The error code."""
     hint: Optional[str]
+    """The error hint."""
     details: Optional[str]
+    """The error details."""
 
     def __init__(self, error: Dict[str, str]) -> None:
         self._raw_error = error
@@ -29,4 +33,9 @@ class APIError(Exception):
         return complete_error_text or "Empty error"
 
     def json(self) -> Dict[str, str]:
+        """Convert the error into a dictionary.
+
+        Returns:
+            :class:`dict`
+        """
         return self._raw_error

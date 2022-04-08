@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Dict, Union, cast
 
 from deprecation import deprecated
-from httpx import Response, Timeout
+from httpx import Timeout
 
 from .. import __version__
 from ..base_client import (
@@ -12,7 +12,7 @@ from ..base_client import (
     BasePostgrestClient,
 )
 from ..utils import SyncClient
-from .request_builder import SyncRequestBuilder
+from .request_builder import SyncFilterRequestBuilder, SyncRequestBuilder
 
 
 class SyncPostgrestClient(BasePostgrestClient):
@@ -54,18 +54,21 @@ class SyncPostgrestClient(BasePostgrestClient):
         self.aclose()
 
     def aclose(self) -> None:
+        """Close the underlying HTTP connections."""
         self.session.aclose()
 
     def from_(self, table: str) -> SyncRequestBuilder:
-        """Perform a table operation."""
-        base_url = str(self.session.base_url)
-        headers = dict(self.session.headers.items())
-        session = self.create_session(base_url, headers, self.session.timeout)
-        session.auth = self.session.auth
-        return SyncRequestBuilder(session, f"/{table}")
+        """Perform a table operation.
+
+        Args:
+            table: The name of the table
+        Returns:
+            :class:`AsyncRequestBuilder`
+        """
+        return SyncRequestBuilder(self.session, f"/{table}")
 
     def table(self, table: str) -> SyncRequestBuilder:
-        """Alias to self.from_()."""
+        """Alias to :meth:`from_`."""
         return self.from_(table)
 
     @deprecated("0.2.0", "1.0.0", __version__, "Use self.from_() instead")
@@ -73,7 +76,13 @@ class SyncPostgrestClient(BasePostgrestClient):
         """Alias to self.from_()."""
         return self.from_(table)
 
-    def rpc(self, func: str, params: dict) -> Response:
-        """Perform a stored procedure call."""
-        path = f"/rpc/{func}"
-        return self.session.post(path, json=params)
+    def rpc(self, func: str, params: dict) -> SyncFilterRequestBuilder:
+        """Perform a stored procedure call.
+
+        Args:
+            func: The name of the remote procedure to run.
+            params: The parameters to be passed to the remote procedure.
+        Returns:
+            :class:`AsyncFilterRequestBuilder`
+        """
+        return SyncFilterRequestBuilder(self.session, f"/rpc/{func}", "POST", params)

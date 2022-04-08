@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from typing import Optional
 
+from httpx import Headers, QueryParams
+from pydantic import ValidationError
+
 from ..base_request_builder import (
     APIResponse,
     BaseFilterRequestBuilder,
@@ -32,14 +35,38 @@ class SyncQueryRequestBuilder:
         self.json = json
 
     def execute(self) -> APIResponse:
+        """Execute the query.
+
+        .. tip::
+            This is the last method called, after the query is built.
+
+        Returns:
+            :class:`APIResponse`
+
+        Raises:
+            :class:`APIError`
+        """
         r = self.session.request(
             self.http_method,
             self.path,
             json=self.json,
         )
+
+        key = self.session.headers.get("apiKey")
+        auth = self.session.headers.get("Authorization")
+        headers = Headers()
+
+        if key:
+            headers["apiKey"] = key
+        if auth:
+            headers["Authorization"] = auth
+        # remove the params and headers that were set by the query
+        self.session.params = QueryParams()
+        self.session.headers = headers
+
         try:
             return APIResponse.from_http_request_response(r)
-        except ValueError as e:
+        except ValidationError as e:
             raise APIError(r.json()) from e
 
 
@@ -79,6 +106,14 @@ class SyncRequestBuilder:
         *columns: str,
         count: Optional[CountMethod] = None,
     ) -> SyncSelectRequestBuilder:
+        """Run a SELECT query.
+
+        Args:
+            *columns: The names of the columns to fetch.
+            count: The method to use to get the count of rows returned.
+        Returns:
+            :class:`AsyncSelectRequestBuilder`
+        """
         method, json = pre_select(self.session, *columns, count=count)
         return SyncSelectRequestBuilder(self.session, self.path, method, json)
 
@@ -88,8 +123,18 @@ class SyncRequestBuilder:
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
-        upsert=False,
+        upsert: bool = False,
     ) -> SyncQueryRequestBuilder:
+        """Run an INSERT query.
+
+        Args:
+            json: The row to be inserted.
+            count: The method to use to get the count of rows returned.
+            returning: Either 'minimal' or 'representation'
+            upsert: Whether the query should be an upsert.
+        Returns:
+            :class:`AsyncQueryRequestBuilder`
+        """
         method, json = pre_insert(
             self.session,
             json,
@@ -105,8 +150,18 @@ class SyncRequestBuilder:
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
-        ignore_duplicates=False,
+        ignore_duplicates: bool = False,
     ) -> SyncQueryRequestBuilder:
+        """Run an upsert (INSERT ... ON CONFLICT DO UPDATE) query.
+
+        Args:
+            json: The row to be inserted.
+            count: The method to use to get the count of rows returned.
+            returning: Either 'minimal' or 'representation'
+            ignore_duplicates: Whether duplicate rows should be ignored.
+        Returns:
+            :class:`AsyncQueryRequestBuilder`
+        """
         method, json = pre_upsert(
             self.session,
             json,
@@ -123,6 +178,15 @@ class SyncRequestBuilder:
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
     ) -> SyncFilterRequestBuilder:
+        """Run an UPDATE query.
+
+        Args:
+            json: The updated fields.
+            count: The method to use to get the count of rows returned.
+            returning: Either 'minimal' or 'representation'
+        Returns:
+            :class:`AsyncFilterRequestBuilder`
+        """
         method, json = pre_update(
             self.session,
             json,
@@ -137,6 +201,14 @@ class SyncRequestBuilder:
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
     ) -> SyncFilterRequestBuilder:
+        """Run a DELETE query.
+
+        Args:
+            count: The method to use to get the count of rows returned.
+            returning: Either 'minimal' or 'representation'
+        Returns:
+            :class:`AsyncFilterRequestBuilder`
+        """
         method, json = pre_delete(
             self.session,
             count=count,
