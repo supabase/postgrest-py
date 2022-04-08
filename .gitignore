@@ -136,3 +136,6 @@ dmypy.json
 
 # Poetry local config
 poetry.toml
+
+# dummy test file
+x.py
