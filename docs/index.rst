@@ -9,7 +9,8 @@ Welcome to postgrest-py's documentation!
 Installation
 ============
 Requirements:
-* Python >= 3.7
+
+- Python >= 3.7
 
 **With pip:**
    pip install postgrest-py
