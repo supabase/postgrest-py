@@ -16,8 +16,11 @@
 
 
 # -- Project information -----------------------------------------------------
+import postgrest_py
 
 project = "postgrest-py"
+version = postgrest_py.__version__
+release = version
 copyright = (
     "2022, Anand Krishna, Daniel Reinón García, Joel Lee, Leynier Gutiérrez González"
 )
