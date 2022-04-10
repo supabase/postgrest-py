@@ -11,7 +11,6 @@ async def postgrest_client():
 
 
 class TestConstructor:
-    @pytest.mark.asyncio
     def test_simple(self, postgrest_client: AsyncPostgrestClient):
         session = postgrest_client.session
 
@@ -45,14 +44,12 @@ class TestConstructor:
 
 
 class TestAuth:
-    @pytest.mark.asyncio
     def test_auth_token(self, postgrest_client: AsyncPostgrestClient):
         postgrest_client.auth("s3cr3t")
         session = postgrest_client.session
 
         assert session.headers["Authorization"] == "Bearer s3cr3t"
 
-    @pytest.mark.asyncio
     def test_auth_basic(self, postgrest_client: AsyncPostgrestClient):
         postgrest_client.auth(None, username="admin", password="s3cr3t")
         session = postgrest_client.session
@@ -61,7 +58,6 @@ class TestAuth:
         assert session.auth._auth_header == BasicAuth("admin", "s3cr3t")._auth_header
 
 
-@pytest.mark.asyncio
 def test_schema(postgrest_client: AsyncPostgrestClient):
     postgrest_client.schema("private")
     session = postgrest_client.session
@@ -71,3 +67,10 @@ def test_schema(postgrest_client: AsyncPostgrestClient):
     }
 
     assert subheaders.items() < dict(session.headers).items()
+
+
+@pytest.mark.asyncio
+async def test_params_purged_after_execute(postgrest_client: AsyncPostgrestClient):
+    assert len(postgrest_client.session.params) == 0
+    await postgrest_client.from_("test").select("a", "b").eq("c", "d").execute()
+    assert len(postgrest_client.session.params) == 0

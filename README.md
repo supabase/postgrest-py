@@ -54,12 +54,12 @@ pip install postgrest-py
 
 ```py
 import asyncio
-from postgrest_py import PostgrestClient
+from postgrest_py import AsyncPostgrestClient
 
 async def main():
-    async with PostgrestClient("http://localhost:3000") as client:
+    async with AsyncPostgrestClient("http://localhost:3000") as client:
         r = await client.from_("countries").select("*").execute()
-        countries = r.json()
+        countries = r.data
 
 asyncio.run(main())
 ```
@@ -111,10 +111,6 @@ poetry run pytest
 ## CHANGELOG
 
 Read more [here](https://github.com/supabase/postgrest-py/blob/master/CHANGELOG.md).
-
-## TODO
-
-Read more [here](https://github.com/supabase/postgrest-py/blob/master/TODO.md).
 
 ## SPONSORS
 
