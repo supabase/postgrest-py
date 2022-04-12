@@ -48,3 +48,21 @@ We connect to the API and authenticate, and fetch some data.
 .. code-block:: python
 
     await client.rpc("bar", {"arg1": "value1", "arg2": "value2"}).execute()
+
+
+**Closing the connection**
+
+Once you have finished running your queries, close the connection:
+
+.. code-block:: python
+
+    await client.aclose()
+
+
+You can also use the client with a context manager, which will close the client for you.
+
+.. code-block:: python
+
+    async with AsyncPostgrestClient("url") as client:
+        # run queries
+    # the client is closed when the async with block ends
