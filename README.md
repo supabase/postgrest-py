@@ -80,13 +80,13 @@ countries = r.data
 ### Update
 
 ```py
-await client.from_("countries").eq("name", "Việt Nam").update({"capital": "Hà Nội"}).execute()
+await client.from_("countries").update({"capital": "Hà Nội"}).eq("name", "Việt Nam").execute()
 ```
 
 ### Delete
 
 ```py
-await client.from_("countries").eq("name", "Việt Nam").delete().execute()
+await client.from_("countries").delete().eq("name", "Việt Nam").execute()
 ```
 
 ### General filters

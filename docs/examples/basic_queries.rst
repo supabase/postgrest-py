@@ -33,11 +33,11 @@ We connect to the API and authenticate, and fetch some data.
 
 .. code-block:: python
 
-    await client.from_("countries").eq("name", "Việt Nam").update({"capital": "Hà Nội"}).execute()
+    await client.from_("countries").update({"capital": "Hà Nội"}).eq("name", "Việt Nam").execute()
 
 .. code-block:: python
 
-    await client.from_("countries").eq("name", "Việt Nam").delete().execute()
+    await client.from_("countries").delete().eq("name", "Việt Nam").execute()
 
 **Calling RPCs**
 
