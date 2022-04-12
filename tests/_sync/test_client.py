@@ -25,6 +25,7 @@ class TestConstructor:
         )
         assert session.headers.items() >= headers.items()
 
+    @pytest.mark.asyncio
     def test_custom_headers(self):
         with SyncPostgrestClient(
             "https://example.com", schema="pub", headers={"Custom-Header": "value"}
@@ -68,6 +69,7 @@ def test_schema(postgrest_client: SyncPostgrestClient):
     assert subheaders.items() < dict(session.headers).items()
 
 
+@pytest.mark.asyncio
 def test_params_purged_after_execute(postgrest_client: SyncPostgrestClient):
     assert len(postgrest_client.session.params) == 0
     postgrest_client.from_("test").select("a", "b").eq("c", "d").execute()
