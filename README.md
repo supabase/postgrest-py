@@ -74,7 +74,7 @@ await client.from_("countries").insert({ "name": "Việt Nam", "capital": "Hà N
 
 ```py
 r = await client.from_("countries").select("id", "name").execute()
-countries = r.json()
+countries = r.data
 ```
 
 ### Update
@@ -92,6 +92,9 @@ await client.from_("countries").eq("name", "Việt Nam").delete().execute()
 ### General filters
 
 ### Stored procedures (RPC)
+```py
+await client.rpc("foobar", {"arg1": "value1", "arg2": "value2"}).execute()
+```
 
 ## DEVELOPMENT
 
