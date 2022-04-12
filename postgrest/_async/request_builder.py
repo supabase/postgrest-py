@@ -18,13 +18,13 @@ from ..base_request_builder import (
 )
 from ..exceptions import APIError
 from ..types import ReturnMethod
-from ..utils import SyncClient
+from ..utils import AsyncClient
 
 
-class SyncQueryRequestBuilder:
+class AsyncQueryRequestBuilder:
     def __init__(
         self,
-        session: SyncClient,
+        session: AsyncClient,
         path: str,
         http_method: str,
         json: dict,
@@ -34,7 +34,7 @@ class SyncQueryRequestBuilder:
         self.http_method = http_method
         self.json = json
 
-    def execute(self) -> APIResponse:
+    async def execute(self) -> APIResponse:
         """Execute the query.
 
         .. tip::
@@ -44,9 +44,9 @@ class SyncQueryRequestBuilder:
             :class:`APIResponse`
 
         Raises:
-            :class:`APIError`
+            :class:`APIError` If the API raised an error.
         """
-        r = self.session.request(
+        r = await self.session.request(
             self.http_method,
             self.path,
             json=self.json,
@@ -71,33 +71,33 @@ class SyncQueryRequestBuilder:
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
-class SyncFilterRequestBuilder(BaseFilterRequestBuilder, SyncQueryRequestBuilder):  # type: ignore
+class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
-        session: SyncClient,
+        session: AsyncClient,
         path: str,
         http_method: str,
         json: dict,
     ) -> None:
         BaseFilterRequestBuilder.__init__(self, session)
-        SyncQueryRequestBuilder.__init__(self, session, path, http_method, json)
+        AsyncQueryRequestBuilder.__init__(self, session, path, http_method, json)
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
-class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder):  # type: ignore
+class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
-        session: SyncClient,
+        session: AsyncClient,
         path: str,
         http_method: str,
         json: dict,
     ) -> None:
         BaseSelectRequestBuilder.__init__(self, session)
-        SyncQueryRequestBuilder.__init__(self, session, path, http_method, json)
+        AsyncQueryRequestBuilder.__init__(self, session, path, http_method, json)
 
 
-class SyncRequestBuilder:
-    def __init__(self, session: SyncClient, path: str) -> None:
+class AsyncRequestBuilder:
+    def __init__(self, session: AsyncClient, path: str) -> None:
         self.session = session
         self.path = path
 
@@ -105,7 +105,7 @@ class SyncRequestBuilder:
         self,
         *columns: str,
         count: Optional[CountMethod] = None,
-    ) -> SyncSelectRequestBuilder:
+    ) -> AsyncSelectRequestBuilder:
         """Run a SELECT query.
 
         Args:
@@ -115,7 +115,7 @@ class SyncRequestBuilder:
             :class:`AsyncSelectRequestBuilder`
         """
         method, json = pre_select(self.session, *columns, count=count)
-        return SyncSelectRequestBuilder(self.session, self.path, method, json)
+        return AsyncSelectRequestBuilder(self.session, self.path, method, json)
 
     def insert(
         self,
@@ -124,7 +124,7 @@ class SyncRequestBuilder:
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
         upsert: bool = False,
-    ) -> SyncQueryRequestBuilder:
+    ) -> AsyncQueryRequestBuilder:
         """Run an INSERT query.
 
         Args:
@@ -142,7 +142,7 @@ class SyncRequestBuilder:
             returning=returning,
             upsert=upsert,
         )
-        return SyncQueryRequestBuilder(self.session, self.path, method, json)
+        return AsyncQueryRequestBuilder(self.session, self.path, method, json)
 
     def upsert(
         self,
@@ -151,7 +151,7 @@ class SyncRequestBuilder:
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
         ignore_duplicates: bool = False,
-    ) -> SyncQueryRequestBuilder:
+    ) -> AsyncQueryRequestBuilder:
         """Run an upsert (INSERT ... ON CONFLICT DO UPDATE) query.
 
         Args:
@@ -169,7 +169,7 @@ class SyncRequestBuilder:
             returning=returning,
             ignore_duplicates=ignore_duplicates,
         )
-        return SyncQueryRequestBuilder(self.session, self.path, method, json)
+        return AsyncQueryRequestBuilder(self.session, self.path, method, json)
 
     def update(
         self,
@@ -177,7 +177,7 @@ class SyncRequestBuilder:
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
-    ) -> SyncFilterRequestBuilder:
+    ) -> AsyncFilterRequestBuilder:
         """Run an UPDATE query.
 
         Args:
@@ -193,14 +193,14 @@ class SyncRequestBuilder:
             count=count,
             returning=returning,
         )
-        return SyncFilterRequestBuilder(self.session, self.path, method, json)
+        return AsyncFilterRequestBuilder(self.session, self.path, method, json)
 
     def delete(
         self,
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
-    ) -> SyncFilterRequestBuilder:
+    ) -> AsyncFilterRequestBuilder:
         """Run a DELETE query.
 
         Args:
@@ -214,4 +214,4 @@ class SyncRequestBuilder:
             count=count,
             returning=returning,
         )
-        return SyncFilterRequestBuilder(self.session, self.path, method, json)
+        return AsyncFilterRequestBuilder(self.session, self.path, method, json)

@@ -1,7 +1,7 @@
 import pytest
 from httpx import BasicAuth, Headers
 
-from postgrest_py import SyncPostgrestClient
+from postgrest import SyncPostgrestClient
 
 
 @pytest.fixture

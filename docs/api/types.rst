@@ -3,14 +3,14 @@ Types
 
 Some type aliases and enums used in the library.
 
-.. autoclass:: postgrest_py.types.CountMethod
+.. autoclass:: postgrest.types.CountMethod
     :members:
 
-.. autoclass:: postgrest_py.types.Filters
+.. autoclass:: postgrest.types.Filters
     :members:
 
-.. autoclass:: postgrest_py.types.RequestMethod
+.. autoclass:: postgrest.types.RequestMethod
     :members:
 
-.. autoclass:: postgrest_py.types.ReturnMethod
+.. autoclass:: postgrest.types.ReturnMethod
     :members:

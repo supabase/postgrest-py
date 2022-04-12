@@ -1,7 +1,7 @@
 Responses
 =========
 
-Once a query is run, the postgrest_py parses the server's response into an APIResponse object.
+Once a query is run, the library parses the server's response into an APIResponse object.
 
-.. autoclass:: postgrest_py.APIResponse
+.. autoclass:: postgrest.APIResponse
     :members:

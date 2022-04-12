@@ -1,7 +1,7 @@
 import pytest
 
-from postgrest_py import AsyncFilterRequestBuilder
-from postgrest_py.utils import AsyncClient
+from postgrest import AsyncFilterRequestBuilder
+from postgrest.utils import AsyncClient
 
 
 @pytest.fixture

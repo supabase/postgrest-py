@@ -8,26 +8,26 @@ Request Builders
 .. warning::
     These classes are not meant to be constructed by the user.
 
-.. autoclass:: postgrest_py.AsyncRequestBuilder
+.. autoclass:: postgrest.AsyncRequestBuilder
     :members:
     :inherited-members:
 
-.. autoclass:: postgrest_py.AsyncSelectRequestBuilder
+.. autoclass:: postgrest.AsyncSelectRequestBuilder
     :members:
     :inherited-members:
 
-.. autoclass:: postgrest_py.AsyncQueryRequestBuilder
+.. autoclass:: postgrest.AsyncQueryRequestBuilder
     :members:
     :inherited-members:
 
-.. autoclass:: postgrest_py.SyncRequestBuilder
+.. autoclass:: postgrest.SyncRequestBuilder
     :members:
     :inherited-members:
 
-.. autoclass:: postgrest_py.SyncSelectRequestBuilder
+.. autoclass:: postgrest.SyncSelectRequestBuilder
     :members:
     :inherited-members:
 
-.. autoclass:: postgrest_py.SyncQueryRequestBuilder
+.. autoclass:: postgrest.SyncQueryRequestBuilder
     :members:
     :inherited-members:

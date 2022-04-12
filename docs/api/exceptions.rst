@@ -1,5 +1,5 @@
 Exceptions
 ==========
 
-.. autoexception:: postgrest_py.APIError
+.. autoexception:: postgrest.APIError
     :members:

@@ -35,7 +35,7 @@ python-semantic-release = "^7.28.0"
 furo = "^2022.4.7"
 
 [tool.semantic_release]
-version_variable = "postgrest_py/__init__.py:__version__"
+version_variable = "postgrest/__init__.py:__version__"
 version_toml = "pyproject.toml:tool.poetry.version"
 major_on_zero = false
 commit_subject = "chore(release): bump version to v{version}"

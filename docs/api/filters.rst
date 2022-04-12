@@ -18,10 +18,14 @@ filter data during queries.
     All the filter methods return a modified instance of the filter builder, allowing fluent chaining of filters.
 
 
-.. autoclass:: postgrest_py.AsyncFilterRequestBuilder
+.. autoclass:: postgrest.AsyncFilterRequestBuilder
     :members:
+    :undoc-members:
     :inherited-members:
+    :member-order: bysource
 
-.. autoclass:: postgrest_py.SyncFilterRequestBuilder
+.. autoclass:: postgrest.SyncFilterRequestBuilder
     :members:
+    :undoc-members:
     :inherited-members:
+    :member-order: bysource

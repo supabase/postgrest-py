@@ -54,7 +54,7 @@ pip install postgrest-py
 
 ```py
 import asyncio
-from postgrest_py import AsyncPostgrestClient
+from postgrest import AsyncPostgrestClient
 
 async def main():
     async with AsyncPostgrestClient("http://localhost:3000") as client:

@@ -1,7 +1,7 @@
 import pytest
 
-from postgrest_py import SyncQueryRequestBuilder
-from postgrest_py.utils import SyncClient
+from postgrest import SyncQueryRequestBuilder
+from postgrest.utils import SyncClient
 
 
 @pytest.fixture

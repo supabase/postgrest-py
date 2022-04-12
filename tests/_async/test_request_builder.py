@@ -3,10 +3,10 @@ from typing import Any, Dict, List
 import pytest
 from httpx import Request, Response
 
-from postgrest_py import AsyncRequestBuilder
-from postgrest_py.base_request_builder import APIResponse
-from postgrest_py.types import CountMethod
-from postgrest_py.utils import AsyncClient
+from postgrest import AsyncRequestBuilder
+from postgrest.base_request_builder import APIResponse
+from postgrest.types import CountMethod
+from postgrest.utils import AsyncClient
 
 
 @pytest.fixture

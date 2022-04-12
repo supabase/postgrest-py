@@ -13,9 +13,13 @@ Requirements:
 - Python >= 3.7
 
 **With pip:**
+::
+
    pip install postgrest-py
 
 **With poetry:**
+::
+
    poetry add postgrest-py
 
 
