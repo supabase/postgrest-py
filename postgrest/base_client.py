@@ -7,13 +7,6 @@ from httpx import BasicAuth, Timeout
 
 from .utils import AsyncClient, SyncClient
 
-DEFAULT_POSTGREST_CLIENT_HEADERS: Dict[str, str] = {
-    "Accept": "application/json",
-    "Content-Type": "application/json",
-}
-
-DEFAULT_POSTGREST_CLIENT_TIMEOUT: int = 5
-
 
 class BasePostgrestClient(ABC):
     """Base PostgREST client."""
@@ -51,8 +44,12 @@ class BasePostgrestClient(ABC):
     ):
         """
         Authenticate the client with either bearer token or basic authentication.
-        Raise `ValueError` if neither authentication scheme is provided.
-        Bearer token is preferred if both ones are provided.
+
+        Raises:
+            `ValueError`: If neither authentication scheme is provided.
+
+        .. note::
+            Bearer token is preferred if both ones are provided.
         """
         if token:
             self.session.headers["Authorization"] = f"Bearer {token}"

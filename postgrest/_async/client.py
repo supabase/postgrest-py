@@ -3,13 +3,13 @@ from __future__ import annotations
 from typing import Dict, Union, cast
 
 from deprecation import deprecated
-from httpx import Timeout
+from httpx import Headers, QueryParams, Timeout
 
 from .. import __version__
-from ..base_client import (
+from ..base_client import BasePostgrestClient
+from ..constants import (
     DEFAULT_POSTGREST_CLIENT_HEADERS,
     DEFAULT_POSTGREST_CLIENT_TIMEOUT,
-    BasePostgrestClient,
 )
 from ..utils import AsyncClient
 from .request_builder import AsyncFilterRequestBuilder, AsyncRequestBuilder
@@ -73,7 +73,7 @@ class AsyncPostgrestClient(BasePostgrestClient):
 
     @deprecated("0.2.0", "1.0.0", __version__, "Use self.from_() instead")
     def from_table(self, table: str) -> AsyncRequestBuilder:
-        """Alias to self.from_()."""
+        """Alias to :meth:`from_`."""
         return self.from_(table)
 
     async def rpc(self, func: str, params: dict) -> AsyncFilterRequestBuilder:
@@ -84,5 +84,16 @@ class AsyncPostgrestClient(BasePostgrestClient):
             params: The parameters to be passed to the remote procedure.
         Returns:
             :class:`AsyncFilterRequestBuilder`
+        Example:
+            .. code-block:: python
+
+                await client.rpc("foobar", {"arg": "value"}).execute()
+
+        .. versionchanged:: 0.11.0
+            This method now returns a :class:`AsyncFilterRequestBuilder` which allows you to
+            filter on the RPC's resultset.
         """
-        return AsyncFilterRequestBuilder(self.session, f"/rpc/{func}", "POST", params)
+        # the params here are params to be sent to the RPC and not the queryparams!
+        return AsyncFilterRequestBuilder(
+            self.session, f"/rpc/{func}", "POST", Headers(), QueryParams(), json=params
+        )

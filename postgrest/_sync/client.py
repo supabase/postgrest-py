@@ -3,13 +3,13 @@ from __future__ import annotations
 from typing import Dict, Union, cast
 
 from deprecation import deprecated
-from httpx import Timeout
+from httpx import Headers, QueryParams, Timeout
 
 from .. import __version__
-from ..base_client import (
+from ..base_client import BasePostgrestClient
+from ..constants import (
     DEFAULT_POSTGREST_CLIENT_HEADERS,
     DEFAULT_POSTGREST_CLIENT_TIMEOUT,
-    BasePostgrestClient,
 )
 from ..utils import SyncClient
 from .request_builder import SyncFilterRequestBuilder, SyncRequestBuilder
@@ -63,7 +63,7 @@ class SyncPostgrestClient(BasePostgrestClient):
         Args:
             table: The name of the table
         Returns:
-            :class:`AsyncRequestBuilder`
+            :class:`SyncRequestBuilder`
         """
         return SyncRequestBuilder(self.session, f"/{table}")
 
@@ -83,6 +83,16 @@ class SyncPostgrestClient(BasePostgrestClient):
             func: The name of the remote procedure to run.
             params: The parameters to be passed to the remote procedure.
         Returns:
-            :class:`AsyncFilterRequestBuilder`
+            :class:`SyncFilterRequestBuilder`
+        Example:
+            ::
+                await client.rpc("foobar", {"arg": "value"}).execute()
+
+        .. versionchanged:: 0.11.0
+            This method now returns a :class:`SyncFilterRequestBuilder` which allows you to
+            filter on the RPC's resultset.
         """
-        return SyncFilterRequestBuilder(self.session, f"/rpc/{func}", "POST", params)
+        # the params here are params to be sent to the RPC and not the queryparams!
+        return SyncFilterRequestBuilder(
+            self.session, f"/rpc/{func}", "POST", Headers(), QueryParams(), json=params
+        )
