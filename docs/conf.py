@@ -16,10 +16,10 @@
 
 
 # -- Project information -----------------------------------------------------
-import postgrest_py
+import postgrest
 
 project = "postgrest-py"
-version = postgrest_py.__version__
+version = postgrest.__version__
 release = version
 copyright = (
     "2022, Anand Krishna, Daniel Reinón García, Joel Lee, Leynier Gutiérrez González"
@@ -64,4 +64,4 @@ html_theme = "furo"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+html_static_path = []

@@ -13,14 +13,18 @@ Requirements:
 - Python >= 3.7
 
 **With pip:**
+::
+
    pip install postgrest-py
 
 **With poetry:**
+::
+
    poetry add postgrest-py
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
    :caption: Contents:
 
       API Reference </api/index>

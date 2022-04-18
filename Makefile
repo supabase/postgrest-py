@@ -25,4 +25,4 @@ clean_infra:
 run_tests: tests
 
 build_sync:
-	poetry run unasync postgrest_py tests
+	poetry run unasync postgrest tests

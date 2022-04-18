@@ -2,8 +2,19 @@ from __future__ import annotations
 
 import json
 from re import search
-from typing import Any, Dict, Iterable, Optional, Tuple, Type, TypeVar, Union
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
+from httpx import Headers, QueryParams
 from httpx import Response as RequestResponse
 from pydantic import BaseModel, validator
 
@@ -11,80 +22,86 @@ from .types import CountMethod, Filters, RequestMethod, ReturnMethod
 from .utils import AsyncClient, SyncClient, sanitize_param
 
 
+class QueryArgs(NamedTuple):
+    # groups the method, json, headers and params for a query in a single object
+    method: RequestMethod
+    params: QueryParams
+    headers: Headers
+    json: Dict[Any, Any]
+
+
 def pre_select(
-    session: Union[AsyncClient, SyncClient],
     *columns: str,
     count: Optional[CountMethod] = None,
-) -> Tuple[RequestMethod, dict]:
+) -> QueryArgs:
     if columns:
         method = RequestMethod.GET
-        session.params = session.params.set("select", ",".join(columns))
+        params = QueryParams({"select": ",".join(columns)})
     else:
         method = RequestMethod.HEAD
+        params = QueryParams()
     if count:
-        session.headers["Prefer"] = f"count={count}"
-    return method, {}
+        headers = Headers({"Prefer": f"count={count}"})
+    else:
+        headers = Headers()
+    return QueryArgs(method, params, headers, {})
 
 
 def pre_insert(
-    session: Union[AsyncClient, SyncClient],
     json: dict,
     *,
     count: Optional[CountMethod],
     returning: ReturnMethod,
     upsert: bool,
-) -> Tuple[RequestMethod, dict]:
+) -> QueryArgs:
     prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
     if upsert:
         prefer_headers.append("resolution=merge-duplicates")
-    session.headers["prefer"] = ",".join(prefer_headers)
-    return RequestMethod.POST, json
+    headers = Headers({"Prefer": ",".join(prefer_headers)})
+    return QueryArgs(RequestMethod.POST, QueryParams(), headers, json)
 
 
 def pre_upsert(
-    session: Union[AsyncClient, SyncClient],
     json: dict,
     *,
     count: Optional[CountMethod],
     returning: ReturnMethod,
     ignore_duplicates: bool,
-) -> Tuple[RequestMethod, dict]:
+) -> QueryArgs:
     prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
     resolution = "ignore" if ignore_duplicates else "merge"
     prefer_headers.append(f"resolution={resolution}-duplicates")
-    session.headers["prefer"] = ",".join(prefer_headers)
-    return RequestMethod.POST, json
+    headers = Headers({"Prefer": ",".join(prefer_headers)})
+    return QueryArgs(RequestMethod.POST, QueryParams(), headers, json)
 
 
 def pre_update(
-    session: Union[AsyncClient, SyncClient],
     json: dict,
     *,
     count: Optional[CountMethod],
     returning: ReturnMethod,
-) -> Tuple[RequestMethod, dict]:
+) -> QueryArgs:
     prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
-    session.headers["prefer"] = ",".join(prefer_headers)
-    return RequestMethod.PATCH, json
+    headers = Headers({"Prefer": ",".join(prefer_headers)})
+    return QueryArgs(RequestMethod.PATCH, QueryParams(), headers, json)
 
 
 def pre_delete(
-    session: Union[AsyncClient, SyncClient],
     *,
     count: Optional[CountMethod],
     returning: ReturnMethod,
-) -> Tuple[RequestMethod, dict]:
+) -> QueryArgs:
     prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
-    session.headers["prefer"] = ",".join(prefer_headers)
-    return RequestMethod.DELETE, {}
+    headers = Headers({"Prefer": ",".join(prefer_headers)})
+    return QueryArgs(RequestMethod.DELETE, QueryParams(), headers, {})
 
 
 class APIResponse(BaseModel):
@@ -143,8 +160,15 @@ _FilterT = TypeVar("_FilterT", bound="BaseFilterRequestBuilder")
 
 
 class BaseFilterRequestBuilder:
-    def __init__(self, session: Union[AsyncClient, SyncClient]) -> None:
+    def __init__(
+        self,
+        session: Union[AsyncClient, SyncClient],
+        headers: Headers,
+        params: QueryParams,
+    ) -> None:
         self.session = session
+        self.headers = headers
+        self.params = params
         self.negate_next = False
 
     @property
@@ -165,7 +189,7 @@ class BaseFilterRequestBuilder:
             self.negate_next = False
             operator = f"{Filters.NOT}.{operator}"
         key, val = sanitize_param(column), f"{operator}.{criteria}"
-        self.session.params = self.session.params.add(key, val)
+        self.params = self.params.add(key, val)
         return self
 
     def eq(self: _FilterT, column: str, value: Any) -> _FilterT:
@@ -333,8 +357,13 @@ class BaseFilterRequestBuilder:
 
 
 class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
-    def __init__(self, session: Union[AsyncClient, SyncClient]) -> None:
-        BaseFilterRequestBuilder.__init__(self, session)
+    def __init__(
+        self,
+        session: Union[AsyncClient, SyncClient],
+        headers: Headers,
+        params: QueryParams,
+    ) -> None:
+        BaseFilterRequestBuilder.__init__(self, session, headers, params)
 
     def order(
         self: _FilterT, column: str, *, desc: bool = False, nullsfirst: bool = False
@@ -346,7 +375,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
             desc: Whether the rows should be ordered in descending order or not.
             nullsfirst: nullsfirst
         """
-        self.session.params = self.session.params.add(
+        self.params = self.params.add(
             "order",
             f"{column}{'.desc' if desc else ''}{'.nullsfirst' if nullsfirst else ''}",
         )
@@ -359,13 +388,13 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
             size: The number of rows to be returned
             start: Offset to start from
         """
-        self.session.headers["Range-Unit"] = "items"
-        self.session.headers["Range"] = f"{start}-{start + size - 1}"
+        self.headers["Range-Unit"] = "items"
+        self.headers["Range"] = f"{start}-{start + size - 1}"
         return self
 
     def range(self: _FilterT, start: int, end: int) -> _FilterT:
-        self.session.headers["Range-Unit"] = "items"
-        self.session.headers["Range"] = f"{start}-{end - 1}"
+        self.headers["Range-Unit"] = "items"
+        self.headers["Range"] = f"{start}-{end - 1}"
         return self
 
     def single(self: _FilterT) -> _FilterT:
@@ -374,5 +403,5 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         .. caution::
             The API will raise an error if the query returned more than one row.
         """
-        self.session.headers["Accept"] = "application/vnd.pgrst.object+json"
+        self.headers["Accept"] = "application/vnd.pgrst.object+json"
         return self

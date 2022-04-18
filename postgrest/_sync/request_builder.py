@@ -27,11 +27,15 @@ class SyncQueryRequestBuilder:
         session: SyncClient,
         path: str,
         http_method: str,
+        headers: Headers,
+        params: QueryParams,
         json: dict,
     ) -> None:
         self.session = session
         self.path = path
         self.http_method = http_method
+        self.headers = headers
+        self.params = params
         self.json = json
 
     def execute(self) -> APIResponse:
@@ -44,25 +48,15 @@ class SyncQueryRequestBuilder:
             :class:`APIResponse`
 
         Raises:
-            :class:`APIError`
+            :class:`APIError` If the API raised an error.
         """
         r = self.session.request(
             self.http_method,
             self.path,
             json=self.json,
+            params=self.params,
+            headers=self.headers,
         )
-
-        key = self.session.headers.get("apiKey")
-        auth = self.session.headers.get("Authorization")
-        headers = Headers()
-
-        if key:
-            headers["apiKey"] = key
-        if auth:
-            headers["Authorization"] = auth
-        # remove the params and headers that were set by the query
-        self.session.params = QueryParams()
-        self.session.headers = headers
 
         try:
             return APIResponse.from_http_request_response(r)
@@ -77,10 +71,14 @@ class SyncFilterRequestBuilder(BaseFilterRequestBuilder, SyncQueryRequestBuilder
         session: SyncClient,
         path: str,
         http_method: str,
+        headers: Headers,
+        params: QueryParams,
         json: dict,
     ) -> None:
-        BaseFilterRequestBuilder.__init__(self, session)
-        SyncQueryRequestBuilder.__init__(self, session, path, http_method, json)
+        BaseFilterRequestBuilder.__init__(self, session, headers, params)
+        SyncQueryRequestBuilder.__init__(
+            self, session, path, http_method, headers, params, json
+        )
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
@@ -90,10 +88,14 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
         session: SyncClient,
         path: str,
         http_method: str,
+        headers: Headers,
+        params: QueryParams,
         json: dict,
     ) -> None:
-        BaseSelectRequestBuilder.__init__(self, session)
-        SyncQueryRequestBuilder.__init__(self, session, path, http_method, json)
+        BaseSelectRequestBuilder.__init__(self, session, headers, params)
+        SyncQueryRequestBuilder.__init__(
+            self, session, path, http_method, headers, params, json
+        )
 
 
 class SyncRequestBuilder:
@@ -112,10 +114,12 @@ class SyncRequestBuilder:
             *columns: The names of the columns to fetch.
             count: The method to use to get the count of rows returned.
         Returns:
-            :class:`AsyncSelectRequestBuilder`
+            :class:`SyncSelectRequestBuilder`
         """
-        method, json = pre_select(self.session, *columns, count=count)
-        return SyncSelectRequestBuilder(self.session, self.path, method, json)
+        method, params, headers, json = pre_select(*columns, count=count)
+        return SyncSelectRequestBuilder(
+            self.session, self.path, method, headers, params, json
+        )
 
     def insert(
         self,
@@ -133,16 +137,17 @@ class SyncRequestBuilder:
             returning: Either 'minimal' or 'representation'
             upsert: Whether the query should be an upsert.
         Returns:
-            :class:`AsyncQueryRequestBuilder`
+            :class:`SyncQueryRequestBuilder`
         """
-        method, json = pre_insert(
-            self.session,
+        method, params, headers, json = pre_insert(
             json,
             count=count,
             returning=returning,
             upsert=upsert,
         )
-        return SyncQueryRequestBuilder(self.session, self.path, method, json)
+        return SyncQueryRequestBuilder(
+            self.session, self.path, method, headers, params, json
+        )
 
     def upsert(
         self,
@@ -160,16 +165,17 @@ class SyncRequestBuilder:
             returning: Either 'minimal' or 'representation'
             ignore_duplicates: Whether duplicate rows should be ignored.
         Returns:
-            :class:`AsyncQueryRequestBuilder`
+            :class:`SyncQueryRequestBuilder`
         """
-        method, json = pre_upsert(
-            self.session,
+        method, params, headers, json = pre_upsert(
             json,
             count=count,
             returning=returning,
             ignore_duplicates=ignore_duplicates,
         )
-        return SyncQueryRequestBuilder(self.session, self.path, method, json)
+        return SyncQueryRequestBuilder(
+            self.session, self.path, method, headers, params, json
+        )
 
     def update(
         self,
@@ -185,15 +191,16 @@ class SyncRequestBuilder:
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`AsyncFilterRequestBuilder`
+            :class:`SyncFilterRequestBuilder`
         """
-        method, json = pre_update(
-            self.session,
+        method, params, headers, json = pre_update(
             json,
             count=count,
             returning=returning,
         )
-        return SyncFilterRequestBuilder(self.session, self.path, method, json)
+        return SyncFilterRequestBuilder(
+            self.session, self.path, method, headers, params, json
+        )
 
     def delete(
         self,
@@ -207,11 +214,12 @@ class SyncRequestBuilder:
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`AsyncFilterRequestBuilder`
+            :class:`SyncFilterRequestBuilder`
         """
-        method, json = pre_delete(
-            self.session,
+        method, params, headers, json = pre_delete(
             count=count,
             returning=returning,
         )
-        return SyncFilterRequestBuilder(self.session, self.path, method, json)
+        return SyncFilterRequestBuilder(
+            self.session, self.path, method, headers, params, json
+        )

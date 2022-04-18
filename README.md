@@ -54,7 +54,7 @@ pip install postgrest-py
 
 ```py
 import asyncio
-from postgrest_py import AsyncPostgrestClient
+from postgrest import AsyncPostgrestClient
 
 async def main():
     async with AsyncPostgrestClient("http://localhost:3000") as client:
@@ -74,24 +74,27 @@ await client.from_("countries").insert({ "name": "Việt Nam", "capital": "Hà N
 
 ```py
 r = await client.from_("countries").select("id", "name").execute()
-countries = r.json()
+countries = r.data
 ```
 
 ### Update
 
 ```py
-await client.from_("countries").eq("name", "Việt Nam").update({"capital": "Hà Nội"}).execute()
+await client.from_("countries").update({"capital": "Hà Nội"}).eq("name", "Việt Nam").execute()
 ```
 
 ### Delete
 
 ```py
-await client.from_("countries").eq("name", "Việt Nam").delete().execute()
+await client.from_("countries").delete().eq("name", "Việt Nam").execute()
 ```
 
 ### General filters
 
 ### Stored procedures (RPC)
+```py
+await client.rpc("foobar", {"arg1": "value1", "arg2": "value2"}).execute()
+```
 
 ## DEVELOPMENT
 

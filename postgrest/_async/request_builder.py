@@ -27,11 +27,15 @@ class AsyncQueryRequestBuilder:
         session: AsyncClient,
         path: str,
         http_method: str,
+        headers: Headers,
+        params: QueryParams,
         json: dict,
     ) -> None:
         self.session = session
         self.path = path
         self.http_method = http_method
+        self.headers = headers
+        self.params = params
         self.json = json
 
     async def execute(self) -> APIResponse:
@@ -44,25 +48,15 @@ class AsyncQueryRequestBuilder:
             :class:`APIResponse`
 
         Raises:
-            :class:`APIError`
+            :class:`APIError` If the API raised an error.
         """
         r = await self.session.request(
             self.http_method,
             self.path,
             json=self.json,
+            params=self.params,
+            headers=self.headers,
         )
-
-        key = self.session.headers.get("apiKey")
-        auth = self.session.headers.get("Authorization")
-        headers = Headers()
-
-        if key:
-            headers["apiKey"] = key
-        if auth:
-            headers["Authorization"] = auth
-        # remove the params and headers that were set by the query
-        self.session.params = QueryParams()
-        self.session.headers = headers
 
         try:
             return APIResponse.from_http_request_response(r)
@@ -77,10 +71,14 @@ class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuild
         session: AsyncClient,
         path: str,
         http_method: str,
+        headers: Headers,
+        params: QueryParams,
         json: dict,
     ) -> None:
-        BaseFilterRequestBuilder.__init__(self, session)
-        AsyncQueryRequestBuilder.__init__(self, session, path, http_method, json)
+        BaseFilterRequestBuilder.__init__(self, session, headers, params)
+        AsyncQueryRequestBuilder.__init__(
+            self, session, path, http_method, headers, params, json
+        )
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
@@ -90,10 +88,14 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuild
         session: AsyncClient,
         path: str,
         http_method: str,
+        headers: Headers,
+        params: QueryParams,
         json: dict,
     ) -> None:
-        BaseSelectRequestBuilder.__init__(self, session)
-        AsyncQueryRequestBuilder.__init__(self, session, path, http_method, json)
+        BaseSelectRequestBuilder.__init__(self, session, headers, params)
+        AsyncQueryRequestBuilder.__init__(
+            self, session, path, http_method, headers, params, json
+        )
 
 
 class AsyncRequestBuilder:
@@ -114,8 +116,10 @@ class AsyncRequestBuilder:
         Returns:
             :class:`AsyncSelectRequestBuilder`
         """
-        method, json = pre_select(self.session, *columns, count=count)
-        return AsyncSelectRequestBuilder(self.session, self.path, method, json)
+        method, params, headers, json = pre_select(*columns, count=count)
+        return AsyncSelectRequestBuilder(
+            self.session, self.path, method, headers, params, json
+        )
 
     def insert(
         self,
@@ -135,14 +139,15 @@ class AsyncRequestBuilder:
         Returns:
             :class:`AsyncQueryRequestBuilder`
         """
-        method, json = pre_insert(
-            self.session,
+        method, params, headers, json = pre_insert(
             json,
             count=count,
             returning=returning,
             upsert=upsert,
         )
-        return AsyncQueryRequestBuilder(self.session, self.path, method, json)
+        return AsyncQueryRequestBuilder(
+            self.session, self.path, method, headers, params, json
+        )
 
     def upsert(
         self,
@@ -162,14 +167,15 @@ class AsyncRequestBuilder:
         Returns:
             :class:`AsyncQueryRequestBuilder`
         """
-        method, json = pre_upsert(
-            self.session,
+        method, params, headers, json = pre_upsert(
             json,
             count=count,
             returning=returning,
             ignore_duplicates=ignore_duplicates,
         )
-        return AsyncQueryRequestBuilder(self.session, self.path, method, json)
+        return AsyncQueryRequestBuilder(
+            self.session, self.path, method, headers, params, json
+        )
 
     def update(
         self,
@@ -187,13 +193,14 @@ class AsyncRequestBuilder:
         Returns:
             :class:`AsyncFilterRequestBuilder`
         """
-        method, json = pre_update(
-            self.session,
+        method, params, headers, json = pre_update(
             json,
             count=count,
             returning=returning,
         )
-        return AsyncFilterRequestBuilder(self.session, self.path, method, json)
+        return AsyncFilterRequestBuilder(
+            self.session, self.path, method, headers, params, json
+        )
 
     def delete(
         self,
@@ -209,9 +216,10 @@ class AsyncRequestBuilder:
         Returns:
             :class:`AsyncFilterRequestBuilder`
         """
-        method, json = pre_delete(
-            self.session,
+        method, params, headers, json = pre_delete(
             count=count,
             returning=returning,
         )
-        return AsyncFilterRequestBuilder(self.session, self.path, method, json)
+        return AsyncFilterRequestBuilder(
+            self.session, self.path, method, headers, params, json
+        )
