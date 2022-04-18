@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v0.10.2 (2022-04-18)
+### Fix
+* Include source directory name ([#116](https://github.com/supabase-community/postgrest-py/issues/116)) ([`18334f8`](https://github.com/supabase-community/postgrest-py/commit/18334f880d5e4e769a9e843007bc2f46b597a777))
+
+### Documentation
+* Remove rtd config file ([`14100a1`](https://github.com/supabase-community/postgrest-py/commit/14100a15a7d9c526df3e504a676d2d1018be3e04))
+
+**[See all commits in this version](https://github.com/supabase-community/postgrest-py/compare/v0.10.1...v0.10.2)**
+
 ## v0.10.1 (2022-04-07)
 ### Fix
 * Escape chars only when necessary ([#108](https://github.com/supabase-community/postgrest-py/issues/108)) ([`53f7d18`](https://github.com/supabase-community/postgrest-py/commit/53f7d18807aa292aa7326af573bd55828a3bb6e4))
