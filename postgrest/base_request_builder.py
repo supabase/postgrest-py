@@ -16,7 +16,7 @@ from typing import (
 
 from httpx import Headers, QueryParams
 from httpx import Response as RequestResponse
-from postgrest.exceptions import APIError
+from .exceptions import APIError
 from pydantic import BaseModel, validator
 
 from .types import CountMethod, Filters, RequestMethod, ReturnMethod
