@@ -63,6 +63,25 @@ class SyncQueryRequestBuilder:
         except ValidationError as e:
             raise APIError(r.json()) from e
 
+    def maybe_single(self):
+        """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error.
+        """
+
+        def __maybe_single_wrapper(self, func):
+            res: APIResponse = func()
+            
+            if 'Results contain 0 rows' in res.error.details:
+                return APIResponse.from_dict({
+                    "data": None,
+                    "error": None,
+                    "count": res.count
+                })
+            return res
+        self.headers["Accept"] = "application/vnd.pgrst.object+json"
+        _self = self # potential issue: not shallow/deep copying object
+        _self.execute = __maybe_single_wrapper(self.execute)
+        return _self
+
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
 class SyncFilterRequestBuilder(BaseFilterRequestBuilder, SyncQueryRequestBuilder):  # type: ignore

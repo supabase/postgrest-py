@@ -159,11 +159,11 @@ class APIResponse(BaseModel):
             return None
         else:
             try:
-                return request_response.json()
-            except json.JSONDecodeError as e:
-                return {
+                return APIError(request_response.json())
+            except json.JSONDecodeError:
+                return APIError({
                     "message": request_response.text
-                }
+                })
 
     @classmethod
     def from_http_request_response(
