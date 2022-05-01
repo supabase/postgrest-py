@@ -366,30 +366,45 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         BaseFilterRequestBuilder.__init__(self, session, headers, params)
 
     def order(
-        self: _FilterT, column: str, *, desc: bool = False, nullsfirst: bool = False
+        self: _FilterT,
+        column: str,
+        *,
+        desc: bool = False,
+        nullsfirst: bool = False,
+        foreign_table: str = "",
     ) -> _FilterT:
         """Sort the returned rows in some specific order.
 
         Args:
             column: The column to order by
             desc: Whether the rows should be ordered in descending order or not.
-            nullsfirst: nullsfirst
+            nullsfirst: nullsfirst,
+            foreign_table: Order results in foreign table
         """
         self.params = self.params.add(
-            "order",
+            f"{foreign_table + '.order' if foreign_table else 'order' }",
             f"{column}{'.desc' if desc else ''}{'.nullsfirst' if nullsfirst else ''}",
         )
         return self
 
-    def limit(self: _FilterT, size: int, *, start: int = 0) -> _FilterT:
+    def limit(
+        self: _FilterT, size: int, *, start: int = 0, foreign_table: str = ""
+    ) -> _FilterT:
         """Limit the number of rows returned by a query.
 
         Args:
             size: The number of rows to be returned
             start: Offset to start from
+            foreign_table: Limit results returned by foreign table
         """
         self.headers["Range-Unit"] = "items"
         self.headers["Range"] = f"{start}-{start + size - 1}"
+
+        if len(foreign_table) > 0:
+            self.params = self.params.add(
+                f"{foreign_table}.limit",
+                size,
+            )
         return self
 
     def range(self: _FilterT, start: int, end: int) -> _FilterT:
