@@ -40,10 +40,7 @@ def pre_select(
     else:
         method = RequestMethod.HEAD
         params = QueryParams()
-    if count:
-        headers = Headers({"Prefer": f"count={count}"})
-    else:
-        headers = Headers()
+    headers = Headers({"Prefer": f"count={count}"}) if count else Headers()
     return QueryArgs(method, params, headers, {})
 
 
@@ -345,7 +342,7 @@ class BaseFilterRequestBuilder:
     def match(self: _FilterT, query: Dict[str, Any]) -> _FilterT:
         updated_query = self
 
-        if len(query) == 0:
+        if not query:
             raise ValueError(
                 "query dictionary should contain at least one key-value pair"
             )
@@ -382,9 +379,10 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
             foreign_table: Order results in foreign table
         """
         self.params = self.params.add(
-            f"{foreign_table + '.order' if foreign_table else 'order' }",
+            f"{f'{foreign_table}.order' if foreign_table else 'order'}",
             f"{column}{'.desc' if desc else ''}{'.nullsfirst' if nullsfirst else ''}",
         )
+
         return self
 
     def limit(
@@ -400,7 +398,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         self.headers["Range-Unit"] = "items"
         self.headers["Range"] = f"{start}-{start + size - 1}"
 
-        if len(foreign_table) > 0:
+        if foreign_table != '':
             self.params = self.params.add(
                 f"{foreign_table}.limit",
                 size,
