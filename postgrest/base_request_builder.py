@@ -16,7 +16,6 @@ from typing import (
 
 from httpx import Headers, QueryParams
 from httpx import Response as RequestResponse
-from .exceptions import APIError
 from pydantic import BaseModel, validator
 
 from .types import CountMethod, Filters, RequestMethod, ReturnMethod
@@ -110,8 +109,6 @@ class APIResponse(BaseModel):
     """The data returned by the query."""
     count: Optional[int] = None
     """The number of rows returned."""
-    error: Optional[APIError] = None
-    """The error returned by the query."""
 
     @validator("data")
     @classmethod
@@ -151,28 +148,12 @@ class APIResponse(BaseModel):
         return cls._get_count_from_content_range_header(content_range_header)
 
     @classmethod
-    def _get_error_from_http_request_response(
-        cls: Type[APIResponse],
-        request_response: RequestResponse,
-    ) -> Optional[APIError]:
-        if 200 <= request_response.status_code <= 299: # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
-            return None
-        else:
-            try:
-                return APIError(request_response.json())
-            except json.JSONDecodeError:
-                return APIError({
-                    "message": request_response.text
-                })
-
-    @classmethod
     def from_http_request_response(
         cls: Type[APIResponse], request_response: RequestResponse
     ) -> APIResponse:
         data = request_response.json()
         count = cls._get_count_from_http_request_response(request_response)
-        error = cls._get_error_from_http_request_response(request_response)
-        return cls(data=data, count=count, error=error)
+        return cls(data=data, count=count)
 
     @classmethod
     def from_dict(
