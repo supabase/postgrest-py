@@ -16,6 +16,7 @@ from typing import (
 
 from httpx import Headers, QueryParams
 from httpx import Response as RequestResponse
+from postgrest.exceptions import APIError
 from pydantic import BaseModel, validator
 
 from .types import CountMethod, Filters, RequestMethod, ReturnMethod
@@ -109,6 +110,8 @@ class APIResponse(BaseModel):
     """The data returned by the query."""
     count: Optional[int] = None
     """The number of rows returned."""
+    error: Optional[APIError] = None
+    """The error returned by the query."""
 
     @validator("data")
     @classmethod
@@ -148,12 +151,36 @@ class APIResponse(BaseModel):
         return cls._get_count_from_content_range_header(content_range_header)
 
     @classmethod
+    def _get_error_from_http_request_response(
+        cls: Type[APIResponse],
+        request_response: RequestResponse,
+    ) -> Optional[APIError]:
+        if 200 <= request_response.status_code <= 299: # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
+            return None
+        else:
+            try:
+                return request_response.json()
+            except json.JSONDecodeError as e:
+                return {
+                    "message": request_response.text
+                }
+
+    @classmethod
     def from_http_request_response(
         cls: Type[APIResponse], request_response: RequestResponse
     ) -> APIResponse:
         data = request_response.json()
         count = cls._get_count_from_http_request_response(request_response)
-        return cls(data=data, count=count)
+        error = cls._get_error_from_http_request_response(request_response)
+        return cls(data=data, count=count, error=error)
+
+    @classmethod
+    def from_dict(
+        cls: Type[APIResponse], dict: Dict[str, Any]
+    ) -> APIResponse:
+        keys = dict.keys()
+        assert len(keys) == 3 and "data" in keys and "count" in keys and "error" in keys
+        return cls(data=dict.get("data"), count=dict.get("count"), error=dict.get("error"))
 
 
 _FilterT = TypeVar("_FilterT", bound="BaseFilterRequestBuilder")
