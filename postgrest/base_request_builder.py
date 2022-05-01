@@ -432,3 +432,10 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         """
         self.headers["Accept"] = "application/vnd.pgrst.object+json"
         return self
+
+    def maybe_single(self: _FilterT) -> _FilterT:
+        """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error.
+        """
+        self.headers["Accept"] = "application/vnd.pgrst.object+json"
+        self.headers["x-maybeSingle"] = "true"
+        return self

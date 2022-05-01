@@ -97,25 +97,6 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuild
             self, session, path, http_method, headers, params, json
         )
 
-    async def maybe_single(self):
-        """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error.
-        """
-
-        async def __maybe_single_wrapper(self, func):
-            res: APIResponse = await func()
-            
-            if 'Results contain 0 rows' in res.error.details:
-                return APIResponse.from_dict({
-                    "data": None,
-                    "error": None,
-                    "count": res.count
-                })
-            return res
-        self.headers["Accept"] = "application/vnd.pgrst.object+json"
-        _self = self # potential issue: not shallow/deep copying object
-        _self.execute = __maybe_single_wrapper(self.execute)
-        return _self
-
 
 class AsyncRequestBuilder:
     def __init__(self, session: AsyncClient, path: str) -> None:
