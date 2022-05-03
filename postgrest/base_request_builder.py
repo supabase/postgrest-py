@@ -379,7 +379,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
             column: The column to order by
             desc: Whether the rows should be ordered in descending order or not.
             nullsfirst: nullsfirst
-            foreign_table: Order results in foreign table
+            foreign_table: Foreign table name whose results are to be ordered.
         .. versionchanged:: 0.10.3
            Allow ordering results for foreign tables with the foreign_table parameter.
         """
@@ -397,7 +397,9 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         Args:
             size: The number of rows to be returned
             start: Offset to start from
-            foreign_table: Limit results returned by foreign table
+            foreign_table: Foreign table name to limit
+        .. versionchanged:: 0.10.3
+           Allow limiting results returned for foreign tables with the foreign_table parameter.
         """
         self.headers["Range-Unit"] = "items"
         self.headers["Range"] = f"{start}-{start + size - 1}"
