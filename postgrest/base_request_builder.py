@@ -371,24 +371,26 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         *,
         desc: bool = False,
         nullsfirst: bool = False,
-        foreign_table: str = "",
+        foreign_table: Optional[str] = None,
     ) -> _FilterT:
         """Sort the returned rows in some specific order.
 
         Args:
             column: The column to order by
             desc: Whether the rows should be ordered in descending order or not.
-            nullsfirst: nullsfirst,
+            nullsfirst: nullsfirst
             foreign_table: Order results in foreign table
+        .. versionchanged:: 0.10.3
+           Allow ordering results for foreign tables with the foreign_table parameter.
         """
         self.params = self.params.add(
-            f"{foreign_table + '.order' if foreign_table else 'order' }",
+            f"{foreign_table}.order" if foreign_table else "order" ,
             f"{column}{'.desc' if desc else ''}{'.nullsfirst' if nullsfirst else ''}",
         )
         return self
 
     def limit(
-        self: _FilterT, size: int, *, start: int = 0, foreign_table: str = ""
+        self: _FilterT, size: int, *, start: int = 0, foreign_table: Optional[str] = None
     ) -> _FilterT:
         """Limit the number of rows returned by a query.
 
@@ -400,7 +402,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         self.headers["Range-Unit"] = "items"
         self.headers["Range"] = f"{start}-{start + size - 1}"
 
-        if len(foreign_table) > 0:
+        if foreign_table is not None:
             self.params = self.params.add(
                 f"{foreign_table}.limit",
                 size,
