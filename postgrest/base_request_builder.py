@@ -384,31 +384,26 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
            Allow ordering results for foreign tables with the foreign_table parameter.
         """
         self.params = self.params.add(
-            f"{foreign_table}.order" if foreign_table else "order" ,
+            f"{foreign_table}.order" if foreign_table else "order",
             f"{column}{'.desc' if desc else ''}{'.nullsfirst' if nullsfirst else ''}",
         )
         return self
 
     def limit(
-        self: _FilterT, size: int, *, start: int = 0, foreign_table: Optional[str] = None
+        self: _FilterT, size: int, *, foreign_table: Optional[str] = None
     ) -> _FilterT:
         """Limit the number of rows returned by a query.
 
         Args:
             size: The number of rows to be returned
-            start: Offset to start from
             foreign_table: Foreign table name to limit
         .. versionchanged:: 0.10.3
            Allow limiting results returned for foreign tables with the foreign_table parameter.
         """
-        self.headers["Range-Unit"] = "items"
-        self.headers["Range"] = f"{start}-{start + size - 1}"
-
-        if foreign_table is not None:
-            self.params = self.params.add(
-                f"{foreign_table}.limit",
-                size,
-            )
+        self.params = self.params.add(
+            f"{foreign_table}.limit" if foreign_table else "limit",
+            size,
+        )
         return self
 
     def range(self: _FilterT, start: int, end: int) -> _FilterT:
