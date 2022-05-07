@@ -19,9 +19,27 @@ from ..base_request_builder import (
 from ..exceptions import APIError
 from ..types import ReturnMethod
 from ..utils import AsyncClient
+from abc import ABC, abstractmethod
 
 
-class AsyncQueryRequestBuilder:
+class QueryRequestBuilder(ABC):
+    @abstractmethod
+    async def execute(self) -> APIResponse:
+        """Execute the query.
+
+        .. tip::
+            This is the last method called, after the query is built.
+
+        Returns:
+            :class:`APIResponse`
+
+        Raises:
+            :class:`APIError` If the API raised an error.
+        """
+        raise NotImplementedError("Children class is supposed to have this method")
+
+
+class AsyncQueryRequestBuilder(QueryRequestBuilder):
     def __init__(
         self,
         session: AsyncClient,
@@ -39,17 +57,6 @@ class AsyncQueryRequestBuilder:
         self.json = json
 
     async def execute(self) -> APIResponse:
-        """Execute the query.
-
-        .. tip::
-            This is the last method called, after the query is built.
-
-        Returns:
-            :class:`APIResponse`
-
-        Raises:
-            :class:`APIError` If the API raised an error.
-        """
         r = await self.session.request(
             self.http_method,
             self.path,
@@ -108,32 +115,28 @@ class AsyncQueryFactory:
         return self.is_single and cond
 
     @property
-    def query_request_builder(self):
-        return AsyncQueryFactory(
-            headers=self.headers,
-            http_method=self.http_method,
-            json=self.json,
-            params=self.params,
-            path=self.path,
-            session=self.session,
-        )
-
-    @property
-    def maybe_single_request_builder(self):
-        return AsyncMaybeSingleRequestBuilder(
-            headers=self.headers,
-            http_method=self.http_method,
-            json=self.json,
-            params=self.params,
-            path=self.path,
-            session=self.session,
-        )
-
-    def execute(self) -> APIResponse:
+    def request_builder(self) -> QueryRequestBuilder:
         if self.is_maybe_single:
-            return self.maybe_single_request_builder.execute()
+            return AsyncMaybeSingleRequestBuilder(
+                headers=self.headers,
+                http_method=self.http_method,
+                json=self.json,
+                params=self.params,
+                path=self.path,
+                session=self.session,
+            )
         else:
-            return self.query_request_builder.execute()
+            return AsyncQueryRequestBuilder(
+                headers=self.headers,
+                http_method=self.http_method,
+                json=self.json,
+                params=self.params,
+                path=self.path,
+                session=self.session,
+            )
+
+    async def execute(self) -> APIResponse:
+        return await self.request_builder.execute()
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
