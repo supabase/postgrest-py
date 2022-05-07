@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from typing import Optional
 
 from httpx import Headers, QueryParams
@@ -19,7 +20,6 @@ from ..base_request_builder import (
 from ..exceptions import APIError
 from ..types import ReturnMethod
 from ..utils import AsyncClient
-from abc import ABC, abstractmethod
 
 
 class QueryRequestBuilder(ABC):
@@ -66,7 +66,9 @@ class AsyncQueryRequestBuilder(QueryRequestBuilder):
         )
 
         try:
-            if 200 <= r.status_code <= 299:  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
+            if (
+                200 <= r.status_code <= 299
+            ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
                 return APIResponse.from_http_request_response(r)
             else:
                 raise APIError(r.json())
@@ -80,11 +82,13 @@ class AsyncMaybeSingleRequestBuilder(AsyncQueryRequestBuilder):
             r = await super().execute()
         except APIError as e:
             if e.details and "Results contain 0 rows" in e.details:
-                return APIResponse.from_dict({
-                    "data": None,
-                    "error": None,
-                    "count": 0  # NOTE: needs to take value from res.count
-                })
+                return APIResponse.from_dict(
+                    {
+                        "data": None,
+                        "error": None,
+                        "count": 0,  # NOTE: needs to take value from res.count
+                    }
+                )
         return r
 
 
@@ -111,7 +115,10 @@ class AsyncQueryFactory:
 
     @property
     def is_maybe_single(self):
-        cond = "x-maybeSingle" in self.headers and self.headers["x-maybeSingle"].lower() == "true"
+        cond = (
+            "x-maybeSingle" in self.headers
+            and self.headers["x-maybeSingle"].lower() == "true"
+        )
         return self.is_single and cond
 
     @property
@@ -220,9 +227,7 @@ class AsyncRequestBuilder:
             returning=returning,
             upsert=upsert,
         )
-        return AsyncQueryFactory(
-            self.session, self.path, method, headers, params, json
-        )
+        return AsyncQueryFactory(self.session, self.path, method, headers, params, json)
 
     def upsert(
         self,
@@ -248,9 +253,7 @@ class AsyncRequestBuilder:
             returning=returning,
             ignore_duplicates=ignore_duplicates,
         )
-        return AsyncQueryFactory(
-            self.session, self.path, method, headers, params, json
-        )
+        return AsyncQueryFactory(self.session, self.path, method, headers, params, json)
 
     def update(
         self,
