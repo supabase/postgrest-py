@@ -111,7 +111,7 @@ class AsyncQueryFactory:
 
     @property
     def is_single(self):
-        return self.headers["Accept"] == "application/vnd.pgrst.object+json"
+        return self.headers.get("Accept") == "application/vnd.pgrst.object+json"
 
     @property
     def is_maybe_single(self):
