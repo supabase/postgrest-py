@@ -156,12 +156,12 @@ class APIResponse(BaseModel):
         return cls(data=data, count=count)
 
     @classmethod
-    def from_dict(
-        cls: Type[APIResponse], dict: Dict[str, Any]
-    ) -> APIResponse:
+    def from_dict(cls: Type[APIResponse], dict: Dict[str, Any]) -> APIResponse:
         keys = dict.keys()
         assert len(keys) == 3 and "data" in keys and "count" in keys and "error" in keys
-        return cls(data=dict.get("data"), count=dict.get("count"), error=dict.get("error"))
+        return cls(
+            data=dict.get("data"), count=dict.get("count"), error=dict.get("error")
+        )
 
 
 _FilterT = TypeVar("_FilterT", bound="BaseFilterRequestBuilder")
@@ -415,8 +415,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         return self
 
     def maybe_single(self: _FilterT) -> _FilterT:
-        """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error.
-        """
+        """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error."""
         self.headers["Accept"] = "application/vnd.pgrst.object+json"
         self.headers["x-maybeSingle"] = "true"
         return self
