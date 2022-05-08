@@ -84,8 +84,9 @@ async def test_response_status_code_outside_ok(postgrest_client: AsyncPostgrestC
         await postgrest_client.from_("test").select("a", "b").eq(
             "c", "d"
         ).execute()  # gives status_code = 400
+    exc_response = exc_info.value.args[0]
     assert (
-        isinstance(exc_info.value.args[0], dict)
-        and exc_info.value.args[0].get("success") is False
+        isinstance(exc_response, str)
+        and "success" in exc_response
+        and "400" in exc_response
     )
-    assert isinstance(exc_info.value.args[0].get("errors"), list)
