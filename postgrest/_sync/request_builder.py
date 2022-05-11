@@ -58,7 +58,6 @@ class SyncQueryRequestBuilder:
             params=self.params,
             headers=self.headers,
         )
-
         try:
             if (
                 200 <= r.status_code <= 299
@@ -106,7 +105,6 @@ class SyncSingleRequestBuilder:
             params=self.params,
             headers=self.headers,
         )
-
         try:
             if (
                 200 <= r.status_code <= 299
@@ -120,6 +118,7 @@ class SyncSingleRequestBuilder:
 
 class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder):
     def execute(self) -> SingleAPIResponse:
+        r = None
         try:
             r = super().execute()
         except APIError as e:
@@ -131,6 +130,15 @@ class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder):
                         "count": 0,  # NOTE: needs to take value from res.count
                     }
                 )
+        if not r:
+            raise APIError(
+                {
+                    "message": "Missing response",
+                    "code": "204",
+                    "hint": "Please check traceback of the code",
+                    "details": "Postgrest couldn't retrieve response, please check traceback of the code. Please create an issue in `supabase-community/postgrest-py` if needed.",
+                }
+            )
         return r
 
 
@@ -167,7 +175,7 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
             self, session, path, http_method, headers, params, json
         )
 
-    def single(self):
+    def single(self) -> SyncSingleRequestBuilder:
         """Specify that the query will only return a single row in response.
 
         .. caution::
@@ -180,10 +188,10 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
             json=self.json,
             params=self.params,
             path=self.path,
-            session=self.session,
+            session=self.session,  # type: ignore
         )
 
-    def maybe_single(self):
+    def maybe_single(self) -> SyncMaybeSingleRequestBuilder:
         """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error."""
         self.headers["Accept"] = "application/vnd.pgrst.object+json"
         return SyncMaybeSingleRequestBuilder(
@@ -192,7 +200,7 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
             json=self.json,
             params=self.params,
             path=self.path,
-            session=self.session,
+            session=self.session,  # type: ignore
         )
 
 

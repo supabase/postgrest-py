@@ -113,7 +113,6 @@ class AsyncSingleRequestBuilder:
             else:
                 raise APIError(r.json())
         except ValidationError as e:
-            print("ENTER VALIDATION ERROR", e)
             raise APIError(r.json()) from e
 
 

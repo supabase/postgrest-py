@@ -120,7 +120,8 @@ async def test_response_maybe_single(postgrest_client: AsyncPostgrestClient):
 @pytest.mark.asyncio
 async def test_response_single_outside_ok(postgrest_client: AsyncPostgrestClient):
     with patch(
-        "httpx.AsyncClient.request", return_value=Response(status_code=400, json={})
+        "postgrest.utils.AsyncClient.request",
+        return_value=Response(status_code=400, json={}),
     ):
         client = postgrest_client.from_("test").select("a", "b").eq("c", "d").single()
         assert "Accept" in client.headers
