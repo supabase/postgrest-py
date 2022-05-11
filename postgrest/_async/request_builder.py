@@ -167,7 +167,7 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuild
             self, session, path, http_method, headers, params, json
         )
 
-    def single(self):
+    def single(self) -> AsyncSingleRequestBuilder:
         """Specify that the query will only return a single row in response.
 
         .. caution::
@@ -180,10 +180,10 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuild
             json=self.json,
             params=self.params,
             path=self.path,
-            session=self.session,
+            session=self.session,  # type: ignore
         )
 
-    def maybe_single(self):
+    def maybe_single(self) -> AsyncMaybeSingleRequestBuilder:
         """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error."""
         self.headers["Accept"] = "application/vnd.pgrst.object+json"
         return AsyncMaybeSingleRequestBuilder(
@@ -192,7 +192,7 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuild
             json=self.json,
             params=self.params,
             path=self.path,
-            session=self.session,
+            session=self.session,  # type: ignore
         )
 
 
