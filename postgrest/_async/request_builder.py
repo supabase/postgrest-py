@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from typing import Optional
 
 from httpx import Headers, QueryParams
@@ -11,6 +10,7 @@ from ..base_request_builder import (
     BaseFilterRequestBuilder,
     BaseSelectRequestBuilder,
     CountMethod,
+    SingleAPIResponse,
     pre_delete,
     pre_insert,
     pre_select,
@@ -22,24 +22,7 @@ from ..types import ReturnMethod
 from ..utils import AsyncClient
 
 
-class QueryRequestBuilder(ABC):
-    @abstractmethod
-    async def execute(self) -> APIResponse:
-        """Execute the query.
-
-        .. tip::
-            This is the last method called, after the query is built.
-
-        Returns:
-            :class:`APIResponse`
-
-        Raises:
-            :class:`APIError` If the API raised an error.
-        """
-        raise NotImplementedError("Children class is supposed to have this method")
-
-
-class AsyncQueryRequestBuilder(QueryRequestBuilder):
+class AsyncQueryRequestBuilder:
     def __init__(
         self,
         session: AsyncClient,
@@ -57,6 +40,17 @@ class AsyncQueryRequestBuilder(QueryRequestBuilder):
         self.json = json
 
     async def execute(self) -> APIResponse:
+        """Execute the query.
+
+        .. tip::
+            This is the last method called, after the query is built.
+
+        Returns:
+            :class:`APIResponse`
+
+        Raises:
+            :class:`APIError` If the API raised an error.
+        """
         r = await self.session.request(
             self.http_method,
             self.path,
@@ -76,23 +70,7 @@ class AsyncQueryRequestBuilder(QueryRequestBuilder):
             raise APIError(r.json()) from e
 
 
-class AsyncMaybeSingleRequestBuilder(AsyncQueryRequestBuilder):
-    async def execute(self) -> APIResponse:
-        try:
-            r = await super().execute()
-        except APIError as e:
-            if e.details and "Results contain 0 rows" in e.details:
-                return APIResponse.from_dict(
-                    {
-                        "data": None,
-                        "error": None,
-                        "count": 0,  # NOTE: needs to take value from res.count
-                    }
-                )
-        return r
-
-
-class AsyncQueryFactory:
+class AsyncSingleRequestBuilder:
     def __init__(
         self,
         session: AsyncClient,
@@ -109,45 +87,55 @@ class AsyncQueryFactory:
         self.params = params
         self.json = json
 
-    @property
-    def is_single(self):
-        return self.headers.get("Accept") == "application/vnd.pgrst.object+json"
+    async def execute(self) -> SingleAPIResponse:
+        """Execute the query.
 
-    @property
-    def is_maybe_single(self):
-        cond = (
-            "x-maybeSingle" in self.headers
-            and self.headers["x-maybeSingle"].lower() == "true"
+        .. tip::
+            This is the last method called, after the query is built.
+
+        Returns:
+            :class:`SingleAPIResponse`
+
+        Raises:
+            :class:`APIError` If the API raised an error.
+        """
+        r = await self.session.request(
+            self.http_method,
+            self.path,
+            json=self.json,
+            params=self.params,
+            headers=self.headers,
         )
-        return self.is_single and cond
 
-    @property
-    def request_builder(self) -> QueryRequestBuilder:
-        if self.is_maybe_single:
-            return AsyncMaybeSingleRequestBuilder(
-                headers=self.headers,
-                http_method=self.http_method,
-                json=self.json,
-                params=self.params,
-                path=self.path,
-                session=self.session,
-            )
-        else:
-            return AsyncQueryRequestBuilder(
-                headers=self.headers,
-                http_method=self.http_method,
-                json=self.json,
-                params=self.params,
-                path=self.path,
-                session=self.session,
-            )
+        try:
+            if (
+                200 <= r.status_code <= 299
+            ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
+                return SingleAPIResponse.from_http_request_response(r)
+            else:
+                raise APIError(r.json())
+        except ValidationError as e:
+            raise APIError(r.json()) from e
 
-    async def execute(self) -> APIResponse:
-        return await self.request_builder.execute()
+
+class AsyncMaybeSingleRequestBuilder(AsyncSingleRequestBuilder):
+    async def execute(self) -> SingleAPIResponse:
+        try:
+            r = await super().execute()
+        except APIError as e:
+            if e.details and "Results contain 0 rows" in e.details:
+                return SingleAPIResponse.from_dict(
+                    {
+                        "data": None,
+                        "error": None,
+                        "count": 0,  # NOTE: needs to take value from res.count
+                    }
+                )
+        return r
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
-class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryFactory):  # type: ignore
+class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
         session: AsyncClient,
@@ -158,13 +146,13 @@ class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryFactory):  #
         json: dict,
     ) -> None:
         BaseFilterRequestBuilder.__init__(self, session, headers, params)
-        AsyncQueryFactory.__init__(
+        AsyncQueryRequestBuilder.__init__(
             self, session, path, http_method, headers, params, json
         )
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
-class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryFactory):  # type: ignore
+class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
         session: AsyncClient,
@@ -175,8 +163,36 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryFactory):  #
         json: dict,
     ) -> None:
         BaseSelectRequestBuilder.__init__(self, session, headers, params)
-        AsyncQueryFactory.__init__(
+        AsyncQueryRequestBuilder.__init__(
             self, session, path, http_method, headers, params, json
+        )
+
+    def single(self):
+        """Specify that the query will only return a single row in response.
+
+        .. caution::
+            The API will raise an error if the query returned more than one row.
+        """
+        self.headers["Accept"] = "application/vnd.pgrst.object+json"
+        return AsyncSingleRequestBuilder(
+            headers=self.headers,
+            http_method=self.http_method,
+            json=self.json,
+            params=self.params,
+            path=self.path,
+            session=self.session,
+        )
+
+    def maybe_single(self):
+        """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error."""
+        self.headers["Accept"] = "application/vnd.pgrst.object+json"
+        return AsyncMaybeSingleRequestBuilder(
+            headers=self.headers,
+            http_method=self.http_method,
+            json=self.json,
+            params=self.params,
+            path=self.path,
+            session=self.session,
         )
 
 
@@ -210,7 +226,7 @@ class AsyncRequestBuilder:
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
         upsert: bool = False,
-    ) -> AsyncQueryFactory:
+    ) -> AsyncQueryRequestBuilder:
         """Run an INSERT query.
 
         Args:
@@ -219,7 +235,7 @@ class AsyncRequestBuilder:
             returning: Either 'minimal' or 'representation'
             upsert: Whether the query should be an upsert.
         Returns:
-            :class:`AsyncQueryFactory`
+            :class:`AsyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_insert(
             json,
@@ -227,7 +243,9 @@ class AsyncRequestBuilder:
             returning=returning,
             upsert=upsert,
         )
-        return AsyncQueryFactory(self.session, self.path, method, headers, params, json)
+        return AsyncQueryRequestBuilder(
+            self.session, self.path, method, headers, params, json
+        )
 
     def upsert(
         self,
@@ -236,7 +254,7 @@ class AsyncRequestBuilder:
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
         ignore_duplicates: bool = False,
-    ) -> AsyncQueryFactory:
+    ) -> AsyncQueryRequestBuilder:
         """Run an upsert (INSERT ... ON CONFLICT DO UPDATE) query.
 
         Args:
@@ -245,7 +263,7 @@ class AsyncRequestBuilder:
             returning: Either 'minimal' or 'representation'
             ignore_duplicates: Whether duplicate rows should be ignored.
         Returns:
-            :class:`AsyncQueryFactory`
+            :class:`AsyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_upsert(
             json,
@@ -253,7 +271,9 @@ class AsyncRequestBuilder:
             returning=returning,
             ignore_duplicates=ignore_duplicates,
         )
-        return AsyncQueryFactory(self.session, self.path, method, headers, params, json)
+        return AsyncQueryRequestBuilder(
+            self.session, self.path, method, headers, params, json
+        )
 
     def update(
         self,
