@@ -2,6 +2,7 @@ import pytest
 from httpx import BasicAuth, Headers
 
 from postgrest import SyncPostgrestClient
+from postgrest.exceptions import APIError
 
 
 @pytest.fixture
@@ -72,5 +73,20 @@ def test_schema(postgrest_client: SyncPostgrestClient):
 @pytest.mark.asyncio
 def test_params_purged_after_execute(postgrest_client: SyncPostgrestClient):
     assert len(postgrest_client.session.params) == 0
-    postgrest_client.from_("test").select("a", "b").eq("c", "d").execute()
+    with pytest.raises(APIError):
+        postgrest_client.from_("test").select("a", "b").eq("c", "d").execute()
     assert len(postgrest_client.session.params) == 0
+
+
+@pytest.mark.asyncio
+def test_response_status_code_outside_ok(postgrest_client: SyncPostgrestClient):
+    with pytest.raises(APIError) as exc_info:
+        postgrest_client.from_("test").select("a", "b").eq(
+            "c", "d"
+        ).execute()  # gives status_code = 400
+    exc_response = exc_info.value.args[0]
+    assert (
+        isinstance(exc_response, str)
+        and "success" in exc_response
+        and "400" in exc_response
+    )

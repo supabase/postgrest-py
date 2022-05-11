@@ -10,6 +10,7 @@ from ..base_request_builder import (
     BaseFilterRequestBuilder,
     BaseSelectRequestBuilder,
     CountMethod,
+    SingleAPIResponse,
     pre_delete,
     pre_insert,
     pre_select,
@@ -59,9 +60,78 @@ class SyncQueryRequestBuilder:
         )
 
         try:
-            return APIResponse.from_http_request_response(r)
+            if (
+                200 <= r.status_code <= 299
+            ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
+                return APIResponse.from_http_request_response(r)
+            else:
+                raise APIError(r.json())
         except ValidationError as e:
             raise APIError(r.json()) from e
+
+
+class SyncSingleRequestBuilder:
+    def __init__(
+        self,
+        session: SyncClient,
+        path: str,
+        http_method: str,
+        headers: Headers,
+        params: QueryParams,
+        json: dict,
+    ) -> None:
+        self.session = session
+        self.path = path
+        self.http_method = http_method
+        self.headers = headers
+        self.params = params
+        self.json = json
+
+    def execute(self) -> SingleAPIResponse:
+        """Execute the query.
+
+        .. tip::
+            This is the last method called, after the query is built.
+
+        Returns:
+            :class:`SingleAPIResponse`
+
+        Raises:
+            :class:`APIError` If the API raised an error.
+        """
+        r = self.session.request(
+            self.http_method,
+            self.path,
+            json=self.json,
+            params=self.params,
+            headers=self.headers,
+        )
+
+        try:
+            if (
+                200 <= r.status_code <= 299
+            ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
+                return SingleAPIResponse.from_http_request_response(r)
+            else:
+                raise APIError(r.json())
+        except ValidationError as e:
+            raise APIError(r.json()) from e
+
+
+class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder):
+    def execute(self) -> SingleAPIResponse:
+        try:
+            r = super().execute()
+        except APIError as e:
+            if e.details and "Results contain 0 rows" in e.details:
+                return SingleAPIResponse.from_dict(
+                    {
+                        "data": None,
+                        "error": None,
+                        "count": 0,  # NOTE: needs to take value from res.count
+                    }
+                )
+        return r
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
@@ -97,6 +167,34 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
             self, session, path, http_method, headers, params, json
         )
 
+    def single(self):
+        """Specify that the query will only return a single row in response.
+
+        .. caution::
+            The API will raise an error if the query returned more than one row.
+        """
+        self.headers["Accept"] = "application/vnd.pgrst.object+json"
+        return SyncSingleRequestBuilder(
+            headers=self.headers,
+            http_method=self.http_method,
+            json=self.json,
+            params=self.params,
+            path=self.path,
+            session=self.session,
+        )
+
+    def maybe_single(self):
+        """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error."""
+        self.headers["Accept"] = "application/vnd.pgrst.object+json"
+        return SyncMaybeSingleRequestBuilder(
+            headers=self.headers,
+            http_method=self.http_method,
+            json=self.json,
+            params=self.params,
+            path=self.path,
+            session=self.session,
+        )
+
 
 class SyncRequestBuilder:
     def __init__(self, session: SyncClient, path: str) -> None:
@@ -114,7 +212,7 @@ class SyncRequestBuilder:
             *columns: The names of the columns to fetch.
             count: The method to use to get the count of rows returned.
         Returns:
-            :class:`SyncSelectRequestBuilder`
+            :class:`AsyncSelectRequestBuilder`
         """
         method, params, headers, json = pre_select(*columns, count=count)
         return SyncSelectRequestBuilder(
@@ -137,7 +235,7 @@ class SyncRequestBuilder:
             returning: Either 'minimal' or 'representation'
             upsert: Whether the query should be an upsert.
         Returns:
-            :class:`SyncQueryRequestBuilder`
+            :class:`AsyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_insert(
             json,
@@ -165,7 +263,7 @@ class SyncRequestBuilder:
             returning: Either 'minimal' or 'representation'
             ignore_duplicates: Whether duplicate rows should be ignored.
         Returns:
-            :class:`SyncQueryRequestBuilder`
+            :class:`AsyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_upsert(
             json,
@@ -191,7 +289,7 @@ class SyncRequestBuilder:
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`SyncFilterRequestBuilder`
+            :class:`AsyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_update(
             json,
@@ -214,7 +312,7 @@ class SyncRequestBuilder:
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`SyncFilterRequestBuilder`
+            :class:`AsyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_delete(
             count=count,
