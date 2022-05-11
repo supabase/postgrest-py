@@ -41,10 +41,7 @@ def pre_select(
     else:
         method = RequestMethod.HEAD
         params = QueryParams()
-    if count:
-        headers = Headers({"Prefer": f"count={count}"})
-    else:
-        headers = Headers()
+    headers = Headers({"Prefer": f"count={count}"}) if count else Headers()
     return QueryArgs(method, params, headers, {})
 
 
@@ -409,7 +406,7 @@ class BaseFilterRequestBuilder:
     def match(self: _FilterT, query: Dict[str, Any]) -> _FilterT:
         updated_query = self
 
-        if len(query) == 0:
+        if not query:
             raise ValueError(
                 "query dictionary should contain at least one key-value pair"
             )
