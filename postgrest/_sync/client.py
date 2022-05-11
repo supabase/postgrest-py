@@ -85,7 +85,7 @@ class SyncPostgrestClient(BasePostgrestClient):
         Returns:
             :class:`SyncFilterRequestBuilder`
         Example:
-            .. code-block:: python
+            ::
 
                 await client.rpc("foobar", {"arg": "value"}).execute()
 
