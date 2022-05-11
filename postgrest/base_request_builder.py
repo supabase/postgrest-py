@@ -165,41 +165,9 @@ class APIResponse(BaseModel):
         )
 
 
-class SingleAPIResponse(BaseModel):
-    data: Dict[str, Any]
+class SingleAPIResponse(APIResponse):
+    data: Dict[str, Any]  # type: ignore
     """The data returned by the query."""
-    count: Optional[int] = None
-    """The number of rows returned."""
-
-    @staticmethod
-    def _get_count_from_content_range_header(
-        content_range_header: str,
-    ) -> Optional[int]:
-        content_range = content_range_header.split("/")
-        if len(content_range) < 2:
-            return None
-        return int(content_range[1])
-
-    @staticmethod
-    def _is_count_in_prefer_header(prefer_header: str) -> bool:
-        pattern = f"count=({'|'.join([cm.value for cm in CountMethod])})"
-        return bool(search(pattern, prefer_header))
-
-    @classmethod
-    def _get_count_from_http_request_response(
-        cls: Type[SingleAPIResponse],
-        request_response: RequestResponse,
-    ) -> Optional[int]:
-        prefer_header: Optional[str] = request_response.request.headers.get("prefer")
-        if not prefer_header:
-            return None
-        is_count_in_prefer_header = cls._is_count_in_prefer_header(prefer_header)
-        content_range_header: Optional[str] = request_response.headers.get(
-            "content-range"
-        )
-        if not (is_count_in_prefer_header and content_range_header):
-            return None
-        return cls._get_count_from_content_range_header(content_range_header)
 
     @classmethod
     def from_http_request_response(

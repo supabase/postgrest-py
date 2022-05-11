@@ -1,5 +1,7 @@
+from unittest.mock import patch
+
 import pytest
-from httpx import BasicAuth, Headers
+from httpx import BasicAuth, Headers, Response
 
 from postgrest import AsyncPostgrestClient
 from postgrest.exceptions import APIError
@@ -84,9 +86,45 @@ async def test_response_status_code_outside_ok(postgrest_client: AsyncPostgrestC
         await postgrest_client.from_("test").select("a", "b").eq(
             "c", "d"
         ).execute()  # gives status_code = 400
-    exc_response = exc_info.value.args[0]
+    exc_response = exc_info.value.json()
+    assert not exc_response.get("success")
+    assert isinstance(exc_response.get("errors"), list)
     assert (
-        isinstance(exc_response, str)
-        and "success" in exc_response
-        and "400" in exc_response
+        isinstance(exc_response["errors"][0], dict)
+        and "code" in exc_response["errors"][0]
     )
+    assert exc_response["errors"][0].get("code") == 400
+
+
+@pytest.mark.asyncio
+async def test_response_maybe_single(postgrest_client: AsyncPostgrestClient):
+    with patch(
+        "postgrest._async.request_builder.AsyncSingleRequestBuilder.execute",
+        side_effect=APIError(
+            {"message": "mock error", "code": "400", "hint": "mock", "details": "mock"}
+        ),
+    ):
+        client = (
+            postgrest_client.from_("test").select("a", "b").eq("c", "d").maybe_single()
+        )
+        assert "Accept" in client.headers
+        assert client.headers.get("Accept") == "application/vnd.pgrst.object+json"
+        with pytest.raises(APIError) as exc_info:
+            await client.execute()
+        assert isinstance(exc_info, pytest.ExceptionInfo)
+        exc_response = exc_info.value.json()
+        assert isinstance(exc_response.get("message"), str)
+        assert "code" in exc_response and int(exc_response["code"]) == 204
+
+
+@pytest.mark.asyncio
+async def test_response_single_outside_ok(postgrest_client: AsyncPostgrestClient):
+    with patch(
+        "httpx.AsyncClient.request", return_value=Response(status_code=400, json={})
+    ):
+        client = postgrest_client.from_("test").select("a", "b").eq("c", "d").single()
+        assert "Accept" in client.headers
+        assert client.headers.get("Accept") == "application/vnd.pgrst.object+json"
+        with pytest.raises(APIError) as exc_info:
+            await client.execute()
+        assert isinstance(exc_info.value, APIError)

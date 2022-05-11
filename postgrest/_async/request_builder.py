@@ -58,7 +58,6 @@ class AsyncQueryRequestBuilder:
             params=self.params,
             headers=self.headers,
         )
-
         try:
             if (
                 200 <= r.status_code <= 299
@@ -106,7 +105,6 @@ class AsyncSingleRequestBuilder:
             params=self.params,
             headers=self.headers,
         )
-
         try:
             if (
                 200 <= r.status_code <= 299
@@ -115,11 +113,13 @@ class AsyncSingleRequestBuilder:
             else:
                 raise APIError(r.json())
         except ValidationError as e:
+            print("ENTER VALIDATION ERROR", e)
             raise APIError(r.json()) from e
 
 
 class AsyncMaybeSingleRequestBuilder(AsyncSingleRequestBuilder):
     async def execute(self) -> SingleAPIResponse:
+        r = None
         try:
             r = await super().execute()
         except APIError as e:
@@ -131,6 +131,15 @@ class AsyncMaybeSingleRequestBuilder(AsyncSingleRequestBuilder):
                         "count": 0,  # NOTE: needs to take value from res.count
                     }
                 )
+        if not r:
+            raise APIError(
+                {
+                    "message": "Missing response",
+                    "code": "204",
+                    "hint": "Please check traceback of the code",
+                    "details": "Postgrest couldn't retrieve response, please check traceback of the code. Please create an issue in `supabase-community/postgrest-py` if needed.",
+                }
+            )
         return r
 
 
