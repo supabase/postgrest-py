@@ -1,8 +1,7 @@
-from asyncio import coroutine
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
-from httpx import BasicAuth, Headers, Response
+from httpx import BasicAuth, Headers
 
 from postgrest import AsyncPostgrestClient
 from postgrest.exceptions import APIError
@@ -116,17 +115,3 @@ async def test_response_maybe_single(postgrest_client: AsyncPostgrestClient):
         exc_response = exc_info.value.json()
         assert isinstance(exc_response.get("message"), str)
         assert "code" in exc_response and int(exc_response["code"]) == 204
-
-
-@pytest.mark.asyncio
-async def test_response_single_outside_ok(postgrest_client: AsyncPostgrestClient):
-    with patch(
-        "postgrest.utils.AsyncClient.request",
-        side_effect=coroutine(Mock(return_value=Response(status_code=400, json={}))),
-    ):
-        client = postgrest_client.from_("test").select("a", "b").eq("c", "d").single()
-        assert "Accept" in client.headers
-        assert client.headers.get("Accept") == "application/vnd.pgrst.object+json"
-        with pytest.raises(APIError) as exc_info:
-            await client.execute()
-        assert isinstance(exc_info.value, APIError)
