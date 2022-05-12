@@ -1,4 +1,5 @@
-from unittest.mock import patch
+from asyncio import coroutine
+from unittest.mock import Mock, patch
 
 import pytest
 from httpx import BasicAuth, Headers, Response
@@ -121,7 +122,7 @@ async def test_response_maybe_single(postgrest_client: AsyncPostgrestClient):
 async def test_response_single_outside_ok(postgrest_client: AsyncPostgrestClient):
     with patch(
         "postgrest.utils.AsyncClient.request",
-        return_value=Response(status_code=400, json={}),
+        side_effect=coroutine(Mock(return_value=Response(status_code=400, json={}))),
     ):
         client = postgrest_client.from_("test").select("a", "b").eq("c", "d").single()
         assert "Accept" in client.headers
