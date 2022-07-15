@@ -69,14 +69,18 @@ def pre_upsert(
     count: Optional[CountMethod],
     returning: ReturnMethod,
     ignore_duplicates: bool,
+    on_conflict="": str,
 ) -> QueryArgs:
+    query_params = dict()
     prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
     resolution = "ignore" if ignore_duplicates else "merge"
     prefer_headers.append(f"resolution={resolution}-duplicates")
     headers = Headers({"Prefer": ",".join(prefer_headers)})
-    return QueryArgs(RequestMethod.POST, QueryParams(), headers, json)
+    if on_conflict:
+        query_params["on_conflict"] = on_conflict
+    return QueryArgs(RequestMethod.POST, QueryParams(query_params), headers, json)
 
 
 def pre_update(
