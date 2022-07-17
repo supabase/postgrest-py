@@ -165,6 +165,7 @@ class SyncRequestBuilder:
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
             ignore_duplicates: Whether duplicate rows should be ignored.
+            on_conflict: Specified columns to be made to work with UNIQUE constraint.
         Returns:
             :class:`SyncQueryRequestBuilder`
         """
