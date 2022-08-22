@@ -34,7 +34,7 @@ pytest-cov = "^3.0.0"
 pytest-depends = "^1.0.1"
 pytest-asyncio = "^0.18.3"
 unasync-cli = "^0.0.9"
-python-semantic-release = "^7.28.1"
+python-semantic-release = "^7.31.3"
 furo = "^2022.6.4"
 
 [tool.semantic_release]
