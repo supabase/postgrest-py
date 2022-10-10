@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "postgrest-py"
-version = "0.10.2"
+version = "0.10.3"
 description = "PostgREST client for Python. This library provides an ORM interface to PostgREST."
 authors = ["Lương Quang Mạnh <luongquangmanh85@gmail.com>"]
 homepage = "https://github.com/supabase-community/postgrest-py"
@@ -19,7 +19,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-httpx = ">=0.20,<0.24"
+httpx = "^0.23.0"
 deprecation = "^2.1.0"
 pydantic = "^1.9.0"
 
