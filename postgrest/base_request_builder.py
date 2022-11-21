@@ -406,6 +406,18 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         )
         return self
 
+    def offset(self: _FilterT, size: int) -> _FilterT:
+        """Set the starting row index returned by a query.
+
+        Args:
+            size: The number of the row to start at
+        """
+        self.params = self.params.add(
+            'limit'
+            size,
+        )
+        return self
+
     def range(self: _FilterT, start: int, end: int) -> _FilterT:
         self.headers["Range-Unit"] = "items"
         self.headers["Range"] = f"{start}-{end - 1}"
