@@ -413,7 +413,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
             size: The number of the row to start at
         """
         self.params = self.params.add(
-            'limit',
+            'offset',
             size,
         )
         return self
