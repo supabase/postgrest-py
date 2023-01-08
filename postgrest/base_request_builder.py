@@ -6,6 +6,7 @@ from typing import (
     Any,
     Dict,
     Iterable,
+    List,
     NamedTuple,
     Optional,
     Tuple,
@@ -105,7 +106,7 @@ def pre_delete(
 
 
 class APIResponse(BaseModel):
-    data: Any
+    data: List[Dict[str, Any]]
     """The data returned by the query."""
     count: Optional[int] = None
     """The number of rows returned."""
@@ -154,6 +155,37 @@ class APIResponse(BaseModel):
         data = request_response.json()
         count = cls._get_count_from_http_request_response(request_response)
         return cls(data=data, count=count)
+
+    @classmethod
+    def from_dict(cls: Type[APIResponse], dict: Dict[str, Any]) -> APIResponse:
+        keys = dict.keys()
+        assert len(keys) == 3 and "data" in keys and "count" in keys and "error" in keys
+        return cls(
+            data=dict.get("data"), count=dict.get("count"), error=dict.get("error")
+        )
+
+
+class SingleAPIResponse(APIResponse):
+    data: Dict[str, Any]  # type: ignore
+    """The data returned by the query."""
+
+    @classmethod
+    def from_http_request_response(
+        cls: Type[SingleAPIResponse], request_response: RequestResponse
+    ) -> SingleAPIResponse:
+        data = request_response.json()
+        count = cls._get_count_from_http_request_response(request_response)
+        return cls(data=data, count=count)
+
+    @classmethod
+    def from_dict(
+        cls: Type[SingleAPIResponse], dict: Dict[str, Any]
+    ) -> SingleAPIResponse:
+        keys = dict.keys()
+        assert len(keys) == 3 and "data" in keys and "count" in keys and "error" in keys
+        return cls(
+            data=dict.get("data"), count=dict.get("count"), error=dict.get("error")
+        )
 
 
 _FilterT = TypeVar("_FilterT", bound="BaseFilterRequestBuilder")
@@ -409,13 +441,4 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
     def range(self: _FilterT, start: int, end: int) -> _FilterT:
         self.headers["Range-Unit"] = "items"
         self.headers["Range"] = f"{start}-{end - 1}"
-        return self
-
-    def single(self: _FilterT) -> _FilterT:
-        """Specify that the query will only return a single row in response.
-
-        .. caution::
-            The API will raise an error if the query returned more than one row.
-        """
-        self.headers["Accept"] = "application/vnd.pgrst.object+json"
         return self

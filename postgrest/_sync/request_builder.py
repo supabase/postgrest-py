@@ -10,6 +10,7 @@ from ..base_request_builder import (
     BaseFilterRequestBuilder,
     BaseSelectRequestBuilder,
     CountMethod,
+    SingleAPIResponse,
     pre_delete,
     pre_insert,
     pre_select,
@@ -57,11 +58,88 @@ class SyncQueryRequestBuilder:
             params=self.params,
             headers=self.headers,
         )
-
         try:
-            return APIResponse.from_http_request_response(r)
+            if (
+                200 <= r.status_code <= 299
+            ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
+                return APIResponse.from_http_request_response(r)
+            else:
+                raise APIError(r.json())
         except ValidationError as e:
             raise APIError(r.json()) from e
+
+
+class SyncSingleRequestBuilder:
+    def __init__(
+        self,
+        session: SyncClient,
+        path: str,
+        http_method: str,
+        headers: Headers,
+        params: QueryParams,
+        json: dict,
+    ) -> None:
+        self.session = session
+        self.path = path
+        self.http_method = http_method
+        self.headers = headers
+        self.params = params
+        self.json = json
+
+    def execute(self) -> SingleAPIResponse:
+        """Execute the query.
+
+        .. tip::
+            This is the last method called, after the query is built.
+
+        Returns:
+            :class:`SingleAPIResponse`
+
+        Raises:
+            :class:`APIError` If the API raised an error.
+        """
+        r = self.session.request(
+            self.http_method,
+            self.path,
+            json=self.json,
+            params=self.params,
+            headers=self.headers,
+        )
+        try:
+            if (
+                200 <= r.status_code <= 299
+            ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
+                return SingleAPIResponse.from_http_request_response(r)
+            else:
+                raise APIError(r.json())
+        except ValidationError as e:
+            raise APIError(r.json()) from e
+
+
+class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder):
+    def execute(self) -> SingleAPIResponse:
+        r = None
+        try:
+            r = super().execute()
+        except APIError as e:
+            if e.details and "Results contain 0 rows" in e.details:
+                return SingleAPIResponse.from_dict(
+                    {
+                        "data": None,
+                        "error": None,
+                        "count": 0,  # NOTE: needs to take value from res.count
+                    }
+                )
+        if not r:
+            raise APIError(
+                {
+                    "message": "Missing response",
+                    "code": "204",
+                    "hint": "Please check traceback of the code",
+                    "details": "Postgrest couldn't retrieve response, please check traceback of the code. Please create an issue in `supabase-community/postgrest-py` if needed.",
+                }
+            )
+        return r
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
@@ -95,6 +173,34 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
         BaseSelectRequestBuilder.__init__(self, session, headers, params)
         SyncQueryRequestBuilder.__init__(
             self, session, path, http_method, headers, params, json
+        )
+
+    def single(self) -> SyncSingleRequestBuilder:
+        """Specify that the query will only return a single row in response.
+
+        .. caution::
+            The API will raise an error if the query returned more than one row.
+        """
+        self.headers["Accept"] = "application/vnd.pgrst.object+json"
+        return SyncSingleRequestBuilder(
+            headers=self.headers,
+            http_method=self.http_method,
+            json=self.json,
+            params=self.params,
+            path=self.path,
+            session=self.session,  # type: ignore
+        )
+
+    def maybe_single(self) -> SyncMaybeSingleRequestBuilder:
+        """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error."""
+        self.headers["Accept"] = "application/vnd.pgrst.object+json"
+        return SyncMaybeSingleRequestBuilder(
+            headers=self.headers,
+            http_method=self.http_method,
+            json=self.json,
+            params=self.params,
+            path=self.path,
+            session=self.session,  # type: ignore
         )
 
 

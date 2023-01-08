@@ -68,7 +68,7 @@ class SyncPostgrestClient(BasePostgrestClient):
         return SyncRequestBuilder(self.session, f"/{table}")
 
     def table(self, table: str) -> SyncRequestBuilder:
-        """Alias to :meth:`from_`."""
+        """Alias to self.from_()."""
         return self.from_(table)
 
     @deprecated("0.2.0", "1.0.0", __version__, "Use self.from_() instead")
@@ -86,6 +86,7 @@ class SyncPostgrestClient(BasePostgrestClient):
             :class:`SyncFilterRequestBuilder`
         Example:
             ::
+
                 await client.rpc("foobar", {"arg": "value"}).execute()
 
         .. versionchanged:: 0.11.0
