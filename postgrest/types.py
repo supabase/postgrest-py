@@ -2,14 +2,20 @@ from __future__ import annotations
 
 from enum import Enum
 
+import sys
 
-class CountMethod(str, Enum):
+if sys.version_info >= (3, 11):
+    from enum import StrEnum
+else:
+    from strenum import StrEnum
+
+class CountMethod(StrEnum):
     exact = "exact"
     planned = "planned"
     estimated = "estimated"
 
 
-class Filters(str, Enum):
+class Filters(StrEnum):
     NOT = "not"
     EQ = "eq"
     NEQ = "neq"
@@ -35,7 +41,7 @@ class Filters(str, Enum):
     ADJ = "adj"
 
 
-class RequestMethod(str, Enum):
+class RequestMethod(StrEnum):
     GET = "GET"
     POST = "POST"
     PATCH = "PATCH"
@@ -44,6 +50,6 @@ class RequestMethod(str, Enum):
     HEAD = "HEAD"
 
 
-class ReturnMethod(str, Enum):
+class ReturnMethod(StrEnum):
     minimal = "minimal"
     representation = "representation"
