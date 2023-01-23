@@ -1767,6 +1767,23 @@ lint = ["docutils-stubs", "flake8", "mypy"]
 test = ["pytest"]
 
 [[package]]
+name = "strenum"
+version = "0.4.9"
+description = "An Enum that inherits from str."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "StrEnum-0.4.9-py3-none-any.whl", hash = "sha256:c3df653030837b8077b2eb929738283481f01b07c7ef73ab4db368449830cc46"},
+    {file = "StrEnum-0.4.9.tar.gz", hash = "sha256:1b15ccff9eb0e22e77b8f874366ea752754280adc9144e6e388705d14cc350e7"},
+]
+
+[package.extras]
+docs = ["myst-parser[linkify]", "sphinx", "sphinx-rtd-theme"]
+release = ["twine"]
+test = ["pylint", "pytest", "pytest-black", "pytest-cov", "pytest-pylint"]
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -2016,4 +2033,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7"
-content-hash = "6fcc218c197f6b2fb4f52131919c658dc889bd15e3cd7168651391d3a8867777"
+content-hash = "c79f81b084c8259a2b7f9cf135788418ec6766501e6def11de58a7e4be25c2b1"
