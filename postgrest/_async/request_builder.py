@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Union
 
 from httpx import Headers, QueryParams
 from pydantic import ValidationError
@@ -229,7 +229,7 @@ class AsyncRequestBuilder:
 
     def insert(
         self,
-        json: dict,
+        json: Union[dict, list],
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
