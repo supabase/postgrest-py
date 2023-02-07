@@ -262,6 +262,7 @@ class SyncRequestBuilder:
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
         ignore_duplicates: bool = False,
+        on_conflict: str = "",
     ) -> SyncQueryRequestBuilder:
         """Run an upsert (INSERT ... ON CONFLICT DO UPDATE) query.
 
@@ -270,6 +271,7 @@ class SyncRequestBuilder:
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
             ignore_duplicates: Whether duplicate rows should be ignored.
+            on_conflict: Specified columns to be made to work with UNIQUE constraint.
         Returns:
             :class:`SyncQueryRequestBuilder`
         """
@@ -278,6 +280,7 @@ class SyncRequestBuilder:
             count=count,
             returning=returning,
             ignore_duplicates=ignore_duplicates,
+            on_conflict=on_conflict
         )
         return SyncQueryRequestBuilder(
             self.session, self.path, method, headers, params, json
