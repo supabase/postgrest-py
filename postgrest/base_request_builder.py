@@ -41,10 +41,7 @@ def pre_select(
     else:
         method = RequestMethod.HEAD
         params = QueryParams()
-    if count:
-        headers = Headers({"Prefer": f"count={count}"})
-    else:
-        headers = Headers()
+    headers = Headers({"Prefer": f"count={count}"}) if count else Headers()
     return QueryArgs(method, params, headers, {})
 
 
@@ -72,7 +69,7 @@ def pre_upsert(
     ignore_duplicates: bool,
     on_conflict: str = "",
 ) -> QueryArgs:
-    query_params = dict()
+    query_params = {}
     prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
@@ -127,9 +124,7 @@ class APIResponse(BaseModel):
         content_range_header: str,
     ) -> Optional[int]:
         content_range = content_range_header.split("/")
-        if len(content_range) < 2:
-            return None
-        return int(content_range[1])
+        return None if len(content_range) < 2 else int(content_range[1])
 
     @staticmethod
     def _is_count_in_prefer_header(prefer_header: str) -> bool:
@@ -148,9 +143,11 @@ class APIResponse(BaseModel):
         content_range_header: Optional[str] = request_response.headers.get(
             "content-range"
         )
-        if not (is_count_in_prefer_header and content_range_header):
-            return None
-        return cls._get_count_from_content_range_header(content_range_header)
+        return (
+            cls._get_count_from_content_range_header(content_range_header)
+            if (is_count_in_prefer_header and content_range_header)
+            else None
+        )
 
     @classmethod
     def from_http_request_response(
@@ -381,7 +378,7 @@ class BaseFilterRequestBuilder:
     def match(self: _FilterT, query: Dict[str, Any]) -> _FilterT:
         updated_query = self
 
-        if len(query) == 0:
+        if not query:
             raise ValueError(
                 "query dictionary should contain at least one key-value pair"
             )
