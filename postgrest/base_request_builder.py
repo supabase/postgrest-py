@@ -70,7 +70,7 @@ def pre_upsert(
     count: Optional[CountMethod],
     returning: ReturnMethod,
     ignore_duplicates: bool,
-    on_conflict: str= "",
+    on_conflict: str = "",
 ) -> QueryArgs:
     query_params = dict()
     prefer_headers = [f"return={returning}"]
