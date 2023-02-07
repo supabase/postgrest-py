@@ -280,7 +280,7 @@ class AsyncRequestBuilder:
             count=count,
             returning=returning,
             ignore_duplicates=ignore_duplicates,
-            on_conflict=on_conflict
+            on_conflict=on_conflict,
         )
         return AsyncQueryRequestBuilder(
             self.session, self.path, method, headers, params, json
