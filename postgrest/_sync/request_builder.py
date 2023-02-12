@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Union
 
 from httpx import Headers, QueryParams
 from pydantic import ValidationError
@@ -202,6 +202,31 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
             path=self.path,
             session=self.session,  # type: ignore
         )
+    def text_search(
+            self,
+            column: str,
+            query: str,
+            options: Dict[str, any] = {}
+    ) -> SyncFilterRequestBuilder:
+        type_ = options.get('type')
+        type_part = ''
+        if type_ == 'plain':
+            type_part = 'pl'
+        elif type_ == 'phrase':
+            type_part = 'ph'
+        elif type_ == 'web_search':
+            type_part = 'w'
+        config_part = f"{options.get('config')}" if options.get('config') else  ''
+        self.params = self.params.add(column, f"{type_part}fts{config_part}.{query}")
+
+        return SyncQueryRequestBuilder(
+            headers=self.headers,
+            http_method=self.http_method,
+            json=self.json,
+            params=self.params,
+            path=self.path,
+            session=self.session,  # type: ignore
+        )
 
 
 class SyncRequestBuilder:
@@ -220,7 +245,7 @@ class SyncRequestBuilder:
             *columns: The names of the columns to fetch.
             count: The method to use to get the count of rows returned.
         Returns:
-            :class:`SyncSelectRequestBuilder`
+            :class:`AsyncSelectRequestBuilder`
         """
         method, params, headers, json = pre_select(*columns, count=count)
         return SyncSelectRequestBuilder(
@@ -229,7 +254,7 @@ class SyncRequestBuilder:
 
     def insert(
         self,
-        json: dict,
+        json: Union[dict, list],
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
@@ -243,7 +268,7 @@ class SyncRequestBuilder:
             returning: Either 'minimal' or 'representation'
             upsert: Whether the query should be an upsert.
         Returns:
-            :class:`SyncQueryRequestBuilder`
+            :class:`AsyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_insert(
             json,
@@ -273,7 +298,7 @@ class SyncRequestBuilder:
             ignore_duplicates: Whether duplicate rows should be ignored.
             on_conflict: Specified columns to be made to work with UNIQUE constraint.
         Returns:
-            :class:`SyncQueryRequestBuilder`
+            :class:`AsyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_upsert(
             json,
@@ -300,7 +325,7 @@ class SyncRequestBuilder:
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`SyncFilterRequestBuilder`
+            :class:`AsyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_update(
             json,
@@ -323,7 +348,7 @@ class SyncRequestBuilder:
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`SyncFilterRequestBuilder`
+            :class:`AsyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_delete(
             count=count,

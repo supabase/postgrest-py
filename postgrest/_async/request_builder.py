@@ -202,6 +202,31 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuild
             path=self.path,
             session=self.session,  # type: ignore
         )
+    def text_search(
+            self,
+            column: str,
+            query: str,
+            options: Dict[str, any] = {}
+    ) -> AsyncFilterRequestBuilder:
+        type_ = options.get('type')
+        type_part = ''
+        if type_ == 'plain':
+            type_part = 'pl'
+        elif type_ == 'phrase':
+            type_part = 'ph'
+        elif type_ == 'web_search':
+            type_part = 'w'
+        config_part = f"{options.get('config')}" if options.get('config') else  ''
+        self.params = self.params.add(column, f"{type_part}fts{config_part}.{query}")
+
+        return AsyncQueryRequestBuilder(
+            headers=self.headers,
+            http_method=self.http_method,
+            json=self.json,
+            params=self.params,
+            path=self.path,
+            session=self.session,  # type: ignore
+        )
 
 
 class AsyncRequestBuilder:
