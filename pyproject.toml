@@ -36,7 +36,7 @@ pytest-depends = "^1.0.1"
 pytest-asyncio = "^0.18.3"
 unasync-cli = "^0.0.9"
 python-semantic-release = "^7.32.1"
-furo = "^2022.9.15"
+furo = "^2022.12.7"
 
 [tool.semantic_release]
 version_variable = "postgrest/__init__.py:__version__"
