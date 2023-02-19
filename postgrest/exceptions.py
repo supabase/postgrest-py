@@ -46,5 +46,5 @@ def generate_default_error_message(r):
         "message": "JSON could not be generated",
         "code": r.status_code,
         "hint": "Refer to full message for details",
-        "message": str(r.content),
+        "details": str(r.content),
     }
