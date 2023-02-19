@@ -63,17 +63,17 @@ class SyncPostgrestClient(BasePostgrestClient):
         Args:
             table: The name of the table
         Returns:
-            :class:`SyncRequestBuilder`
+            :class:`AsyncRequestBuilder`
         """
         return SyncRequestBuilder(self.session, f"/{table}")
 
     def table(self, table: str) -> SyncRequestBuilder:
-        """Alias to self.from_()."""
+        """Alias to :meth:`from_`."""
         return self.from_(table)
 
     @deprecated("0.2.0", "1.0.0", __version__, "Use self.from_() instead")
     def from_table(self, table: str) -> SyncRequestBuilder:
-        """Alias to self.from_()."""
+        """Alias to :meth:`from_`."""
         return self.from_(table)
 
     def rpc(self, func: str, params: dict) -> SyncFilterRequestBuilder:
@@ -83,14 +83,14 @@ class SyncPostgrestClient(BasePostgrestClient):
             func: The name of the remote procedure to run.
             params: The parameters to be passed to the remote procedure.
         Returns:
-            :class:`SyncFilterRequestBuilder`
+            :class:`AsyncFilterRequestBuilder`
         Example:
-            ::
+            .. code-block:: python
 
                 await client.rpc("foobar", {"arg": "value"}).execute()
 
         .. versionchanged:: 0.11.0
-            This method now returns a :class:`SyncFilterRequestBuilder` which allows you to
+            This method now returns a :class:`AsyncFilterRequestBuilder` which allows you to
             filter on the RPC's resultset.
         """
         # the params here are params to be sent to the RPC and not the queryparams!

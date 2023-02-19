@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Union
 
 from httpx import Headers, QueryParams
 from pydantic import ValidationError
@@ -220,7 +220,7 @@ class SyncRequestBuilder:
             *columns: The names of the columns to fetch.
             count: The method to use to get the count of rows returned.
         Returns:
-            :class:`SyncSelectRequestBuilder`
+            :class:`AsyncSelectRequestBuilder`
         """
         method, params, headers, json = pre_select(*columns, count=count)
         return SyncSelectRequestBuilder(
@@ -229,7 +229,7 @@ class SyncRequestBuilder:
 
     def insert(
         self,
-        json: dict,
+        json: Union[dict, list],
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
@@ -243,7 +243,7 @@ class SyncRequestBuilder:
             returning: Either 'minimal' or 'representation'
             upsert: Whether the query should be an upsert.
         Returns:
-            :class:`SyncQueryRequestBuilder`
+            :class:`AsyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_insert(
             json,
@@ -273,7 +273,7 @@ class SyncRequestBuilder:
             ignore_duplicates: Whether duplicate rows should be ignored.
             on_conflict: Specified columns to be made to work with UNIQUE constraint.
         Returns:
-            :class:`SyncQueryRequestBuilder`
+            :class:`AsyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_upsert(
             json,
@@ -300,7 +300,7 @@ class SyncRequestBuilder:
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`SyncFilterRequestBuilder`
+            :class:`AsyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_update(
             json,
@@ -323,7 +323,7 @@ class SyncRequestBuilder:
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`SyncFilterRequestBuilder`
+            :class:`AsyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_delete(
             count=count,
