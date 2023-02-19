@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from json import JSONDecodeError
 from re import search
 from typing import (
     Any,
@@ -153,7 +154,10 @@ class APIResponse(BaseModel):
     def from_http_request_response(
         cls: Type[APIResponse], request_response: RequestResponse
     ) -> APIResponse:
-        data = request_response.json()
+        try:
+            data = request_response.json()
+        except JSONDecodeError as e:
+            return cls(data=[], count=0)
         count = cls._get_count_from_http_request_response(request_response)
         return cls(data=data, count=count)
 

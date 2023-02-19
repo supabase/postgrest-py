@@ -99,7 +99,7 @@ def test_response_status_code_outside_ok(postgrest_client: SyncPostgrestClient):
 @pytest.mark.asyncio
 def test_response_maybe_single(postgrest_client: SyncPostgrestClient):
     with patch(
-        "postgrest._sync.request_builder.SyncSingleRequestBuilder.execute",
+        "postgrest._async.request_builder.AsyncSingleRequestBuilder.execute",
         side_effect=APIError(
             {"message": "mock error", "code": "400", "hint": "mock", "details": "mock"}
         ),
