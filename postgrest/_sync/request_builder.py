@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from json import JSONDecodeError
 from typing import Optional, Union
 
 from httpx import Headers, QueryParams
@@ -17,7 +18,7 @@ from ..base_request_builder import (
     pre_update,
     pre_upsert,
 )
-from ..exceptions import APIError
+from ..exceptions import APIError, generate_default_error_message
 from ..types import ReturnMethod
 from ..utils import SyncClient
 
@@ -67,6 +68,8 @@ class SyncQueryRequestBuilder:
                 raise APIError(r.json())
         except ValidationError as e:
             raise APIError(r.json()) from e
+        except JSONDecodeError as e:
+            raise APIError(generate_default_error_message(r))
 
 
 class SyncSingleRequestBuilder:
@@ -114,6 +117,8 @@ class SyncSingleRequestBuilder:
                 raise APIError(r.json())
         except ValidationError as e:
             raise APIError(r.json()) from e
+        except JSONDecodeError as e:
+            raise APIError(generate_default_error_message(r))
 
 
 class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder):

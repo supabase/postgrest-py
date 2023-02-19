@@ -39,3 +39,12 @@ class APIError(Exception):
             :class:`dict`
         """
         return self._raw_error
+
+
+def generate_default_error_message(r):
+    return {
+        "message": "JSON could not be generated",
+        "code": r.status_code,
+        "hint": "Refer to full message for details",
+        "message": str(r.content),
+    }
