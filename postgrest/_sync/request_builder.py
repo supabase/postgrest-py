@@ -208,6 +208,29 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
             session=self.session,  # type: ignore
         )
 
+    def text_search(
+        self, column: str, query: str, options: Dict[str, any] = {}
+    ) -> SyncFilterRequestBuilder:
+        type_ = options.get("type")
+        type_part = ""
+        if type_ == "plain":
+            type_part = "pl"
+        elif type_ == "phrase":
+            type_part = "ph"
+        elif type_ == "web_search":
+            type_part = "w"
+        config_part = f"({options.get('config')})" if options.get("config") else ""
+        self.params = self.params.add(column, f"{type_part}fts{config_part}.{query}")
+
+        return SyncQueryRequestBuilder(
+            headers=self.headers,
+            http_method=self.http_method,
+            json=self.json,
+            params=self.params,
+            path=self.path,
+            session=self.session,  # type: ignore
+        )
+
 
 class SyncRequestBuilder:
     def __init__(self, session: SyncClient, path: str) -> None:
@@ -337,3 +360,6 @@ class SyncRequestBuilder:
         return SyncFilterRequestBuilder(
             self.session, self.path, method, headers, params, json
         )
+
+    def stub(self):
+        return None
