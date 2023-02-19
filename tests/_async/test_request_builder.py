@@ -113,13 +113,20 @@ class TestDelete:
         assert builder.http_method == "DELETE"
         assert builder.json == {}
 
+
 class TestTextSearch:
     def test_text_search(self, request_builder: AsyncRequestBuilder):
-        builder = request_builder.select("catchphrase").text_search('catchphrase',"'fat' & 'cat'", {
-            "type": "plain",
-            "config": "english",
-        })
-        assert "catchphrase=plfts%28english%29.%27fat%27+%26+%27cat%27" in str(builder.params)
+        builder = request_builder.select("catchphrase").text_search(
+            "catchphrase",
+            "'fat' & 'cat'",
+            {
+                "type": "plain",
+                "config": "english",
+            },
+        )
+        assert "catchphrase=plfts%28english%29.%27fat%27+%26+%27cat%27" in str(
+            builder.params
+        )
 
 
 @pytest.fixture

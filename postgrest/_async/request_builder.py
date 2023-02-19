@@ -360,5 +360,6 @@ class AsyncRequestBuilder:
         return AsyncFilterRequestBuilder(
             self.session, self.path, method, headers, params, json
         )
+
     def stub(self):
         return None

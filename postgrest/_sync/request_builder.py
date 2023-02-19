@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-
-
 from json import JSONDecodeError
-
 from typing import Optional, Union
 
 from httpx import Headers, QueryParams
@@ -363,5 +360,6 @@ class SyncRequestBuilder:
         return SyncFilterRequestBuilder(
             self.session, self.path, method, headers, params, json
         )
+
     def stub(self):
         return None
