@@ -48,7 +48,7 @@ def test_filter_special_characters(
 ):
     builder = filter_request_builder.filter(col_name, "eq", "val")
 
-    assert str(builder.params) == expected_query_prefix + "=eq.val"
+    assert str(builder.params) == f"{expected_query_prefix}=eq.val"
 
 
 def test_multivalued_param(filter_request_builder):
