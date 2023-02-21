@@ -62,6 +62,12 @@ def test_match(filter_request_builder):
     assert str(builder.params) == "id=eq.1&done=eq.false"
 
 
+def test_equals(filter_request_builder):
+    builder = filter_request_builder.eq("x", "a")
+
+    assert str(builder.params) == "x=eq.a"
+
+
 def test_contains(filter_request_builder):
     builder = filter_request_builder.contains("x", "a")
 
