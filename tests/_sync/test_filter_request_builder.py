@@ -36,6 +36,21 @@ def test_filter(filter_request_builder):
     assert builder.params['":col.name"'] == "eq.val"
 
 
+@pytest.mark.parametrize(
+    "col_name, expected_query_prefix",
+    [
+        ("col:name", "%22col%3Aname%22"),
+        ("col.name", "col.name"),
+    ],
+)
+def test_filter_special_characters(
+    filter_request_builder, col_name, expected_query_prefix
+):
+    builder = filter_request_builder.filter(col_name, "eq", "val")
+
+    assert str(builder.params) == expected_query_prefix + "=eq.val"
+
+
 def test_multivalued_param(filter_request_builder):
     builder = filter_request_builder.lte("x", "a").gte("x", "b")
 
@@ -45,6 +60,12 @@ def test_multivalued_param(filter_request_builder):
 def test_match(filter_request_builder):
     builder = filter_request_builder.match({"id": "1", "done": "false"})
     assert str(builder.params) == "id=eq.1&done=eq.false"
+
+
+def test_equals(filter_request_builder):
+    builder = filter_request_builder.eq("x", "a")
+
+    assert str(builder.params) == "x=eq.a"
 
 
 def test_contains(filter_request_builder):
