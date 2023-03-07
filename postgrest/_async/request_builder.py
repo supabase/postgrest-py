@@ -122,19 +122,13 @@ class AsyncSingleRequestBuilder:
 
 
 class AsyncMaybeSingleRequestBuilder(AsyncSingleRequestBuilder):
-    async def execute(self) -> SingleAPIResponse:
+    async def execute(self) -> Optional[SingleAPIResponse]:
         r = None
         try:
             r = await super().execute()
         except APIError as e:
             if e.details and "Results contain 0 rows" in e.details:
-                return SingleAPIResponse.from_dict(
-                    {
-                        "data": None,
-                        "error": None,
-                        "count": 0,  # NOTE: needs to take value from res.count
-                    }
-                )
+                return None
         if not r:
             raise APIError(
                 {
