@@ -39,13 +39,13 @@ Once Docker Compose started, PostgREST is accessible at <http://localhost:3000>.
 #### With Poetry (recommended)
 
 ```sh
-poetry add postgrest-py
+poetry add postgrest
 ```
 
 #### With Pip
 
 ```sh
-pip install postgrest-py
+pip install postgrest
 ```
 
 ## USAGE

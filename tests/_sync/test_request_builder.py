@@ -4,7 +4,7 @@ import pytest
 from httpx import Request, Response
 
 from postgrest import SyncRequestBuilder
-from postgrest.base_request_builder import APIResponse
+from postgrest.base_request_builder import APIResponse, SingleAPIResponse
 from postgrest.types import CountMethod
 from postgrest.utils import SyncClient
 
@@ -114,6 +114,21 @@ class TestDelete:
         assert builder.json == {}
 
 
+class TestTextSearch:
+    def test_text_search(self, request_builder: SyncRequestBuilder):
+        builder = request_builder.select("catchphrase").text_search(
+            "catchphrase",
+            "'fat' & 'cat'",
+            {
+                "type": "plain",
+                "config": "english",
+            },
+        )
+        assert "catchphrase=plfts%28english%29.%27fat%27+%26+%27cat%27" in str(
+            builder.params
+        )
+
+
 @pytest.fixture
 def api_response_with_error() -> Dict[str, Any]:
     return {
@@ -143,6 +158,18 @@ def api_response() -> List[Dict[str, Any]]:
             "continent": None,
         },
     ]
+
+
+@pytest.fixture
+def single_api_response() -> Dict[str, Any]:
+    return {
+        "id": 1,
+        "name": "Bonaire, Sint Eustatius and Saba",
+        "iso2": "BQ",
+        "iso3": "BES",
+        "local_name": None,
+        "continent": None,
+    }
 
 
 @pytest.fixture
@@ -211,6 +238,24 @@ def request_response_with_data(
         status_code=200,
         headers={"content-range": content_range_header_with_count},
         json=api_response,
+        request=Request(
+            method="GET",
+            url="http://example.com",
+            headers={"prefer": prefer_header_with_count},
+        ),
+    )
+
+
+@pytest.fixture
+def request_response_with_single_data(
+    prefer_header_with_count: str,
+    content_range_header_with_count: str,
+    single_api_response: Dict[str, Any],
+) -> Response:
+    return Response(
+        status_code=200,
+        headers={"content-range": content_range_header_with_count},
+        json=single_api_response,
         request=Request(
             method="GET",
             url="http://example.com",
@@ -299,4 +344,16 @@ class TestApiResponse:
     ):
         result = APIResponse.from_http_request_response(request_response_with_data)
         assert result.data == api_response
+        assert result.count == 2
+
+    def test_single_from_http_request_response_constructor(
+        self,
+        request_response_with_single_data: Response,
+        single_api_response: Dict[str, Any],
+    ):
+        result = SingleAPIResponse.from_http_request_response(
+            request_response_with_single_data
+        )
+        assert isinstance(result.data, dict)
+        assert result.data == single_api_response
         assert result.count == 2
