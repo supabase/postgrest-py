@@ -402,6 +402,25 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
     ) -> None:
         BaseFilterRequestBuilder.__init__(self, session, headers, params)
 
+    def explain(
+        self: _FilterT,
+        analyze: bool = False,
+        verbose: bool = False,
+        settings: bool = False,
+        buffers: bool = False,
+        wal: bool = False,
+        format: str = "",
+    ) -> _FilterT:
+        options = [
+            key
+            for key, value in locals().items()
+            if key not in ["self", "format"] and value
+        ]
+        options_str = "|".join(options)
+        options_str = f'options="{options_str};"' if options_str else ""
+        self.headers["Accept"] = f"application/vnd.pgrst.plan+{format}; {options_str}"
+        return self
+
     def order(
         self: _FilterT,
         column: str,
