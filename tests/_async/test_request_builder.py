@@ -129,6 +129,23 @@ class TestTextSearch:
         )
 
 
+class TestExplain:
+    def test_explain_plain(self, request_builder: AsyncRequestBuilder):
+        builder = request_builder.select("*").explain()
+        assert builder.params["select"] == "*"
+        assert "application/vnd.pgrst.plan+" in str(builder.headers.get("accept"))
+
+    def test_explain_options(self, request_builder: AsyncRequestBuilder):
+        builder = request_builder.select("*").explain(
+            format="json", analyze=True, verbose=True, buffers=True, wal=True
+        )
+        assert builder.params["select"] == "*"
+        assert "application/vnd.pgrst.plan+json" in str(builder.headers.get("accept"))
+        assert 'options="analyze|verbose|buffers|wal;' in str(
+            builder.headers.get("accept")
+        )
+
+
 @pytest.fixture
 def api_response_with_error() -> Dict[str, Any]:
     return {
