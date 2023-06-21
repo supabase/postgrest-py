@@ -12,7 +12,7 @@ from ..constants import (
     DEFAULT_POSTGREST_CLIENT_TIMEOUT,
 )
 from ..utils import AsyncClient
-from .request_builder import AsyncFilterRequestBuilder, AsyncRequestBuilder
+from .request_builder import AsyncSelectRequestBuilder, AsyncRequestBuilder
 
 
 class AsyncPostgrestClient(BasePostgrestClient):
@@ -76,24 +76,24 @@ class AsyncPostgrestClient(BasePostgrestClient):
         """Alias to :meth:`from_`."""
         return self.from_(table)
 
-    async def rpc(self, func: str, params: dict) -> AsyncFilterRequestBuilder:
+    async def rpc(self, func: str, params: dict) -> AsyncSelectRequestBuilder:
         """Perform a stored procedure call.
 
         Args:
             func: The name of the remote procedure to run.
             params: The parameters to be passed to the remote procedure.
         Returns:
-            :class:`AsyncFilterRequestBuilder`
+            :class:`AsyncSelectRequestBuilder`
         Example:
             .. code-block:: python
 
                 await client.rpc("foobar", {"arg": "value"}).execute()
 
         .. versionchanged:: 0.11.0
-            This method now returns a :class:`AsyncFilterRequestBuilder` which allows you to
+            This method now returns a :class:`AsyncSelectRequestBuilder` which allows you to
             filter on the RPC's resultset.
         """
         # the params here are params to be sent to the RPC and not the queryparams!
-        return AsyncFilterRequestBuilder(
+        return AsyncSelectRequestBuilder(
             self.session, f"/rpc/{func}", "POST", Headers(), QueryParams(), json=params
         )
