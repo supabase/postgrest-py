@@ -92,8 +92,13 @@ await client.from_("countries").delete().eq("name", "Việt Nam").execute()
 ### General filters
 
 ### Stored procedures (RPC)
+
 ```py
-await client.rpc("foobar", {"arg1": "value1", "arg2": "value2"}).execute()
+query = await client.rpc("foobar", {"arg1": "value1", "arg2": "value2"})
+# for stored procedures that return a result set
+await query.execute()
+# for stored procedures that return a single object
+await query.single().execute()
 ```
 
 ## DEVELOPMENT
