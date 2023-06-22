@@ -12,7 +12,7 @@ from ..constants import (
     DEFAULT_POSTGREST_CLIENT_TIMEOUT,
 )
 from ..utils import SyncClient
-from .request_builder import SyncSelectRequestBuilder, SyncRequestBuilder
+from .request_builder import SyncRequestBuilder, SyncSelectRequestBuilder
 
 
 class SyncPostgrestClient(BasePostgrestClient):

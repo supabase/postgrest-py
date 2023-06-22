@@ -12,7 +12,7 @@ from ..constants import (
     DEFAULT_POSTGREST_CLIENT_TIMEOUT,
 )
 from ..utils import AsyncClient
-from .request_builder import AsyncSelectRequestBuilder, AsyncRequestBuilder
+from .request_builder import AsyncRequestBuilder, AsyncSelectRequestBuilder
 
 
 class AsyncPostgrestClient(BasePostgrestClient):
