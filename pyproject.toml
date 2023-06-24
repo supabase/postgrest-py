@@ -23,8 +23,7 @@ httpx = "^0.23.0"
 deprecation = "^2.1.0"
 pydantic = "^1.9.0"
 strenum = "^0.4.9"
-#supabase-client = {git = "git@github.com:danhdevelop/supabase-client.git"}
-supabase-client = {path = "../supabase-client", develop = true}
+supabase-client = {git = "git@github.com:danhdevelop/supabase-client.git"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.2"

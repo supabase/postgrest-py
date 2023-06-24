@@ -1689,19 +1689,21 @@ test = ["pylint", "pytest", "pytest-black", "pytest-cov", "pytest-pylint"]
 
 [[package]]
 name = "supabase-client"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 optional = false
 python-versions = "^3.8"
 files = []
-develop = true
+develop = false
 
 [package.dependencies]
 httpx = "^0.23.0"
 
 [package.source]
-type = "directory"
-url = "../supabase-client"
+type = "git"
+url = "git@github.com:danhdevelop/supabase-client.git"
+reference = "HEAD"
+resolved_reference = "32480e0e8a3a6b106bb23188c638dfa65b6b12d9"
 
 [[package]]
 name = "tomli"
@@ -1906,4 +1908,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "6e6457cedca4cb16040f13fbc20eb583592a8fab72c6a2d0fb1dfcc369014c6e"
+content-hash = "ce5cb91590e610ce2b5fa78081d38316f127458d791eb2e8d797652d5d2b37a6"
