@@ -5,7 +5,7 @@ from typing import Dict, Optional, Union
 
 from httpx import BasicAuth, Timeout
 
-from .utils import AsyncClient, SyncClient
+from supabase_client import SupaAsyncClient, SupaSyncClient
 
 
 class BasePostgrestClient(ABC):
@@ -32,7 +32,7 @@ class BasePostgrestClient(ABC):
         base_url: str,
         headers: Dict[str, str],
         timeout: Union[int, float, Timeout],
-    ) -> Union[SyncClient, AsyncClient]:
+    ) -> Union[SupaSyncClient, SupaAsyncClient]:
         raise NotImplementedError()
 
     def auth(

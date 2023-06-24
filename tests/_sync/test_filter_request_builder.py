@@ -2,12 +2,12 @@ import pytest
 from httpx import Headers, QueryParams
 
 from postgrest import SyncFilterRequestBuilder
-from postgrest.utils import SyncClient
+from supabase_client import SupaSyncClient
 
 
 @pytest.fixture
 def filter_request_builder():
-    with SyncClient() as client:
+    with SupaSyncClient() as client:
         yield SyncFilterRequestBuilder(
             client, "/example_table", "GET", Headers(), QueryParams(), {}
         )

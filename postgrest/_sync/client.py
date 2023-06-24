@@ -11,7 +11,7 @@ from ..constants import (
     DEFAULT_POSTGREST_CLIENT_HEADERS,
     DEFAULT_POSTGREST_CLIENT_TIMEOUT,
 )
-from ..utils import SyncClient
+from supabase_client import SupaSyncClient
 from .request_builder import SyncFilterRequestBuilder, SyncRequestBuilder
 
 
@@ -33,15 +33,15 @@ class SyncPostgrestClient(BasePostgrestClient):
             headers=headers,
             timeout=timeout,
         )
-        self.session = cast(SyncClient, self.session)
+        self.session = cast(SupaSyncClient, self.session)
 
     def create_session(
         self,
         base_url: str,
         headers: Dict[str, str],
         timeout: Union[int, float, Timeout],
-    ) -> SyncClient:
-        return SyncClient(
+    ) -> SupaSyncClient:
+        return SupaSyncClient(
             base_url=base_url,
             headers=headers,
             timeout=timeout,

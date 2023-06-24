@@ -11,7 +11,7 @@ from ..constants import (
     DEFAULT_POSTGREST_CLIENT_HEADERS,
     DEFAULT_POSTGREST_CLIENT_TIMEOUT,
 )
-from ..utils import AsyncClient
+from supabase_client import SupaAsyncClient
 from .request_builder import AsyncFilterRequestBuilder, AsyncRequestBuilder
 
 
@@ -33,15 +33,15 @@ class AsyncPostgrestClient(BasePostgrestClient):
             headers=headers,
             timeout=timeout,
         )
-        self.session = cast(AsyncClient, self.session)
+        self.session = cast(SupaAsyncClient, self.session)
 
     def create_session(
         self,
         base_url: str,
         headers: Dict[str, str],
         timeout: Union[int, float, Timeout],
-    ) -> AsyncClient:
-        return AsyncClient(
+    ) -> SupaAsyncClient:
+        return SupaAsyncClient(
             base_url=base_url,
             headers=headers,
             timeout=timeout,

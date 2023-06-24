@@ -20,13 +20,12 @@ from ..base_request_builder import (
 )
 from ..exceptions import APIError, generate_default_error_message
 from ..types import ReturnMethod
-from ..utils import AsyncClient
-
+from supabase_client import SupaAsyncClient
 
 class AsyncQueryRequestBuilder:
     def __init__(
         self,
-        session: AsyncClient,
+        session: SupaAsyncClient,
         path: str,
         http_method: str,
         headers: Headers,
@@ -75,7 +74,7 @@ class AsyncQueryRequestBuilder:
 class AsyncSingleRequestBuilder:
     def __init__(
         self,
-        session: AsyncClient,
+        session: SupaAsyncClient,
         path: str,
         http_method: str,
         headers: Headers,
@@ -145,7 +144,7 @@ class AsyncMaybeSingleRequestBuilder(AsyncSingleRequestBuilder):
 class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
-        session: AsyncClient,
+        session: SupaAsyncClient,
         path: str,
         http_method: str,
         headers: Headers,
@@ -162,7 +161,7 @@ class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuild
 class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
-        session: AsyncClient,
+        session: SupaAsyncClient,
         path: str,
         http_method: str,
         headers: Headers,
@@ -227,7 +226,7 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuild
 
 
 class AsyncRequestBuilder:
-    def __init__(self, session: AsyncClient, path: str) -> None:
+    def __init__(self, session: SupaAsyncClient, path: str) -> None:
         self.session = session
         self.path = path
 

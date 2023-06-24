@@ -20,13 +20,13 @@ from ..base_request_builder import (
 )
 from ..exceptions import APIError, generate_default_error_message
 from ..types import ReturnMethod
-from ..utils import SyncClient
+from supabase_client import SupaSyncClient
 
 
 class SyncQueryRequestBuilder:
     def __init__(
         self,
-        session: SyncClient,
+        session: SupaSyncClient,
         path: str,
         http_method: str,
         headers: Headers,
@@ -75,7 +75,7 @@ class SyncQueryRequestBuilder:
 class SyncSingleRequestBuilder:
     def __init__(
         self,
-        session: SyncClient,
+        session: SupaSyncClient,
         path: str,
         http_method: str,
         headers: Headers,
@@ -145,7 +145,7 @@ class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder):
 class SyncFilterRequestBuilder(BaseFilterRequestBuilder, SyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
-        session: SyncClient,
+        session: SupaSyncClient,
         path: str,
         http_method: str,
         headers: Headers,
@@ -162,7 +162,7 @@ class SyncFilterRequestBuilder(BaseFilterRequestBuilder, SyncQueryRequestBuilder
 class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder):  # type: ignore
     def __init__(
         self,
-        session: SyncClient,
+        session: SupaSyncClient,
         path: str,
         http_method: str,
         headers: Headers,
@@ -227,7 +227,7 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
 
 
 class SyncRequestBuilder:
-    def __init__(self, session: SyncClient, path: str) -> None:
+    def __init__(self, session: SupaSyncClient, path: str) -> None:
         self.session = session
         self.path = path
 

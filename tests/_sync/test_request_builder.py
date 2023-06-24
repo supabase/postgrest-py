@@ -6,12 +6,12 @@ from httpx import Request, Response
 from postgrest import SyncRequestBuilder
 from postgrest.base_request_builder import APIResponse, SingleAPIResponse
 from postgrest.types import CountMethod
-from postgrest.utils import SyncClient
+from supabase_client import SupaSyncClient
 
 
 @pytest.fixture
 def request_builder():
-    with SyncClient() as client:
+    with SupaSyncClient() as client:
         yield SyncRequestBuilder(client, "/example_table")
 
 

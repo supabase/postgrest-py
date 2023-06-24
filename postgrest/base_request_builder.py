@@ -21,8 +21,8 @@ from httpx import Response as RequestResponse
 from pydantic import BaseModel, validator
 
 from .types import CountMethod, Filters, RequestMethod, ReturnMethod
-from .utils import AsyncClient, SyncClient, sanitize_param
-
+from .utils import sanitize_param
+from supabase_client import SupaSyncClient, SupaAsyncClient
 
 class QueryArgs(NamedTuple):
     # groups the method, json, headers and params for a query in a single object
@@ -199,7 +199,7 @@ _FilterT = TypeVar("_FilterT", bound="BaseFilterRequestBuilder")
 class BaseFilterRequestBuilder:
     def __init__(
         self,
-        session: Union[AsyncClient, SyncClient],
+        session: Union[SupaAsyncClient, SupaSyncClient],
         headers: Headers,
         params: QueryParams,
     ) -> None:
@@ -396,7 +396,7 @@ class BaseFilterRequestBuilder:
 class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
     def __init__(
         self,
-        session: Union[AsyncClient, SyncClient],
+        session: Union[SupaAsyncClient, SupaSyncClient],
         headers: Headers,
         params: QueryParams,
     ) -> None:

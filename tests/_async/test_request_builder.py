@@ -6,12 +6,12 @@ from httpx import Request, Response
 from postgrest import AsyncRequestBuilder
 from postgrest.base_request_builder import APIResponse, SingleAPIResponse
 from postgrest.types import CountMethod
-from postgrest.utils import AsyncClient
+from supabase_client import SupaAsyncClient
 
 
 @pytest.fixture
 async def request_builder():
-    async with AsyncClient() as client:
+    async with SupaAsyncClient() as client:
         yield AsyncRequestBuilder(client, "/example_table")
 
 

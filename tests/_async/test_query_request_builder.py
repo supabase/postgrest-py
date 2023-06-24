@@ -2,12 +2,12 @@ import pytest
 from httpx import Headers, QueryParams
 
 from postgrest import AsyncQueryRequestBuilder
-from postgrest.utils import AsyncClient
+from supabase_client import SupaAsyncClient
 
 
 @pytest.fixture
 async def query_request_builder():
-    async with AsyncClient() as client:
+    async with SupaAsyncClient() as client:
         yield AsyncQueryRequestBuilder(
             client, "/example_table", "GET", Headers(), QueryParams(), {}
         )
