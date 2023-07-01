@@ -1888,7 +1888,11 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 lock-version = "2.0"
 python-versions = "^3.8"
 <<<<<<< HEAD
+<<<<<<< HEAD
 content-hash = "77c3182591df624eca1a802a8576ac75664e172e7deb0ab4fe54e7ff7fe2375d"
 =======
 content-hash = "c35e312dbb7c38e02169e4bff52289dffa8433c2ad8465ef612104403ae025d6"
 >>>>>>> 3fde0fd (chore(deps-dev): bump black from 23.1.0 to 23.3.0 (#256))
+=======
+content-hash = "fd6a85eea97aa757b8af907446f7aa5b2a915c6c33c57b699df2b2877f0e1527"
+>>>>>>> 4533d52 (chore: update httpx version)
