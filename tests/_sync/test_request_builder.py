@@ -124,8 +124,25 @@ class TestTextSearch:
                 "config": "english",
             },
         )
-        assert "catchphrase=plfts%28english%29.%27fat%27+%26+%27cat%27" in str(
+        assert "catchphrase=plfts%28english%29.%27fat%27%20%26%20%27cat%27" in str(
             builder.params
+        )
+
+
+class TestExplain:
+    def test_explain_plain(self, request_builder: SyncRequestBuilder):
+        builder = request_builder.select("*").explain()
+        assert builder.params["select"] == "*"
+        assert "application/vnd.pgrst.plan+" in str(builder.headers.get("accept"))
+
+    def test_explain_options(self, request_builder: SyncRequestBuilder):
+        builder = request_builder.select("*").explain(
+            format="json", analyze=True, verbose=True, buffers=True, wal=True
+        )
+        assert builder.params["select"] == "*"
+        assert "application/vnd.pgrst.plan+json" in str(builder.headers.get("accept"))
+        assert 'options="analyze|verbose|buffers|wal;' in str(
+            builder.headers.get("accept")
         )
 
 

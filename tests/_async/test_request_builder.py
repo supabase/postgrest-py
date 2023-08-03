@@ -124,7 +124,7 @@ class TestTextSearch:
                 "config": "english",
             },
         )
-        assert "catchphrase=plfts%28english%29.%27fat%27+%26+%27cat%27" in str(
+        assert "catchphrase=plfts%28english%29.%27fat%27%20%26%20%27cat%27" in str(
             builder.params
         )
 
