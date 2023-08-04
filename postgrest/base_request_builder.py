@@ -18,7 +18,7 @@ from typing import (
 
 from httpx import Headers, QueryParams
 from httpx import Response as RequestResponse
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 
 from .types import CountMethod, Filters, RequestMethod, ReturnMethod
 from .utils import AsyncClient, SyncClient, sanitize_param
@@ -113,7 +113,7 @@ class APIResponse(BaseModel):
     count: Optional[int] = None
     """The number of rows returned."""
 
-    @validator("data")
+    @field_validator("data")
     @classmethod
     def raise_when_api_error(cls: Type[APIResponse], value: Any) -> Any:
         if isinstance(value, dict) and value.get("message"):
