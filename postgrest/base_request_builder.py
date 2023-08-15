@@ -18,7 +18,14 @@ from typing import (
 
 from httpx import Headers, QueryParams
 from httpx import Response as RequestResponse
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel
+
+try:
+    # >= 2.0.0
+    from pydantic import field_validator
+except ImportError:
+    # < 2.0.0
+    from pydantic import validator as field_validator
 
 from .types import CountMethod, Filters, RequestMethod, ReturnMethod
 from .utils import AsyncClient, SyncClient, sanitize_param

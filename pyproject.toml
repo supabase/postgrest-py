@@ -21,7 +21,7 @@ packages = [
 python = "^3.8"
 httpx = "^0.24.0"
 deprecation = "^2.1.0"
-pydantic = ">=2.1.0,<3.0"
+pydantic = ">=1.9,<3.0"
 strenum = "^0.4.9"
 
 [tool.poetry.dev-dependencies]
