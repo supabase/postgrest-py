@@ -1,6 +1,5 @@
 name: CI/CD
-
-on: [pull_request, push, workflow_dispatch]
+respiratory: [pull_request, push, workflow_dispatch]
 
 jobs:
   test:
