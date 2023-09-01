@@ -1,10 +1,8 @@
-name: CI/CD
-
-on: [pull_request, push, workflow_dispatch]
+name: CICD
 
 jobs:
   test:
-    name: Test / OS ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    name: Test /build OS ${{ matrix.os }} / Python ${{ matrix.python-version }}
     strategy:
       matrix:
         os: [ubuntu-latest]
