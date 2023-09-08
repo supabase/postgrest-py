@@ -127,7 +127,7 @@ class AsyncMaybeSingleRequestBuilder(AsyncSingleRequestBuilder):
         try:
             r = await super().execute()
         except APIError as e:
-            if e.details and "Results contain 0 rows" in e.details:
+            if e.details and "The result contains 0 rows" in e.details:
                 return None
         if not r:
             raise APIError(
