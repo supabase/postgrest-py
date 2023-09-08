@@ -2,7 +2,7 @@
 name = "postgrest"
 version = "0.10.8"
 description = "PostgREST client for Python. This library provides an ORM interface to PostgREST."
-authors = ["Lương Quang Mạnh <luongquangmanh85@gmail.com>", "Joel Lee <joel@joellee.org>", "Anand"]
+authors = ["Lương Quang Mạnh <luongquangmanh85@gmail.com>", "Joel Lee <joel@joellee.org>", "Anand", "Oliver Rice"]
 homepage = "https://github.com/supabase-community/postgrest-py"
 repository = "https://github.com/supabase-community/postgrest-py"
 documentation = "https://postgrest-py.rtfd.io"
@@ -40,7 +40,7 @@ furo = "^2023.5.20"
 
 [tool.semantic_release]
 version_variable = "postgrest/__init__.py:__version__"
-version_toml = "pyproject.toml:tool.poetry.version"
+version_toml = ["pyproject.toml:tool.poetry.version"]
 major_on_zero = false
 commit_subject = "chore(release): bump version to v{version}"
 build_command = "curl -sSL https://install.python-poetry.org | python - && export PATH=\"/github/home/.local/bin:$PATH\" && poetry install && poetry build"

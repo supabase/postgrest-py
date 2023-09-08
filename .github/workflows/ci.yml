@@ -31,6 +31,12 @@ jobs:
     if: ${{ !startsWith(github.event.head_commit.message, 'bump') && !startsWith(github.event.head_commit.message, 'chore') && github.ref == 'refs/heads/master' && github.event_name == 'push' && github.repository_owner == 'supabase-community' }}
     runs-on: ubuntu-latest
     name: "Bump version, create changelog and publish"
+    environment:
+      name: pypi
+      url: https://pypi.org/p/postgrest
+    permissions:
+      id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
+      contents: write # needed for github actions bot to write to repo
     steps:
       - name: Clone Repository
         uses: actions/checkout@v2
@@ -38,8 +44,18 @@ jobs:
           ref: ${{ github.ref }}
           fetch-depth: 0
       - name: Python Semantic Release
-        uses: relekang/python-semantic-release@master
+        id: release
+        uses: python-semantic-release/python-semantic-release@v8.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          repository_username: __token__
-          repository_password: ${{ secrets.PYPI_TOKEN }}
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # NOTE: DO NOT wrap the conditional in ${{ }} as it will always evaluate to true.
+        # See https://github.com/actions/runner/issues/1173
+        if: steps.release.outputs.released == 'true'
+
+      - name: Python Semantic Release
+        uses: python-semantic-release/upload-to-gh-release@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
