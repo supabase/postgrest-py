@@ -56,6 +56,6 @@ jobs:
         if: steps.release.outputs.released == 'true'
 
       - name: Python Semantic Release
-        uses: python-semantic-release/upload-to-gh-release@master
+        uses: python-semantic-release/upload-to-gh-release@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
