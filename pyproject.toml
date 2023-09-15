@@ -25,7 +25,7 @@ pydantic = ">=1.9,<3.0"
 strenum = "^0.4.9"
 
 [tool.poetry.dev-dependencies]
-pytest = "^7.3.2"
+pytest = "^7.4.2"
 Sphinx = "^7.1.2"
 flake8 = "^5.0.4"
 black = "^23.9"
