@@ -279,7 +279,7 @@ class SyncRequestBuilder:
 
     def upsert(
         self,
-        json: dict,
+        json: Union[dict, list],
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
