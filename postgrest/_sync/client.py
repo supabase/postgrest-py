@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Union, cast
+from typing import Any, Dict, List, Union, cast
 
 from deprecation import deprecated
 from httpx import Headers, QueryParams, Timeout
@@ -14,7 +14,7 @@ from ..constants import (
 from ..utils import SyncClient
 from .request_builder import SyncFilterRequestBuilder, SyncRequestBuilder
 
-_TableT = list[dict[str, Any]]
+_TableT = List[Dict[str, Any]]
 
 
 class SyncPostgrestClient(BasePostgrestClient):
