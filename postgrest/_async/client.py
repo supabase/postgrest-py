@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Union, cast
+from typing import Any, Dict, Union, cast
 
 from deprecation import deprecated
 from httpx import Headers, QueryParams, Timeout
@@ -13,6 +13,8 @@ from ..constants import (
 )
 from ..utils import AsyncClient
 from .request_builder import AsyncFilterRequestBuilder, AsyncRequestBuilder
+
+_TableT = list[dict[str, Any]]
 
 
 class AsyncPostgrestClient(BasePostgrestClient):
@@ -57,7 +59,7 @@ class AsyncPostgrestClient(BasePostgrestClient):
         """Close the underlying HTTP connections."""
         await self.session.aclose()
 
-    def from_(self, table: str) -> AsyncRequestBuilder:
+    def from_(self, table: str) -> AsyncRequestBuilder[_TableT]:
         """Perform a table operation.
 
         Args:
@@ -65,9 +67,9 @@ class AsyncPostgrestClient(BasePostgrestClient):
         Returns:
             :class:`AsyncRequestBuilder`
         """
-        return AsyncRequestBuilder(self.session, f"/{table}")
+        return AsyncRequestBuilder[_TableT](self.session, f"/{table}")
 
-    def table(self, table: str) -> AsyncRequestBuilder:
+    def table(self, table: str) -> AsyncRequestBuilder[_TableT]:
         """Alias to :meth:`from_`."""
         return self.from_(table)
 
@@ -76,7 +78,7 @@ class AsyncPostgrestClient(BasePostgrestClient):
         """Alias to :meth:`from_`."""
         return self.from_(table)
 
-    async def rpc(self, func: str, params: dict) -> AsyncFilterRequestBuilder:
+    async def rpc(self, func: str, params: dict) -> AsyncFilterRequestBuilder[Any]:
         """Perform a stored procedure call.
 
         Args:
@@ -94,6 +96,6 @@ class AsyncPostgrestClient(BasePostgrestClient):
             filter on the RPC's resultset.
         """
         # the params here are params to be sent to the RPC and not the queryparams!
-        return AsyncFilterRequestBuilder(
+        return AsyncFilterRequestBuilder[Any](
             self.session, f"/rpc/{func}", "POST", Headers(), QueryParams(), json=params
         )
