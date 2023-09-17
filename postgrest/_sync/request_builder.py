@@ -60,12 +60,12 @@ class SyncQueryRequestBuilder:
             headers=self.headers,
         )
         try:
-            if (200 <= r.status_code <= 299) and "/rpc" in str(
-                r.request.url
-            ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
-                return APIResponse.from_http_request_response(r)
-            elif 200 <= r.status_code <= 299:
+            # RPC calls should be excluded from validation
+            if (200 <= r.status_code <= 299) and "/rpc" in str(r.request.url):
                 return r.json()
+            elif 200 <= r.status_code <= 299:
+                # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
+                return APIResponse.from_http_request_response(r)
             else:
                 raise APIError(r.json())
         except ValidationError as e:
