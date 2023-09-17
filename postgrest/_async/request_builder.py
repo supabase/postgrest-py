@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from json import JSONDecodeError
-from typing import Optional, Union
+from typing import Any, Generic, Optional, TypeVar, Union
 
 from httpx import Headers, QueryParams
 from pydantic import ValidationError
@@ -22,8 +22,10 @@ from ..exceptions import APIError, generate_default_error_message
 from ..types import ReturnMethod
 from ..utils import AsyncClient
 
+_ReturnT = TypeVar("_ReturnT")
 
-class AsyncQueryRequestBuilder:
+
+class AsyncQueryRequestBuilder(Generic[_ReturnT]):
     def __init__(
         self,
         session: AsyncClient,
@@ -40,7 +42,7 @@ class AsyncQueryRequestBuilder:
         self.params = params
         self.json = json
 
-    async def execute(self) -> APIResponse:
+    async def execute(self) -> APIResponse[_ReturnT]:
         """Execute the query.
 
         .. tip::
@@ -63,7 +65,7 @@ class AsyncQueryRequestBuilder:
             if (
                 200 <= r.status_code <= 299
             ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
-                return APIResponse.from_http_request_response(r)
+                return APIResponse[_ReturnT].from_http_request_response(r)
             else:
                 raise APIError(r.json())
         except ValidationError as e:
@@ -72,7 +74,7 @@ class AsyncQueryRequestBuilder:
             raise APIError(generate_default_error_message(r))
 
 
-class AsyncSingleRequestBuilder:
+class AsyncSingleRequestBuilder(Generic[_ReturnT]):
     def __init__(
         self,
         session: AsyncClient,
@@ -89,7 +91,7 @@ class AsyncSingleRequestBuilder:
         self.params = params
         self.json = json
 
-    async def execute(self) -> SingleAPIResponse:
+    async def execute(self) -> SingleAPIResponse[_ReturnT]:
         """Execute the query.
 
         .. tip::
@@ -112,7 +114,7 @@ class AsyncSingleRequestBuilder:
             if (
                 200 <= r.status_code <= 299
             ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
-                return SingleAPIResponse.from_http_request_response(r)
+                return SingleAPIResponse[_ReturnT].from_http_request_response(r)
             else:
                 raise APIError(r.json())
         except ValidationError as e:
@@ -121,11 +123,11 @@ class AsyncSingleRequestBuilder:
             raise APIError(generate_default_error_message(r))
 
 
-class AsyncMaybeSingleRequestBuilder(AsyncSingleRequestBuilder):
-    async def execute(self) -> Optional[SingleAPIResponse]:
+class AsyncMaybeSingleRequestBuilder(AsyncSingleRequestBuilder[_ReturnT]):
+    async def execute(self) -> Optional[SingleAPIResponse[_ReturnT]]:
         r = None
         try:
-            r = await super().execute()
+            r = await AsyncSingleRequestBuilder[_ReturnT].execute(self)
         except APIError as e:
             if e.details and "The result contains 0 rows" in e.details:
                 return None
@@ -142,7 +144,7 @@ class AsyncMaybeSingleRequestBuilder(AsyncSingleRequestBuilder):
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
-class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
+class AsyncFilterRequestBuilder(BaseFilterRequestBuilder[_ReturnT], AsyncQueryRequestBuilder[_ReturnT]):  # type: ignore
     def __init__(
         self,
         session: AsyncClient,
@@ -152,14 +154,19 @@ class AsyncFilterRequestBuilder(BaseFilterRequestBuilder, AsyncQueryRequestBuild
         params: QueryParams,
         json: dict,
     ) -> None:
-        BaseFilterRequestBuilder.__init__(self, session, headers, params)
-        AsyncQueryRequestBuilder.__init__(
+        # Generic[T] is an instance of typing._GenericAlias, so doing Generic[T].__init__
+        # tries to call _GenericAlias.__init__ - which is the wrong method
+        # The __origin__ attribute of the _GenericAlias is the actual class
+        BaseFilterRequestBuilder[_ReturnT].__origin__.__init__(
+            self, session, headers, params
+        )
+        AsyncQueryRequestBuilder[_ReturnT].__origin__.__init__(
             self, session, path, http_method, headers, params, json
         )
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
-class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuilder):  # type: ignore
+class AsyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], AsyncQueryRequestBuilder[_ReturnT]):  # type: ignore
     def __init__(
         self,
         session: AsyncClient,
@@ -169,19 +176,24 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuild
         params: QueryParams,
         json: dict,
     ) -> None:
-        BaseSelectRequestBuilder.__init__(self, session, headers, params)
-        AsyncQueryRequestBuilder.__init__(
+        # Generic[T] is an instance of typing._GenericAlias, so doing Generic[T].__init__
+        # tries to call _GenericAlias.__init__ - which is the wrong method
+        # The __origin__ attribute of the _GenericAlias is the actual class
+        BaseSelectRequestBuilder[_ReturnT].__origin__.__init__(
+            self, session, headers, params
+        )
+        AsyncQueryRequestBuilder[_ReturnT].__origin__.__init__(
             self, session, path, http_method, headers, params, json
         )
 
-    def single(self) -> AsyncSingleRequestBuilder:
+    def single(self) -> AsyncSingleRequestBuilder[_ReturnT]:
         """Specify that the query will only return a single row in response.
 
         .. caution::
             The API will raise an error if the query returned more than one row.
         """
         self.headers["Accept"] = "application/vnd.pgrst.object+json"
-        return AsyncSingleRequestBuilder(
+        return AsyncSingleRequestBuilder[_ReturnT](
             headers=self.headers,
             http_method=self.http_method,
             json=self.json,
@@ -190,10 +202,10 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuild
             session=self.session,  # type: ignore
         )
 
-    def maybe_single(self) -> AsyncMaybeSingleRequestBuilder:
+    def maybe_single(self) -> AsyncMaybeSingleRequestBuilder[_ReturnT]:
         """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error."""
         self.headers["Accept"] = "application/vnd.pgrst.object+json"
-        return AsyncMaybeSingleRequestBuilder(
+        return AsyncMaybeSingleRequestBuilder[_ReturnT](
             headers=self.headers,
             http_method=self.http_method,
             json=self.json,
@@ -203,8 +215,8 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuild
         )
 
     def text_search(
-        self, column: str, query: str, options: Dict[str, any] = {}
-    ) -> AsyncFilterRequestBuilder:
+        self, column: str, query: str, options: dict[str, Any] = {}
+    ) -> AsyncFilterRequestBuilder[_ReturnT]:
         type_ = options.get("type")
         type_part = ""
         if type_ == "plain":
@@ -216,7 +228,7 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuild
         config_part = f"({options.get('config')})" if options.get("config") else ""
         self.params = self.params.add(column, f"{type_part}fts{config_part}.{query}")
 
-        return AsyncQueryRequestBuilder(
+        return AsyncQueryRequestBuilder[_ReturnT](
             headers=self.headers,
             http_method=self.http_method,
             json=self.json,
@@ -226,7 +238,7 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder, AsyncQueryRequestBuild
         )
 
 
-class AsyncRequestBuilder:
+class AsyncRequestBuilder(Generic[_ReturnT]):
     def __init__(self, session: AsyncClient, path: str) -> None:
         self.session = session
         self.path = path
@@ -235,7 +247,7 @@ class AsyncRequestBuilder:
         self,
         *columns: str,
         count: Optional[CountMethod] = None,
-    ) -> AsyncSelectRequestBuilder:
+    ) -> AsyncSelectRequestBuilder[_ReturnT]:
         """Run a SELECT query.
 
         Args:
@@ -245,7 +257,7 @@ class AsyncRequestBuilder:
             :class:`AsyncSelectRequestBuilder`
         """
         method, params, headers, json = pre_select(*columns, count=count)
-        return AsyncSelectRequestBuilder(
+        return AsyncSelectRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )
 
@@ -256,7 +268,7 @@ class AsyncRequestBuilder:
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
         upsert: bool = False,
-    ) -> AsyncQueryRequestBuilder:
+    ) -> AsyncQueryRequestBuilder[_ReturnT]:
         """Run an INSERT query.
 
         Args:
@@ -273,7 +285,7 @@ class AsyncRequestBuilder:
             returning=returning,
             upsert=upsert,
         )
-        return AsyncQueryRequestBuilder(
+        return AsyncQueryRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )
 
@@ -285,7 +297,7 @@ class AsyncRequestBuilder:
         returning: ReturnMethod = ReturnMethod.representation,
         ignore_duplicates: bool = False,
         on_conflict: str = "",
-    ) -> AsyncQueryRequestBuilder:
+    ) -> AsyncQueryRequestBuilder[_ReturnT]:
         """Run an upsert (INSERT ... ON CONFLICT DO UPDATE) query.
 
         Args:
@@ -304,7 +316,7 @@ class AsyncRequestBuilder:
             ignore_duplicates=ignore_duplicates,
             on_conflict=on_conflict,
         )
-        return AsyncQueryRequestBuilder(
+        return AsyncQueryRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )
 
@@ -314,7 +326,7 @@ class AsyncRequestBuilder:
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
-    ) -> AsyncFilterRequestBuilder:
+    ) -> AsyncFilterRequestBuilder[_ReturnT]:
         """Run an UPDATE query.
 
         Args:
@@ -329,7 +341,7 @@ class AsyncRequestBuilder:
             count=count,
             returning=returning,
         )
-        return AsyncFilterRequestBuilder(
+        return AsyncFilterRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )
 
@@ -338,7 +350,7 @@ class AsyncRequestBuilder:
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
-    ) -> AsyncFilterRequestBuilder:
+    ) -> AsyncFilterRequestBuilder[_ReturnT]:
         """Run a DELETE query.
 
         Args:
@@ -351,7 +363,7 @@ class AsyncRequestBuilder:
             count=count,
             returning=returning,
         )
-        return AsyncFilterRequestBuilder(
+        return AsyncFilterRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )
 
