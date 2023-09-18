@@ -8,6 +8,7 @@ from typing import (
     Dict,
     Generic,
     Iterable,
+    List,
     NamedTuple,
     Optional,
     Tuple,
@@ -127,7 +128,7 @@ _ReturnT = TypeVar("_ReturnT")
 # necessarily return lists.
 # https://github.com/supabase-community/postgrest-py/issues/200
 class APIResponse(BaseModel, Generic[_ReturnT]):
-    data: list[_ReturnT]
+    data: List[_ReturnT]
     """The data returned by the query."""
     count: Optional[int] = None
     """The number of rows returned."""
