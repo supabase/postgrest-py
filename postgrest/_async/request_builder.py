@@ -165,6 +165,27 @@ class AsyncFilterRequestBuilder(BaseFilterRequestBuilder[_ReturnT], AsyncQueryRe
         )
 
 
+# this exists for type-safety. see https://gist.github.com/anand2312/93d3abf401335fd3310d9e30112303bf
+class AsyncRPCFilterRequestBuilder(
+    BaseFilterRequestBuilder[_ReturnT], AsyncSingleRequestBuilder[_ReturnT]
+):
+    def __init__(
+        self,
+        session: AsyncClient,
+        path: str,
+        http_method: str,
+        headers: Headers,
+        params: QueryParams,
+        json: dict,
+    ) -> None:
+        BaseFilterRequestBuilder[_ReturnT].__origin__.__init__(
+            self, session, headers, params
+        )
+        AsyncSingleRequestBuilder[_ReturnT].__origin__.__init__(
+            self, session, path, http_method, headers, params, json
+        )
+
+
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
 class AsyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], AsyncQueryRequestBuilder[_ReturnT]):  # type: ignore
     def __init__(

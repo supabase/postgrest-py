@@ -165,6 +165,27 @@ class SyncFilterRequestBuilder(BaseFilterRequestBuilder[_ReturnT], SyncQueryRequ
         )
 
 
+# this exists for type-safety. see https://gist.github.com/anand2312/93d3abf401335fd3310d9e30112303bf
+class SyncRPCFilterRequestBuilder(
+    BaseFilterRequestBuilder[_ReturnT], SyncSingleRequestBuilder[_ReturnT]
+):
+    def __init__(
+        self,
+        session: SyncClient,
+        path: str,
+        http_method: str,
+        headers: Headers,
+        params: QueryParams,
+        json: dict,
+    ) -> None:
+        BaseFilterRequestBuilder[_ReturnT].__origin__.__init__(
+            self, session, headers, params
+        )
+        SyncSingleRequestBuilder[_ReturnT].__origin__.__init__(
+            self, session, path, http_method, headers, params, json
+        )
+
+
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
 class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequestBuilder[_ReturnT]):  # type: ignore
     def __init__(
