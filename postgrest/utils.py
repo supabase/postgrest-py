@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, TypeVar, cast, get_origin
+from typing import Any, Type, TypeVar, cast, get_origin
 
 from httpx import AsyncClient  # noqa: F401
 from httpx import Client as BaseClient  # noqa: F401
@@ -34,4 +34,4 @@ def get_origin_and_cast(typ: type[type[_T]]) -> type[_T]:
     # while still allowing us to access the methods of `Base` at runtime
     # See: definitions of request builders that use multiple-inheritance
     # like AsyncFilterRequestBuilder
-    return cast(type[_T], get_origin(typ))
+    return cast(Type[_T], get_origin(typ))
