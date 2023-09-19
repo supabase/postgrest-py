@@ -20,7 +20,7 @@ from ..base_request_builder import (
 )
 from ..exceptions import APIError, generate_default_error_message
 from ..types import ReturnMethod
-from ..utils import SyncClient
+from ..utils import SyncClient, get_origin_and_cast
 
 _ReturnT = TypeVar("_ReturnT")
 
@@ -154,13 +154,10 @@ class SyncFilterRequestBuilder(BaseFilterRequestBuilder[_ReturnT], SyncQueryRequ
         params: QueryParams,
         json: dict,
     ) -> None:
-        # Generic[T] is an instance of typing._GenericAlias, so doing Generic[T].__init__
-        # tries to call _GenericAlias.__init__ - which is the wrong method
-        # The __origin__ attribute of the _GenericAlias is the actual class
-        BaseFilterRequestBuilder[_ReturnT].__origin__.__init__(
+        get_origin_and_cast(BaseFilterRequestBuilder[_ReturnT]).__init__(
             self, session, headers, params
         )
-        SyncQueryRequestBuilder[_ReturnT].__origin__.__init__(
+        get_origin_and_cast(SyncQueryRequestBuilder[_ReturnT]).__init__(
             self, session, path, http_method, headers, params, json
         )
 
@@ -178,10 +175,10 @@ class SyncRPCFilterRequestBuilder(
         params: QueryParams,
         json: dict,
     ) -> None:
-        BaseFilterRequestBuilder[_ReturnT].__origin__.__init__(
+        get_origin_and_cast(BaseFilterRequestBuilder[_ReturnT]).__init__(
             self, session, headers, params
         )
-        SyncSingleRequestBuilder[_ReturnT].__origin__.__init__(
+        get_origin_and_cast(SyncSingleRequestBuilder[_ReturnT]).__init__(
             self, session, path, http_method, headers, params, json
         )
 
@@ -197,13 +194,10 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequ
         params: QueryParams,
         json: dict,
     ) -> None:
-        # Generic[T] is an instance of typing._GenericAlias, so doing Generic[T].__init__
-        # tries to call _GenericAlias.__init__ - which is the wrong method
-        # The __origin__ attribute of the _GenericAlias is the actual class
-        BaseSelectRequestBuilder[_ReturnT].__origin__.__init__(
+        get_origin_and_cast(BaseSelectRequestBuilder[_ReturnT]).__init__(
             self, session, headers, params
         )
-        SyncQueryRequestBuilder[_ReturnT].__origin__.__init__(
+        get_origin_and_cast(SyncQueryRequestBuilder[_ReturnT]).__init__(
             self, session, path, http_method, headers, params, json
         )
 
