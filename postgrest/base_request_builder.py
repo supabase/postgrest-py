@@ -6,6 +6,7 @@ from re import search
 from typing import (
     Any,
     Dict,
+    Generic,
     Iterable,
     List,
     NamedTuple,
@@ -19,6 +20,11 @@ from typing import (
 from httpx import Headers, QueryParams
 from httpx import Response as RequestResponse
 from pydantic import BaseModel
+
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 
 try:
     # >= 2.0.0
@@ -114,15 +120,22 @@ def pre_delete(
     return QueryArgs(RequestMethod.DELETE, QueryParams(), headers, {})
 
 
-class APIResponse(BaseModel):
-    data: List[Dict[str, Any]]
+_ReturnT = TypeVar("_ReturnT")
+
+
+# the APIResponse.data is marked as _ReturnT instead of list[_ReturnT]
+# as it is also returned in the case of rpc() calls; and rpc calls do not
+# necessarily return lists.
+# https://github.com/supabase-community/postgrest-py/issues/200
+class APIResponse(BaseModel, Generic[_ReturnT]):
+    data: List[_ReturnT]
     """The data returned by the query."""
     count: Optional[int] = None
     """The number of rows returned."""
 
     @field_validator("data")
     @classmethod
-    def raise_when_api_error(cls: Type[APIResponse], value: Any) -> Any:
+    def raise_when_api_error(cls: Type[Self], value: Any) -> Any:
         if isinstance(value, dict) and value.get("message"):
             raise ValueError("You are passing an API error to the data field.")
         return value
@@ -141,7 +154,7 @@ class APIResponse(BaseModel):
 
     @classmethod
     def _get_count_from_http_request_response(
-        cls: Type[APIResponse],
+        cls: Type[Self],
         request_response: RequestResponse,
     ) -> Optional[int]:
         prefer_header: Optional[str] = request_response.request.headers.get("prefer")
@@ -159,51 +172,48 @@ class APIResponse(BaseModel):
 
     @classmethod
     def from_http_request_response(
-        cls: Type[APIResponse], request_response: RequestResponse
-    ) -> APIResponse:
+        cls: Type[Self], request_response: RequestResponse
+    ) -> Self:
         try:
             data = request_response.json()
         except JSONDecodeError as e:
             return cls(data=[], count=0)
         count = cls._get_count_from_http_request_response(request_response)
-        return cls(data=data, count=count)
+        # the type-ignore here is as pydantic needs us to pass the type parameter
+        # here explicitly, but pylance already knows that cls is correctly parametrized
+        return cls[_ReturnT](data=data, count=count)  # type: ignore
 
     @classmethod
-    def from_dict(cls: Type[APIResponse], dict: Dict[str, Any]) -> APIResponse:
+    def from_dict(cls: Type[Self], dict: Dict[str, Any]) -> Self:
         keys = dict.keys()
         assert len(keys) == 3 and "data" in keys and "count" in keys and "error" in keys
-        return cls(
+        return cls[_ReturnT](  # type: ignore
             data=dict.get("data"), count=dict.get("count"), error=dict.get("error")
         )
 
 
-class SingleAPIResponse(APIResponse):
-    data: Dict[str, Any]  # type: ignore
+class SingleAPIResponse(APIResponse[_ReturnT], Generic[_ReturnT]):
+    data: _ReturnT  # type: ignore
     """The data returned by the query."""
 
     @classmethod
     def from_http_request_response(
-        cls: Type[SingleAPIResponse], request_response: RequestResponse
-    ) -> SingleAPIResponse:
+        cls: Type[Self], request_response: RequestResponse
+    ) -> Self:
         data = request_response.json()
         count = cls._get_count_from_http_request_response(request_response)
-        return cls(data=data, count=count)
+        return cls[_ReturnT](data=data, count=count)  # type: ignore
 
     @classmethod
-    def from_dict(
-        cls: Type[SingleAPIResponse], dict: Dict[str, Any]
-    ) -> SingleAPIResponse:
+    def from_dict(cls: Type[Self], dict: Dict[str, Any]) -> Self:
         keys = dict.keys()
         assert len(keys) == 3 and "data" in keys and "count" in keys and "error" in keys
-        return cls(
+        return cls[_ReturnT](  # type: ignore
             data=dict.get("data"), count=dict.get("count"), error=dict.get("error")
         )
 
 
-_FilterT = TypeVar("_FilterT", bound="BaseFilterRequestBuilder")
-
-
-class BaseFilterRequestBuilder:
+class BaseFilterRequestBuilder(Generic[_ReturnT]):
     def __init__(
         self,
         session: Union[AsyncClient, SyncClient],
@@ -216,12 +226,12 @@ class BaseFilterRequestBuilder:
         self.negate_next = False
 
     @property
-    def not_(self: _FilterT) -> _FilterT:
+    def not_(self: Self) -> Self:
         """Whether the filter applied next should be negated."""
         self.negate_next = True
         return self
 
-    def filter(self: _FilterT, column: str, operator: str, criteria: str) -> _FilterT:
+    def filter(self: Self, column: str, operator: str, criteria: str) -> Self:
         """Apply filters on a query.
 
         Args:
@@ -236,7 +246,7 @@ class BaseFilterRequestBuilder:
         self.params = self.params.add(key, val)
         return self
 
-    def eq(self: _FilterT, column: str, value: Any) -> _FilterT:
+    def eq(self: Self, column: str, value: Any) -> Self:
         """An 'equal to' filter.
 
         Args:
@@ -245,7 +255,7 @@ class BaseFilterRequestBuilder:
         """
         return self.filter(column, Filters.EQ, value)
 
-    def neq(self: _FilterT, column: str, value: Any) -> _FilterT:
+    def neq(self: Self, column: str, value: Any) -> Self:
         """A 'not equal to' filter
 
         Args:
@@ -254,7 +264,7 @@ class BaseFilterRequestBuilder:
         """
         return self.filter(column, Filters.NEQ, value)
 
-    def gt(self: _FilterT, column: str, value: Any) -> _FilterT:
+    def gt(self: Self, column: str, value: Any) -> Self:
         """A 'greater than' filter
 
         Args:
@@ -263,7 +273,7 @@ class BaseFilterRequestBuilder:
         """
         return self.filter(column, Filters.GT, value)
 
-    def gte(self: _FilterT, column: str, value: Any) -> _FilterT:
+    def gte(self: Self, column: str, value: Any) -> Self:
         """A 'greater than or equal to' filter
 
         Args:
@@ -272,7 +282,7 @@ class BaseFilterRequestBuilder:
         """
         return self.filter(column, Filters.GTE, value)
 
-    def lt(self: _FilterT, column: str, value: Any) -> _FilterT:
+    def lt(self: Self, column: str, value: Any) -> Self:
         """A 'less than' filter
 
         Args:
@@ -281,7 +291,7 @@ class BaseFilterRequestBuilder:
         """
         return self.filter(column, Filters.LT, value)
 
-    def lte(self: _FilterT, column: str, value: Any) -> _FilterT:
+    def lte(self: Self, column: str, value: Any) -> Self:
         """A 'less than or equal to' filter
 
         Args:
@@ -290,7 +300,7 @@ class BaseFilterRequestBuilder:
         """
         return self.filter(column, Filters.LTE, value)
 
-    def is_(self: _FilterT, column: str, value: Any) -> _FilterT:
+    def is_(self: Self, column: str, value: Any) -> Self:
         """An 'is' filter
 
         Args:
@@ -299,7 +309,7 @@ class BaseFilterRequestBuilder:
         """
         return self.filter(column, Filters.IS, value)
 
-    def like(self: _FilterT, column: str, pattern: str) -> _FilterT:
+    def like(self: Self, column: str, pattern: str) -> Self:
         """A 'LIKE' filter, to use for pattern matching.
 
         Args:
@@ -308,7 +318,7 @@ class BaseFilterRequestBuilder:
         """
         return self.filter(column, Filters.LIKE, pattern)
 
-    def ilike(self: _FilterT, column: str, pattern: str) -> _FilterT:
+    def ilike(self: Self, column: str, pattern: str) -> Self:
         """An 'ILIKE' filter, to use for pattern matching (case insensitive).
 
         Args:
@@ -317,34 +327,34 @@ class BaseFilterRequestBuilder:
         """
         return self.filter(column, Filters.ILIKE, pattern)
 
-    def fts(self: _FilterT, column: str, query: Any) -> _FilterT:
+    def fts(self: Self, column: str, query: Any) -> Self:
         return self.filter(column, Filters.FTS, query)
 
-    def plfts(self: _FilterT, column: str, query: Any) -> _FilterT:
+    def plfts(self: Self, column: str, query: Any) -> Self:
         return self.filter(column, Filters.PLFTS, query)
 
-    def phfts(self: _FilterT, column: str, query: Any) -> _FilterT:
+    def phfts(self: Self, column: str, query: Any) -> Self:
         return self.filter(column, Filters.PHFTS, query)
 
-    def wfts(self: _FilterT, column: str, query: Any) -> _FilterT:
+    def wfts(self: Self, column: str, query: Any) -> Self:
         return self.filter(column, Filters.WFTS, query)
 
-    def in_(self: _FilterT, column: str, values: Iterable[Any]) -> _FilterT:
+    def in_(self: Self, column: str, values: Iterable[Any]) -> Self:
         values = map(sanitize_param, values)
         values = ",".join(values)
         return self.filter(column, Filters.IN, f"({values})")
 
-    def cs(self: _FilterT, column: str, values: Iterable[Any]) -> _FilterT:
+    def cs(self: Self, column: str, values: Iterable[Any]) -> Self:
         values = ",".join(values)
         return self.filter(column, Filters.CS, f"{{{values}}}")
 
-    def cd(self: _FilterT, column: str, values: Iterable[Any]) -> _FilterT:
+    def cd(self: Self, column: str, values: Iterable[Any]) -> Self:
         values = ",".join(values)
         return self.filter(column, Filters.CD, f"{{{values}}}")
 
     def contains(
-        self: _FilterT, column: str, value: Union[Iterable[Any], str, Dict[Any, Any]]
-    ) -> _FilterT:
+        self: Self, column: str, value: Union[Iterable[Any], str, Dict[Any, Any]]
+    ) -> Self:
         if isinstance(value, str):
             # range types can be inclusive '[', ']' or exclusive '(', ')' so just
             # keep it simple and accept a string
@@ -357,8 +367,8 @@ class BaseFilterRequestBuilder:
         return self.filter(column, Filters.CS, json.dumps(value))
 
     def contained_by(
-        self: _FilterT, column: str, value: Union[Iterable[Any], str, Dict[Any, Any]]
-    ) -> _FilterT:
+        self: Self, column: str, value: Union[Iterable[Any], str, Dict[Any, Any]]
+    ) -> Self:
         if isinstance(value, str):
             # range
             return self.filter(column, Filters.CD, value)
@@ -367,26 +377,26 @@ class BaseFilterRequestBuilder:
             return self.filter(column, Filters.CD, f"{{{stringified_values}}}")
         return self.filter(column, Filters.CD, json.dumps(value))
 
-    def ov(self: _FilterT, column: str, values: Iterable[Any]) -> _FilterT:
+    def ov(self: Self, column: str, values: Iterable[Any]) -> Self:
         values = ",".join(values)
         return self.filter(column, Filters.OV, f"{{{values}}}")
 
-    def sl(self: _FilterT, column: str, range: Tuple[int, int]) -> _FilterT:
+    def sl(self: Self, column: str, range: Tuple[int, int]) -> Self:
         return self.filter(column, Filters.SL, f"({range[0]},{range[1]})")
 
-    def sr(self: _FilterT, column: str, range: Tuple[int, int]) -> _FilterT:
+    def sr(self: Self, column: str, range: Tuple[int, int]) -> Self:
         return self.filter(column, Filters.SR, f"({range[0]},{range[1]})")
 
-    def nxl(self: _FilterT, column: str, range: Tuple[int, int]) -> _FilterT:
+    def nxl(self: Self, column: str, range: Tuple[int, int]) -> Self:
         return self.filter(column, Filters.NXL, f"({range[0]},{range[1]})")
 
-    def nxr(self: _FilterT, column: str, range: Tuple[int, int]) -> _FilterT:
+    def nxr(self: Self, column: str, range: Tuple[int, int]) -> Self:
         return self.filter(column, Filters.NXR, f"({range[0]},{range[1]})")
 
-    def adj(self: _FilterT, column: str, range: Tuple[int, int]) -> _FilterT:
+    def adj(self: Self, column: str, range: Tuple[int, int]) -> Self:
         return self.filter(column, Filters.ADJ, f"({range[0]},{range[1]})")
 
-    def match(self: _FilterT, query: Dict[str, Any]) -> _FilterT:
+    def match(self: Self, query: Dict[str, Any]) -> Self:
         updated_query = self
 
         if not query:
@@ -400,24 +410,29 @@ class BaseFilterRequestBuilder:
         return updated_query
 
 
-class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
+class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
     def __init__(
         self,
         session: Union[AsyncClient, SyncClient],
         headers: Headers,
         params: QueryParams,
     ) -> None:
-        BaseFilterRequestBuilder.__init__(self, session, headers, params)
+        # Generic[T] is an instance of typing._GenericAlias, so doing Generic[T].__init__
+        # tries to call _GenericAlias.__init__ - which is the wrong method
+        # The __origin__ attribute of the _GenericAlias is the actual class
+        BaseFilterRequestBuilder[_ReturnT].__origin__.__init__(
+            self, session, headers, params
+        )
 
     def explain(
-        self: _FilterT,
+        self: Self,
         analyze: bool = False,
         verbose: bool = False,
         settings: bool = False,
         buffers: bool = False,
         wal: bool = False,
         format: str = "",
-    ) -> _FilterT:
+    ) -> Self:
         options = [
             key
             for key, value in locals().items()
@@ -429,13 +444,13 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         return self
 
     def order(
-        self: _FilterT,
+        self: Self,
         column: str,
         *,
         desc: bool = False,
         nullsfirst: bool = False,
         foreign_table: Optional[str] = None,
-    ) -> _FilterT:
+    ) -> Self:
         """Sort the returned rows in some specific order.
 
         Args:
@@ -452,9 +467,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         )
         return self
 
-    def limit(
-        self: _FilterT, size: int, *, foreign_table: Optional[str] = None
-    ) -> _FilterT:
+    def limit(self: Self, size: int, *, foreign_table: Optional[str] = None) -> Self:
         """Limit the number of rows returned by a query.
 
         Args:
@@ -469,7 +482,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder):
         )
         return self
 
-    def range(self: _FilterT, start: int, end: int) -> _FilterT:
+    def range(self: Self, start: int, end: int) -> Self:
         self.headers["Range-Unit"] = "items"
         self.headers["Range"] = f"{start}-{end - 1}"
         return self

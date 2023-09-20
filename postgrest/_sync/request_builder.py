@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from json import JSONDecodeError
-from typing import Optional, Union
+from typing import Any, Generic, Optional, TypeVar, Union
 
 from httpx import Headers, QueryParams
 from pydantic import ValidationError
@@ -20,10 +20,12 @@ from ..base_request_builder import (
 )
 from ..exceptions import APIError, generate_default_error_message
 from ..types import ReturnMethod
-from ..utils import SyncClient
+from ..utils import SyncClient, get_origin_and_cast
+
+_ReturnT = TypeVar("_ReturnT")
 
 
-class SyncQueryRequestBuilder:
+class SyncQueryRequestBuilder(Generic[_ReturnT]):
     def __init__(
         self,
         session: SyncClient,
@@ -40,7 +42,7 @@ class SyncQueryRequestBuilder:
         self.params = params
         self.json = json
 
-    def execute(self) -> APIResponse:
+    def execute(self) -> APIResponse[_ReturnT]:
         """Execute the query.
 
         .. tip::
@@ -63,7 +65,7 @@ class SyncQueryRequestBuilder:
             if (
                 200 <= r.status_code <= 299
             ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
-                return APIResponse.from_http_request_response(r)
+                return APIResponse[_ReturnT].from_http_request_response(r)
             else:
                 raise APIError(r.json())
         except ValidationError as e:
@@ -72,7 +74,7 @@ class SyncQueryRequestBuilder:
             raise APIError(generate_default_error_message(r))
 
 
-class SyncSingleRequestBuilder:
+class SyncSingleRequestBuilder(Generic[_ReturnT]):
     def __init__(
         self,
         session: SyncClient,
@@ -89,7 +91,7 @@ class SyncSingleRequestBuilder:
         self.params = params
         self.json = json
 
-    def execute(self) -> SingleAPIResponse:
+    def execute(self) -> SingleAPIResponse[_ReturnT]:
         """Execute the query.
 
         .. tip::
@@ -112,7 +114,7 @@ class SyncSingleRequestBuilder:
             if (
                 200 <= r.status_code <= 299
             ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
-                return SingleAPIResponse.from_http_request_response(r)
+                return SingleAPIResponse[_ReturnT].from_http_request_response(r)
             else:
                 raise APIError(r.json())
         except ValidationError as e:
@@ -121,11 +123,11 @@ class SyncSingleRequestBuilder:
             raise APIError(generate_default_error_message(r))
 
 
-class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder):
-    def execute(self) -> Optional[SingleAPIResponse]:
+class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder[_ReturnT]):
+    def execute(self) -> Optional[SingleAPIResponse[_ReturnT]]:
         r = None
         try:
-            r = super().execute()
+            r = SyncSingleRequestBuilder[_ReturnT].execute(self)
         except APIError as e:
             if e.details and "The result contains 0 rows" in e.details:
                 return None
@@ -142,7 +144,7 @@ class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder):
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
-class SyncFilterRequestBuilder(BaseFilterRequestBuilder, SyncQueryRequestBuilder):  # type: ignore
+class SyncFilterRequestBuilder(BaseFilterRequestBuilder[_ReturnT], SyncQueryRequestBuilder[_ReturnT]):  # type: ignore
     def __init__(
         self,
         session: SyncClient,
@@ -152,14 +154,37 @@ class SyncFilterRequestBuilder(BaseFilterRequestBuilder, SyncQueryRequestBuilder
         params: QueryParams,
         json: dict,
     ) -> None:
-        BaseFilterRequestBuilder.__init__(self, session, headers, params)
-        SyncQueryRequestBuilder.__init__(
+        get_origin_and_cast(BaseFilterRequestBuilder[_ReturnT]).__init__(
+            self, session, headers, params
+        )
+        get_origin_and_cast(SyncQueryRequestBuilder[_ReturnT]).__init__(
+            self, session, path, http_method, headers, params, json
+        )
+
+
+# this exists for type-safety. see https://gist.github.com/anand2312/93d3abf401335fd3310d9e30112303bf
+class SyncRPCFilterRequestBuilder(
+    BaseFilterRequestBuilder[_ReturnT], SyncSingleRequestBuilder[_ReturnT]
+):
+    def __init__(
+        self,
+        session: SyncClient,
+        path: str,
+        http_method: str,
+        headers: Headers,
+        params: QueryParams,
+        json: dict,
+    ) -> None:
+        get_origin_and_cast(BaseFilterRequestBuilder[_ReturnT]).__init__(
+            self, session, headers, params
+        )
+        get_origin_and_cast(SyncSingleRequestBuilder[_ReturnT]).__init__(
             self, session, path, http_method, headers, params, json
         )
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
-class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder):  # type: ignore
+class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequestBuilder[_ReturnT]):  # type: ignore
     def __init__(
         self,
         session: SyncClient,
@@ -169,19 +194,21 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
         params: QueryParams,
         json: dict,
     ) -> None:
-        BaseSelectRequestBuilder.__init__(self, session, headers, params)
-        SyncQueryRequestBuilder.__init__(
+        get_origin_and_cast(BaseSelectRequestBuilder[_ReturnT]).__init__(
+            self, session, headers, params
+        )
+        get_origin_and_cast(SyncQueryRequestBuilder[_ReturnT]).__init__(
             self, session, path, http_method, headers, params, json
         )
 
-    def single(self) -> SyncSingleRequestBuilder:
+    def single(self) -> SyncSingleRequestBuilder[_ReturnT]:
         """Specify that the query will only return a single row in response.
 
         .. caution::
             The API will raise an error if the query returned more than one row.
         """
         self.headers["Accept"] = "application/vnd.pgrst.object+json"
-        return SyncSingleRequestBuilder(
+        return SyncSingleRequestBuilder[_ReturnT](
             headers=self.headers,
             http_method=self.http_method,
             json=self.json,
@@ -190,10 +217,10 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
             session=self.session,  # type: ignore
         )
 
-    def maybe_single(self) -> SyncMaybeSingleRequestBuilder:
+    def maybe_single(self) -> SyncMaybeSingleRequestBuilder[_ReturnT]:
         """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error."""
         self.headers["Accept"] = "application/vnd.pgrst.object+json"
-        return SyncMaybeSingleRequestBuilder(
+        return SyncMaybeSingleRequestBuilder[_ReturnT](
             headers=self.headers,
             http_method=self.http_method,
             json=self.json,
@@ -203,8 +230,8 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
         )
 
     def text_search(
-        self, column: str, query: str, options: Dict[str, any] = {}
-    ) -> SyncFilterRequestBuilder:
+        self, column: str, query: str, options: dict[str, Any] = {}
+    ) -> SyncFilterRequestBuilder[_ReturnT]:
         type_ = options.get("type")
         type_part = ""
         if type_ == "plain":
@@ -216,7 +243,7 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
         config_part = f"({options.get('config')})" if options.get("config") else ""
         self.params = self.params.add(column, f"{type_part}fts{config_part}.{query}")
 
-        return SyncQueryRequestBuilder(
+        return SyncQueryRequestBuilder[_ReturnT](
             headers=self.headers,
             http_method=self.http_method,
             json=self.json,
@@ -226,7 +253,7 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder, SyncQueryRequestBuilder
         )
 
 
-class SyncRequestBuilder:
+class SyncRequestBuilder(Generic[_ReturnT]):
     def __init__(self, session: SyncClient, path: str) -> None:
         self.session = session
         self.path = path
@@ -235,7 +262,7 @@ class SyncRequestBuilder:
         self,
         *columns: str,
         count: Optional[CountMethod] = None,
-    ) -> SyncSelectRequestBuilder:
+    ) -> SyncSelectRequestBuilder[_ReturnT]:
         """Run a SELECT query.
 
         Args:
@@ -245,7 +272,7 @@ class SyncRequestBuilder:
             :class:`AsyncSelectRequestBuilder`
         """
         method, params, headers, json = pre_select(*columns, count=count)
-        return SyncSelectRequestBuilder(
+        return SyncSelectRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )
 
@@ -256,7 +283,7 @@ class SyncRequestBuilder:
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
         upsert: bool = False,
-    ) -> SyncQueryRequestBuilder:
+    ) -> SyncQueryRequestBuilder[_ReturnT]:
         """Run an INSERT query.
 
         Args:
@@ -273,7 +300,7 @@ class SyncRequestBuilder:
             returning=returning,
             upsert=upsert,
         )
-        return SyncQueryRequestBuilder(
+        return SyncQueryRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )
 
@@ -285,7 +312,7 @@ class SyncRequestBuilder:
         returning: ReturnMethod = ReturnMethod.representation,
         ignore_duplicates: bool = False,
         on_conflict: str = "",
-    ) -> SyncQueryRequestBuilder:
+    ) -> SyncQueryRequestBuilder[_ReturnT]:
         """Run an upsert (INSERT ... ON CONFLICT DO UPDATE) query.
 
         Args:
@@ -304,7 +331,7 @@ class SyncRequestBuilder:
             ignore_duplicates=ignore_duplicates,
             on_conflict=on_conflict,
         )
-        return SyncQueryRequestBuilder(
+        return SyncQueryRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )
 
@@ -314,7 +341,7 @@ class SyncRequestBuilder:
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
-    ) -> SyncFilterRequestBuilder:
+    ) -> SyncFilterRequestBuilder[_ReturnT]:
         """Run an UPDATE query.
 
         Args:
@@ -329,7 +356,7 @@ class SyncRequestBuilder:
             count=count,
             returning=returning,
         )
-        return SyncFilterRequestBuilder(
+        return SyncFilterRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )
 
@@ -338,7 +365,7 @@ class SyncRequestBuilder:
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
-    ) -> SyncFilterRequestBuilder:
+    ) -> SyncFilterRequestBuilder[_ReturnT]:
         """Run a DELETE query.
 
         Args:
@@ -351,7 +378,7 @@ class SyncRequestBuilder:
             count=count,
             returning=returning,
         )
-        return SyncFilterRequestBuilder(
+        return SyncFilterRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )
 
