@@ -39,12 +39,12 @@ python-semantic-release = "^8.1.1"
 furo = "^2023.9.10"
 
 [tool.semantic_release]
-version_variable = "postgrest/__init__.py:__version__"
+version_variables = ["postgrest/__init__.py:__version__"]
 version_toml = ["pyproject.toml:tool.poetry.version"]
 major_on_zero = false
-commit_subject = "chore(release): bump version to v{version}"
+commit_message = "chore(release): bump version to v{version}"
 build_command = "curl -sSL https://install.python-poetry.org | python - && export PATH=\"/github/home/.local/bin:$PATH\" && poetry install && poetry build"
-upload_to_repository = true
+upload_to_vcs_release = true
 branch = "master"
 changelog_components = "semantic_release.changelog.changelog_headers,semantic_release.changelog.compare_url"
 
