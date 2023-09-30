@@ -204,10 +204,7 @@ class SingleAPIResponse(APIResponse[_ReturnT], Generic[_ReturnT]):
         try:
             data = request_response.json()
         except JSONDecodeError:
-            if len(request_response.text) > 0:
-                data = request_response.text
-            else:
-                data = []
+            data = request_response.text if len(request_response.text) > 0 else []
         return cls[_ReturnT](data=data, count=count)  # type: ignore
 
     @classmethod
