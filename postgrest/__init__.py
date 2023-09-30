@@ -10,6 +10,7 @@ from ._async.request_builder import (
     AsyncQueryRequestBuilder,
     AsyncRequestBuilder,
     AsyncSelectRequestBuilder,
+    AsyncSingleRequestBuilder,
 )
 from ._sync.client import SyncPostgrestClient
 from ._sync.request_builder import (
@@ -17,6 +18,7 @@ from ._sync.request_builder import (
     SyncQueryRequestBuilder,
     SyncRequestBuilder,
     SyncSelectRequestBuilder,
+    SyncSingleRequestBuilder,
 )
 from .base_request_builder import APIResponse
 from .constants import DEFAULT_POSTGREST_CLIENT_HEADERS
