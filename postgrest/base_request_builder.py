@@ -200,8 +200,14 @@ class SingleAPIResponse(APIResponse[_ReturnT], Generic[_ReturnT]):
     def from_http_request_response(
         cls: Type[Self], request_response: RequestResponse
     ) -> Self:
-        data = request_response.json()
         count = cls._get_count_from_http_request_response(request_response)
+        try:
+            data = request_response.json()
+        except JSONDecodeError:
+            if len(request_response.text) > 0:
+                data = request_response.text
+            else:
+                data = []
         return cls[_ReturnT](data=data, count=count)  # type: ignore
 
     @classmethod

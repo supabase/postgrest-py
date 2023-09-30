@@ -252,6 +252,18 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], AsyncQueryRe
             session=self.session,  # type: ignore
         )
 
+    def csv(self) -> AsyncSingleRequestBuilder[str]:
+        """Specify that the query must retrieve data as a single CSV string."""
+        self.headers["Accept"] = "text/csv"
+        return AsyncSingleRequestBuilder[str](
+            session=self.session,  # type: ignore
+            path=self.path,
+            http_method=self.http_method,
+            headers=self.headers,
+            params=self.params,
+            json=self.json,
+        )
+
 
 class AsyncRequestBuilder(Generic[_ReturnT]):
     def __init__(self, session: AsyncClient, path: str) -> None:
