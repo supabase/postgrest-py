@@ -2,9 +2,34 @@
 
 
 
+## v0.12.0 (2023-10-06)
+
+### Feature
+
+* feat: add csv() modifier (#316)
+
+* fix: cast to correct type
+
+* feat: add csv() modifier
+
+* chore: export SingleRequestBuilder
+
+* chore: write tests for csv()
+
+* &#39;Refactored by Sourcery&#39; (#317)
+
+Co-authored-by: Sourcery AI &lt;&gt;
+
+---------
+
+Co-authored-by: sourcery-ai[bot] &lt;58596630+sourcery-ai[bot]@users.noreply.github.com&gt; ([`4f6e9d9`](https://github.com/supabase-community/postgrest-py/commit/4f6e9d9a8f340dd25d47f2399218873c7b9abc01))
+
+
 ## v0.11.0 (2023-09-28)
 
 ### Chore
+
+* chore(release): bump version to v0.11.0 ([`5ae0f99`](https://github.com/supabase-community/postgrest-py/commit/5ae0f99732ee416cf1a3b59ebe28937344fefd1a))
 
 * chore(deps-dev): bump python-semantic-release from 7.34.6 to 8.1.1 (#311)
 
