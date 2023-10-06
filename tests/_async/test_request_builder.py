@@ -3,7 +3,7 @@ from typing import Any, Dict, List
 import pytest
 from httpx import Request, Response
 
-from postgrest import AsyncRequestBuilder
+from postgrest import AsyncRequestBuilder, AsyncSingleRequestBuilder
 from postgrest.base_request_builder import APIResponse, SingleAPIResponse
 from postgrest.types import CountMethod
 from postgrest.utils import AsyncClient
@@ -35,6 +35,12 @@ class TestSelect:
         assert builder.headers["prefer"] == "count=exact"
         assert builder.http_method == "HEAD"
         assert builder.json == {}
+
+    def test_select_as_csv(self, request_builder: AsyncRequestBuilder):
+        builder = request_builder.select("*").csv()
+
+        assert builder.headers["Accept"] == "text/csv"
+        assert isinstance(builder, AsyncSingleRequestBuilder)
 
 
 class TestInsert:
@@ -144,6 +150,11 @@ class TestExplain:
         assert 'options="analyze|verbose|buffers|wal;' in str(
             builder.headers.get("accept")
         )
+
+
+@pytest.fixture
+def csv_api_response() -> str:
+    return "id,name\n1,foo\n"
 
 
 @pytest.fixture
@@ -281,6 +292,15 @@ def request_response_with_single_data(
     )
 
 
+@pytest.fixture
+def request_response_with_csv_data(csv_api_response: str) -> Response:
+    return Response(
+        status_code=200,
+        text=csv_api_response,
+        request=Request(method="GET", url="http://example.com"),
+    )
+
+
 class TestApiResponse:
     def test_response_raises_when_api_error(
         self, api_response_with_error: Dict[str, Any]
@@ -374,3 +394,12 @@ class TestApiResponse:
         assert isinstance(result.data, dict)
         assert result.data == single_api_response
         assert result.count == 2
+
+    def test_single_with_csv_data(
+        self, request_response_with_csv_data: Response, csv_api_response: str
+    ):
+        result = SingleAPIResponse.from_http_request_response(
+            request_response_with_csv_data
+        )
+        assert isinstance(result.data, str)
+        assert result.data == csv_api_response

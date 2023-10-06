@@ -34,7 +34,7 @@ except ImportError:
     from pydantic import validator as field_validator
 
 from .types import CountMethod, Filters, RequestMethod, ReturnMethod
-from .utils import AsyncClient, SyncClient, sanitize_param
+from .utils import AsyncClient, SyncClient, get_origin_and_cast, sanitize_param
 
 
 class QueryArgs(NamedTuple):
@@ -200,8 +200,11 @@ class SingleAPIResponse(APIResponse[_ReturnT], Generic[_ReturnT]):
     def from_http_request_response(
         cls: Type[Self], request_response: RequestResponse
     ) -> Self:
-        data = request_response.json()
         count = cls._get_count_from_http_request_response(request_response)
+        try:
+            data = request_response.json()
+        except JSONDecodeError:
+            data = request_response.text if len(request_response.text) > 0 else []
         return cls[_ReturnT](data=data, count=count)  # type: ignore
 
     @classmethod
@@ -420,7 +423,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
         # Generic[T] is an instance of typing._GenericAlias, so doing Generic[T].__init__
         # tries to call _GenericAlias.__init__ - which is the wrong method
         # The __origin__ attribute of the _GenericAlias is the actual class
-        BaseFilterRequestBuilder[_ReturnT].__origin__.__init__(
+        get_origin_and_cast(BaseFilterRequestBuilder[_ReturnT]).__init__(
             self, session, headers, params
         )
 

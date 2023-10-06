@@ -252,6 +252,18 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequ
             session=self.session,  # type: ignore
         )
 
+    def csv(self) -> SyncSingleRequestBuilder[str]:
+        """Specify that the query must retrieve data as a single CSV string."""
+        self.headers["Accept"] = "text/csv"
+        return SyncSingleRequestBuilder[str](
+            session=self.session,  # type: ignore
+            path=self.path,
+            http_method=self.http_method,
+            headers=self.headers,
+            params=self.params,
+            json=self.json,
+        )
+
 
 class SyncRequestBuilder(Generic[_ReturnT]):
     def __init__(self, session: SyncClient, path: str) -> None:
