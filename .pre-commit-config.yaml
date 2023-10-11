@@ -24,8 +24,8 @@ repos:
                     "--line-width=88",
                 ]
 
-    - repo: https://github.com/myint/autoflake.git
-      rev: v1.4
+    - repo: https://github.com/PyCQA/autoflake.git
+      rev: v2.2.1
       hooks:
           - id: autoflake
             args:
