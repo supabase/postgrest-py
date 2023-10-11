@@ -26,7 +26,6 @@ strenum = "^0.4.9"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.4.2"
-Sphinx = "^7.1.2"
 flake8 = "^5.0.4"
 black = "^23.9"
 isort = "^5.12.0"
@@ -36,6 +35,12 @@ pytest-depends = "^1.0.1"
 pytest-asyncio = "^0.18.3"
 unasync-cli = "^0.0.9"
 python-semantic-release = "^8.1.1"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "^7.1.2"
 furo = "^2023.9.10"
 
 [tool.semantic_release]
