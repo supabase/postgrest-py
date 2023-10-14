@@ -78,7 +78,7 @@ class AsyncPostgrestClient(BasePostgrestClient):
         """Alias to :meth:`from_`."""
         return self.from_(table)
 
-    async def rpc(self, func: str, params: dict) -> AsyncRPCFilterRequestBuilder[Any]:
+    def rpc(self, func: str, params: dict) -> AsyncRPCFilterRequestBuilder[Any]:
         """Perform a stored procedure call.
 
         Args:
