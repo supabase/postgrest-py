@@ -2,9 +2,39 @@
 
 
 
+## v0.13.0 (2023-10-22)
+
+### Chore
+
+* chore(deps-dev): bump black from 23.9.1 to 23.10.0 (#325)
+
+Bumps [black](https://github.com/psf/black) from 23.9.1 to 23.10.0.
+- [Release notes](https://github.com/psf/black/releases)
+- [Changelog](https://github.com/psf/black/blob/main/CHANGES.md)
+- [Commits](https://github.com/psf/black/compare/23.9.1...23.10.0)
+
+---
+updated-dependencies:
+- dependency-name: black
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`193c8df`](https://github.com/supabase-community/postgrest-py/commit/193c8df842616c12e897aceb342df9db64c55264))
+
+### Feature
+
+* feat: add offset (#326)
+
+Co-authored-by: joel@joellee.org &lt;joel@joellee.org&gt; ([`7cd6751`](https://github.com/supabase-community/postgrest-py/commit/7cd67512705853f6e4488cfa34491ae97c526041))
+
+
 ## v0.12.1 (2023-10-17)
 
 ### Chore
+
+* chore(release): bump version to v0.12.1 ([`e2d2f0e`](https://github.com/supabase-community/postgrest-py/commit/e2d2f0eef49d0309d8af5091712a2ea10c3d51e8))
 
 * chore(deps-dev): bump pre-commit from 3.3.3 to 3.5.0 (#323)
 
