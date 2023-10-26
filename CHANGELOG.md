@@ -2,7 +2,77 @@
 
 
 
+## v0.13.0 (2023-10-22)
+
+### Chore
+
+* chore(deps-dev): bump black from 23.9.1 to 23.10.0 (#325)
+
+Bumps [black](https://github.com/psf/black) from 23.9.1 to 23.10.0.
+- [Release notes](https://github.com/psf/black/releases)
+- [Changelog](https://github.com/psf/black/blob/main/CHANGES.md)
+- [Commits](https://github.com/psf/black/compare/23.9.1...23.10.0)
+
+---
+updated-dependencies:
+- dependency-name: black
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`193c8df`](https://github.com/supabase-community/postgrest-py/commit/193c8df842616c12e897aceb342df9db64c55264))
+
+### Feature
+
+* feat: add offset (#326)
+
+Co-authored-by: joel@joellee.org &lt;joel@joellee.org&gt; ([`7cd6751`](https://github.com/supabase-community/postgrest-py/commit/7cd67512705853f6e4488cfa34491ae97c526041))
+
+
+## v0.12.1 (2023-10-17)
+
+### Chore
+
+* chore(release): bump version to v0.12.1 ([`e2d2f0e`](https://github.com/supabase-community/postgrest-py/commit/e2d2f0eef49d0309d8af5091712a2ea10c3d51e8))
+
+* chore(deps-dev): bump pre-commit from 3.3.3 to 3.5.0 (#323)
+
+Bumps [pre-commit](https://github.com/pre-commit/pre-commit) from 3.3.3 to 3.5.0.
+- [Release notes](https://github.com/pre-commit/pre-commit/releases)
+- [Changelog](https://github.com/pre-commit/pre-commit/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/pre-commit/pre-commit/compare/v3.3.3...v3.5.0)
+
+---
+updated-dependencies:
+- dependency-name: pre-commit
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`1209139`](https://github.com/supabase-community/postgrest-py/commit/120913914ee958087c1f65d9292a23408fbe6227))
+
+* chore: add python 3.12 to CI (#319)
+
+* chore: add python 3.12 to CI
+
+* chore: update autoflake hook
+
+* chore: add myself to codeowners
+
+* fix: make doc requirements optional ([`d1ee0bb`](https://github.com/supabase-community/postgrest-py/commit/d1ee0bbaf41f357322a31987cbdb016aee372b25))
+
+### Fix
+
+* fix: make rpc function sync (#322) ([`04f4980`](https://github.com/supabase-community/postgrest-py/commit/04f49804db614427b2545414b934b93baef91a71))
+
+
 ## v0.12.0 (2023-10-06)
+
+### Chore
+
+* chore(release): bump version to v0.12.0 ([`89b370f`](https://github.com/supabase-community/postgrest-py/commit/89b370fb1089a06d7d85dee6da37defbbaaf5a02))
 
 ### Feature
 
