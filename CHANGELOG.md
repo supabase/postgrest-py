@@ -2,9 +2,137 @@
 
 
 
+## v0.13.1 (2024-01-04)
+
+### Chore
+
+* chore(deps): bump pydantic from 2.4.2 to 2.5.0 (#332)
+
+Bumps [pydantic](https://github.com/pydantic/pydantic) from 2.4.2 to 2.5.0.
+- [Release notes](https://github.com/pydantic/pydantic/releases)
+- [Changelog](https://github.com/pydantic/pydantic/blob/main/HISTORY.md)
+- [Commits](https://github.com/pydantic/pydantic/compare/v2.4.2...v2.5.0)
+
+---
+updated-dependencies:
+- dependency-name: pydantic
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`fb0b8c2`](https://github.com/supabase-community/postgrest-py/commit/fb0b8c2590a3d53f67c84e9f52917768a13d7153))
+
+* chore(deps-dev): bump pytest from 7.4.2 to 7.4.3 (#329)
+
+Bumps [pytest](https://github.com/pytest-dev/pytest) from 7.4.2 to 7.4.3.
+- [Release notes](https://github.com/pytest-dev/pytest/releases)
+- [Changelog](https://github.com/pytest-dev/pytest/blob/main/CHANGELOG.rst)
+- [Commits](https://github.com/pytest-dev/pytest/compare/7.4.2...7.4.3)
+
+---
+updated-dependencies:
+- dependency-name: pytest
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`85826ea`](https://github.com/supabase-community/postgrest-py/commit/85826ea3473cc6e4c7ebe3a0b8068b89ae917101))
+
+* chore(deps): bump pydantic from 2.1.1 to 2.4.2 (#314)
+
+Bumps [pydantic](https://github.com/pydantic/pydantic) from 2.1.1 to 2.4.2.
+- [Release notes](https://github.com/pydantic/pydantic/releases)
+- [Changelog](https://github.com/pydantic/pydantic/blob/main/HISTORY.md)
+- [Commits](https://github.com/pydantic/pydantic/compare/v2.1.1...v2.4.2)
+
+---
+updated-dependencies:
+- dependency-name: pydantic
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`9579d03`](https://github.com/supabase-community/postgrest-py/commit/9579d03480e2f28ad670d205e4e89ab2a768c4c6))
+
+* chore(deps-dev): bump gitpython from 3.1.35 to 3.1.37 (#320)
+
+Bumps [gitpython](https://github.com/gitpython-developers/GitPython) from 3.1.35 to 3.1.37.
+- [Release notes](https://github.com/gitpython-developers/GitPython/releases)
+- [Changelog](https://github.com/gitpython-developers/GitPython/blob/main/CHANGES)
+- [Commits](https://github.com/gitpython-developers/GitPython/compare/3.1.35...3.1.37)
+
+---
+updated-dependencies:
+- dependency-name: gitpython
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`0e6e8b0`](https://github.com/supabase-community/postgrest-py/commit/0e6e8b0f0be6564a5a0a7fd4b86cd107c1f439d2))
+
+* chore(deps-dev): bump urllib3 from 2.0.4 to 2.0.7 (#324)
+
+Bumps [urllib3](https://github.com/urllib3/urllib3) from 2.0.4 to 2.0.7.
+- [Release notes](https://github.com/urllib3/urllib3/releases)
+- [Changelog](https://github.com/urllib3/urllib3/blob/main/CHANGES.rst)
+- [Commits](https://github.com/urllib3/urllib3/compare/2.0.4...2.0.7)
+
+---
+updated-dependencies:
+- dependency-name: urllib3
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`ffa552f`](https://github.com/supabase-community/postgrest-py/commit/ffa552fa18a87c21de5b1b4ec7b54f27e99179d5))
+
+* chore(deps-dev): bump python-semantic-release from 8.1.1 to 8.3.0 (#327)
+
+Bumps [python-semantic-release](https://github.com/python-semantic-release/python-semantic-release) from 8.1.1 to 8.3.0.
+- [Release notes](https://github.com/python-semantic-release/python-semantic-release/releases)
+- [Changelog](https://github.com/python-semantic-release/python-semantic-release/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/python-semantic-release/python-semantic-release/compare/v8.1.1...v8.3.0)
+
+---
+updated-dependencies:
+- dependency-name: python-semantic-release
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`3f2eebb`](https://github.com/supabase-community/postgrest-py/commit/3f2eebb729d65648b81676be4932a1635aaba70a))
+
+* chore(deps-dev): bump black from 23.10.0 to 23.10.1 (#328)
+
+Bumps [black](https://github.com/psf/black) from 23.10.0 to 23.10.1.
+- [Release notes](https://github.com/psf/black/releases)
+- [Changelog](https://github.com/psf/black/blob/main/CHANGES.md)
+- [Commits](https://github.com/psf/black/compare/23.10.0...23.10.1)
+
+---
+updated-dependencies:
+- dependency-name: black
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`32d3abf`](https://github.com/supabase-community/postgrest-py/commit/32d3abfe34f3b895c9b88cc3b423101535cafe24))
+
+### Fix
+
+* fix: update httpx and other dev dependencies ([`bfc6714`](https://github.com/supabase-community/postgrest-py/commit/bfc6714dc05a21374b67b0c84c0029e1143b3a99))
+
+
 ## v0.13.0 (2023-10-22)
 
 ### Chore
+
+* chore(release): bump version to v0.13.0 ([`f7f786b`](https://github.com/supabase-community/postgrest-py/commit/f7f786bd19194c3878adbe899213dceb67ffb29d))
 
 * chore(deps-dev): bump black from 23.9.1 to 23.10.0 (#325)
 
