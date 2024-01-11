@@ -2,9 +2,18 @@
 
 
 
+## v0.13.2 (2024-01-11)
+
+### Fix
+
+* fix: add missing RPCFilterRequestBuilder and MaybeSingleRequestBuilder exports ([`3ab20e4`](https://github.com/supabase-community/postgrest-py/commit/3ab20e4682a16b31b414fa7e5f2e1a565828f60e))
+
+
 ## v0.13.1 (2024-01-04)
 
 ### Chore
+
+* chore(release): bump version to v0.13.1 ([`9b1b44e`](https://github.com/supabase-community/postgrest-py/commit/9b1b44e31fc0ed980f6fa335f03b4156b8b113de))
 
 * chore(deps): bump pydantic from 2.4.2 to 2.5.0 (#332)
 
