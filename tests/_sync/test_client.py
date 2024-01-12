@@ -28,7 +28,6 @@ class TestConstructor:
         )
         assert session.headers.items() >= headers.items()
 
-    @pytest.mark.asyncio
     def test_custom_headers(self):
         with SyncPostgrestClient(
             "https://example.com", schema="pub", headers={"Custom-Header": "value"}
@@ -72,7 +71,6 @@ def test_schema(postgrest_client: SyncPostgrestClient):
     assert subheaders.items() < dict(session.headers).items()
 
 
-@pytest.mark.asyncio
 def test_params_purged_after_execute(postgrest_client: SyncPostgrestClient):
     assert len(postgrest_client.session.params) == 0
     with pytest.raises(APIError):
@@ -80,7 +78,6 @@ def test_params_purged_after_execute(postgrest_client: SyncPostgrestClient):
     assert len(postgrest_client.session.params) == 0
 
 
-@pytest.mark.asyncio
 def test_response_status_code_outside_ok(postgrest_client: SyncPostgrestClient):
     with pytest.raises(APIError) as exc_info:
         postgrest_client.from_("test").select("a", "b").eq(
@@ -96,7 +93,6 @@ def test_response_status_code_outside_ok(postgrest_client: SyncPostgrestClient):
     assert exc_response["errors"][0].get("code") == 400
 
 
-@pytest.mark.asyncio
 def test_response_maybe_single(postgrest_client: SyncPostgrestClient):
     with patch(
         "postgrest._async.request_builder.AsyncSingleRequestBuilder.execute",

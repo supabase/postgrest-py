@@ -399,6 +399,24 @@ class BaseFilterRequestBuilder(Generic[_ReturnT]):
     def adj(self: Self, column: str, range: Tuple[int, int]) -> Self:
         return self.filter(column, Filters.ADJ, f"({range[0]},{range[1]})")
 
+    def range_gt(self: Self, column: str, range: Tuple[int, int]) -> Self:
+        return self.sr(column, range)
+
+    def range_gte(self: Self, column: str, range: Tuple[int, int]) -> Self:
+        return self.nxl(column, range)
+
+    def range_lt(self: Self, column: str, range: Tuple[int, int]) -> Self:
+        return self.sl(column, range)
+
+    def range_lte(self: Self, column: str, range: Tuple[int, int]) -> Self:
+        return self.nxr(column, range)
+
+    def range_adjacent(self: Self, column: str, range: Tuple[int, int]) -> Self:
+        return self.adj(column, range)
+
+    def overlaps(self: Self, column: str, values: Iterable[Any]) -> Self:
+        return self.ov(column, values)
+
     def match(self: Self, query: Dict[str, Any]) -> Self:
         updated_query = self
 

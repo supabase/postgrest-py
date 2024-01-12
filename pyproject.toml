@@ -53,6 +53,9 @@ upload_to_vcs_release = true
 branch = "master"
 changelog_components = "semantic_release.changelog.changelog_headers,semantic_release.changelog.compare_url"
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
