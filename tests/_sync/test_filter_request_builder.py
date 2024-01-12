@@ -68,6 +68,24 @@ def test_equals(filter_request_builder):
     assert str(builder.params) == "x=eq.a"
 
 
+def test_not_equal(filter_request_builder):
+    builder = filter_request_builder.neq("x", "a")
+
+    assert str(builder.params) == "x=neq.a"
+
+
+def test_greater_than(filter_request_builder):
+    builder = filter_request_builder.gt("x", "a")
+
+    assert str(builder.params) == "x=gt.a"
+
+
+def test_greater_than_or_equals_to(filter_request_builder):
+    builder = filter_request_builder.gte("x", "a")
+
+    assert str(builder.params) == "x=gte.a"
+
+
 def test_contains(filter_request_builder):
     builder = filter_request_builder.contains("x", "a")
 
@@ -100,3 +118,85 @@ def test_contained_by_mixed_items(filter_request_builder):
 
     # {a,["b",%20"c"]}
     assert str(builder.params) == "x=cd.%7Ba%2C%5B%22b%22%2C%20%22c%22%5D%7D"
+
+
+def test_range_greater_than(filter_request_builder):
+    builder = filter_request_builder.range_gt(
+        "x", ["2000-01-02 08:30", "2000-01-02 09:30"]
+    )
+
+    # {a,["b",%20"c"]}
+    assert str(builder.params) == "x=sr.%282000-01-02%2008%3A30%2C2000-01-02%2009%3A30%29"
+
+
+def test_range_greater_than_or_equal_to(filter_request_builder):
+    builder = filter_request_builder.range_gte(
+        "x", ["2000-01-02 08:30", "2000-01-02 09:30"]
+    )
+
+    # {a,["b",%20"c"]}
+    assert (
+        str(builder.params) == "x=nxl.%282000-01-02%2008%3A30%2C2000-01-02%2009%3A30%29"
+    )
+
+
+def test_range_less_than(filter_request_builder):
+    builder = filter_request_builder.range_lt(
+        "x", ["2000-01-02 08:30", "2000-01-02 09:30"]
+    )
+
+    # {a,["b",%20"c"]}
+    assert str(builder.params) == "x=sl.%282000-01-02%2008%3A30%2C2000-01-02%2009%3A30%29"
+
+
+def test_range_less_than_or_equal_to(filter_request_builder):
+    builder = filter_request_builder.range_lte(
+        "x", ["2000-01-02 08:30", "2000-01-02 09:30"]
+    )
+
+    # {a,["b",%20"c"]}
+    assert (
+        str(builder.params) == "x=nxr.%282000-01-02%2008%3A30%2C2000-01-02%2009%3A30%29"
+    )
+
+
+def test_range_adjacent(filter_request_builder):
+    builder = filter_request_builder.range_adjacent(
+        "x", ["2000-01-02 08:30", "2000-01-02 09:30"]
+    )
+
+    # {a,["b",%20"c"]}
+    assert (
+        str(builder.params) == "x=adj.%282000-01-02%2008%3A30%2C2000-01-02%2009%3A30%29"
+    )
+
+
+def test_overlaps(filter_request_builder):
+    builder = filter_request_builder.overlaps("x", ["is:closed", "severity:high"])
+
+    # {a,["b",%20"c"]}
+    assert str(builder.params) == "x=ov.%7Bis%3Aclosed%2Cseverity%3Ahigh%7D"
+
+
+def test_like(filter_request_builder):
+    builder = filter_request_builder.like("x", "%a%")
+
+    assert str(builder.params) == "x=like.%25a%25"
+
+
+def test_ilike(filter_request_builder):
+    builder = filter_request_builder.ilike("x", "%a%")
+
+    assert str(builder.params) == "x=ilike.%25a%25"
+
+
+def test_is_(filter_request_builder):
+    builder = filter_request_builder.is_("x", "a")
+
+    assert str(builder.params) == "x=is.a"
+
+
+def test_in_(filter_request_builder):
+    builder = filter_request_builder.in_("x", ["a", "b"])
+
+    assert str(builder.params) == "x=in.%28a%2Cb%29"
