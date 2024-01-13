@@ -24,5 +24,10 @@ clean_infra:
 
 run_tests: tests
 
-build_sync:
+run_unasync:
 	poetry run unasync postgrest tests
+
+build_sync: run_unasync remove_pytest_asyncio_from_sync
+
+remove_pytest_asyncio_from_sync:
+	sed -i 's/@pytest.mark.asyncio//g' tests/_sync/test_client.py
