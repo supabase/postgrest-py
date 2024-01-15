@@ -1,6 +1,6 @@
 from postgrest import AsyncPostgrestClient
 
-REST_URL = f"http://127.0.0.1:3000"
+REST_URL = "http://127.0.0.1:3000"
 
 
 def rest_client():
