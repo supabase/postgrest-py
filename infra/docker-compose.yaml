@@ -20,6 +20,6 @@ services:
       POSTGRES_USER: app_user
       POSTGRES_PASSWORD: password
 # Uncomment this if you want to persist the data. Create your boostrap SQL file in the project root
-#    volumes:
-#      - "./pgdata:/var/lib/postgresql/data"
-#      - "./init.sql:/docker-entrypoint-initdb.d/init.sql"
+    volumes:
+      # - "./pgdata:/var/lib/postgresql/data"
+      - "./init.sql:/docker-entrypoint-initdb.d/init.sql"
