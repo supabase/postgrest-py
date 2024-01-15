@@ -2,9 +2,25 @@
 
 
 
+## v0.15.0 (2024-01-15)
+
+### Chore
+
+* chore(deps-dev): bump pytest-asyncio from 0.18.3 to 0.23.3 (#344)
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`e9f49a5`](https://github.com/supabase-community/postgrest-py/commit/e9f49a57b13c7f8f53ca2a5fc2d41377e980959b))
+
+### Feature
+
+* feat: add like_any_of, like_all_of, ilike_any_of and ilike_all_of filters (#358) ([`d4e3f57`](https://github.com/supabase-community/postgrest-py/commit/d4e3f57aafd75138272b558f4ce507b2bef70e37))
+
+
 ## v0.14.0 (2024-01-15)
 
 ### Chore
+
+* chore(release): bump version to v0.14.0 ([`9f8a2a5`](https://github.com/supabase-community/postgrest-py/commit/9f8a2a54319795523efe5d41f5dcd327ba465a69))
 
 * chore: add alias for range methods (#350) ([`83ca3cd`](https://github.com/supabase-community/postgrest-py/commit/83ca3cd0a791513ed4c1fe45d3ed125a3c3d96e3))
 
