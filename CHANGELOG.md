@@ -2,7 +2,28 @@
 
 
 
+## v0.14.0 (2024-01-15)
+
+### Chore
+
+* chore: add alias for range methods (#350) ([`83ca3cd`](https://github.com/supabase-community/postgrest-py/commit/83ca3cd0a791513ed4c1fe45d3ed125a3c3d96e3))
+
+### Feature
+
+* feat: add or filter along with tests (#355)
+
+Co-authored-by: sourcery-ai[bot] &lt;58596630+sourcery-ai[bot]@users.noreply.github.com&gt; ([`e302009`](https://github.com/supabase-community/postgrest-py/commit/e302009ac93ba3703a7b5f9e394e1d867704cea7))
+
+### Unknown
+
+* update ci for publishing package (#349) ([`496d95a`](https://github.com/supabase-community/postgrest-py/commit/496d95a227c8412a064a8f31a365e758d8c7d844))
+
+
 ## v0.13.2 (2024-01-11)
+
+### Chore
+
+* chore(release): bump version to v0.13.2 ([`bef118f`](https://github.com/supabase-community/postgrest-py/commit/bef118f164fe31b2f372436339807867a7d4c648))
 
 ### Fix
 
