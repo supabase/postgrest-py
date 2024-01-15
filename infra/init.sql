@@ -66,4 +66,6 @@ create table public.issues (
 
 insert into public.issues (id, title, tags) values
     (1, 'Cache invalidation is not working', array['is:open', 'severity:high', 'priority:low']),
-    (2, 'Use better names', array['is:open', 'severity:low', 'priority:medium']);
+    (2, 'Use better names', array['is:open', 'severity:low', 'priority:medium']),
+    (3, 'Add missing postgrest filters', array['is:open', 'severity:low', 'priority:high']),
+    (4, 'Add alias to filters', array['is:closed', 'severity:low', 'priority:medium']);

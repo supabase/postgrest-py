@@ -202,7 +202,16 @@ def test_in_(filter_request_builder):
     assert str(builder.params) == "x=in.%28a%2Cb%29"
 
 
-def test_in_(filter_request_builder):
+def test_or_(filter_request_builder):
     builder = filter_request_builder.or_("x.eq.1")
 
     assert str(builder.params) == "or=%28x.eq.1%29"
+
+
+def test_or_in_contain(filter_request_builder):
+    builder = filter_request_builder.or_("id.in.(5,6,7), arraycol.cs.{'a','b'}")
+
+    assert (
+        str(builder.params)
+        == "or=%28id.in.%285%2C6%2C7%29%2C%20arraycol.cs.%7B%27a%27%2C%27b%27%7D%29"
+    )

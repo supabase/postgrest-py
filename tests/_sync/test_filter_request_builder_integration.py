@@ -187,7 +187,10 @@ def test_overlaps():
         .execute()
     )
 
-    assert res.data == [{"title": "Cache invalidation is not working"}]
+    assert res.data == [
+        {"title": "Cache invalidation is not working"},
+        {"title": "Add alias to filters"},
+    ]
 
 
 def test_like():
@@ -284,6 +287,22 @@ def test_or_with_and():
     assert res.data == [
         {"country_name": "ALBANIA", "iso": "AL"},
         {"country_name": "TRINIDAD AND TOBAGO", "iso": "TT"},
+    ]
+
+
+def test_or_in():
+    res = (
+        rest_client()
+        .from_("issues")
+        .select("id, title")
+        .or_("id.in.(1,4),tags.cs.{is:open,priority:high}")
+        .execute()
+    )
+
+    assert res.data == [
+        {"id": 1, "title": "Cache invalidation is not working"},
+        {"id": 3, "title": "Add missing postgrest filters"},
+        {"id": 4, "title": "Add alias to filters"},
     ]
 
 
