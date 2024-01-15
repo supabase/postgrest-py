@@ -235,6 +235,20 @@ async def test_is_():
     assert res.data == [{"country_name": "ANTARCTICA", "iso": "AQ"}]
 
 
+async def test_is_not():
+    res = (
+        await rest_client()
+        .from_("countries")
+        .select("country_name, iso")
+        .not_.is_("numcode", "null")
+        .limit(1)
+        .order("nicename")
+        .execute()
+    )
+
+    assert res.data == [{"country_name": "AFGHANISTAN", "iso": "AF"}]
+
+
 async def test_in_():
     res = (
         await rest_client()
@@ -277,4 +291,26 @@ async def test_or_with_and():
     assert res.data == [
         {"country_name": "ALBANIA", "iso": "AL"},
         {"country_name": "TRINIDAD AND TOBAGO", "iso": "TT"},
+    ]
+
+
+async def test_or_on_reference_table():
+    res = (
+        await rest_client()
+        .from_("countries")
+        .select("country_name, cities!inner(name)")
+        .or_("country_id.eq.10,name.eq.Paris", reference_table="cities")
+        .execute()
+    )
+
+    assert res.data == [
+        {
+            "country_name": "UNITED KINGDOM",
+            "cities": [
+                {"name": "London"},
+                {"name": "Manchester"},
+                {"name": "Liverpool"},
+                {"name": "Bristol"},
+            ],
+        },
     ]

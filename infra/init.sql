@@ -1,5 +1,5 @@
 CREATE TABLE public.countries (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id int8 PRIMARY KEY,
     iso CHAR (2) NOT NULL,
     country_name VARCHAR (80) NOT NULL,
     nicename VARCHAR (80) NOT NULL,
@@ -8,19 +8,34 @@ CREATE TABLE public.countries (
     phonecode INT NOT NULL
 );
 
-INSERT INTO public.countries (iso, country_name, nicename, iso3, numcode, phonecode) VALUES
-    ('AF', 'AFGHANISTAN', 'Afghanistan', 'AFG', 4, 93),
-    ('AL', 'ALBANIA', 'Albania', 'ALB', 8, 355),
-    ('DZ', 'ALGERIA', 'Algeria', 'DZA', 12, 213),
-    ('AQ', 'ANTARCTICA', 'Antarctica', NULL, NULL, 0),
-    ('CR', 'COSTA RICA', 'Costa Rica', 'CRI', 188, 506),
-    ('ES', 'SPAIN', 'Spain', 'ESP', 724, 34),
-    ('TH', 'THAILAND', 'Thailand', 'THA', 764, 66),
-    ('TG', 'TOGO', 'Togo', 'TGO', 768, 228),
-    ('TT', 'TRINIDAD AND TOBAGO', 'Trinidad and Tobago', 'TTO', 780, 1868),
-    ('GB', 'UNITED KINGDOM', 'United Kingdom', 'GBR', 826, 44),
-    ('US', 'UNITED STATES', 'United States', 'USA', 840, 1),
-    ('ZW', 'ZIMBABWE', 'Zimbabwe', 'ZWE', 716, 263);
+INSERT INTO public.countries (id, iso, country_name, nicename, iso3, numcode, phonecode) VALUES
+    (1, 'AF', 'AFGHANISTAN', 'Afghanistan', 'AFG', 4, 93),
+    (2, 'AL', 'ALBANIA', 'Albania', 'ALB', 8, 355),
+    (3, 'DZ', 'ALGERIA', 'Algeria', 'DZA', 12, 213),
+    (4, 'AQ', 'ANTARCTICA', 'Antarctica', NULL, NULL, 0),
+    (5, 'CR', 'COSTA RICA', 'Costa Rica', 'CRI', 188, 506),
+    (6, 'ES', 'SPAIN', 'Spain', 'ESP', 724, 34),
+    (7, 'TH', 'THAILAND', 'Thailand', 'THA', 764, 66),
+    (8, 'TG', 'TOGO', 'Togo', 'TGO', 768, 228),
+    (9, 'TT', 'TRINIDAD AND TOBAGO', 'Trinidad and Tobago', 'TTO', 780, 1868),
+    (10, 'GB', 'UNITED KINGDOM', 'United Kingdom', 'GBR', 826, 44),
+    (11, 'US', 'UNITED STATES', 'United States', 'USA', 840, 1),
+    (12, 'ZW', 'ZIMBABWE', 'Zimbabwe', 'ZWE', 716, 263);
+
+create table public.cities (
+    id int8 primary key,
+    country_id int8 not null references public.countries,
+    name text
+);
+
+insert into public.cities (id, name, country_id) values
+    (1, 'London', 10),
+    (2, 'Manchester', 10),
+    (3, 'Liverpool', 10),
+    (4, 'Bristol', 10),
+    (5, 'Miami', 11),
+    (6, 'Huston', 11),
+    (7, 'Atlanta', 11);
 
 create table public.users (
     id int8 primary key,
