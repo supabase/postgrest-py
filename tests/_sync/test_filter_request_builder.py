@@ -190,6 +190,30 @@ def test_ilike(filter_request_builder):
     assert str(builder.params) == "x=ilike.%25a%25"
 
 
+def test_like_all_of(filter_request_builder):
+    builder = filter_request_builder.like_all_of("x", "A*,*b")
+
+    assert str(builder.params) == "x=like%28all%29.%7BA%2A%2C%2Ab%7D"
+
+
+def test_like_any_of(filter_request_builder):
+    builder = filter_request_builder.like_any_of("x", "a*,*b")
+
+    assert str(builder.params) == "x=like%28any%29.%7Ba%2A%2C%2Ab%7D"
+
+
+def test_ilike_all_of(filter_request_builder):
+    builder = filter_request_builder.ilike_all_of("x", "A*,*b")
+
+    assert str(builder.params) == "x=ilike%28all%29.%7BA%2A%2C%2Ab%7D"
+
+
+def test_ilike_any_of(filter_request_builder):
+    builder = filter_request_builder.ilike_any_of("x", "A*,*b")
+
+    assert str(builder.params) == "x=ilike%28any%29.%7BA%2A%2C%2Ab%7D"
+
+
 def test_is_(filter_request_builder):
     builder = filter_request_builder.is_("x", "a")
 

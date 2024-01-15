@@ -224,6 +224,60 @@ async def test_ilike():
     assert res.data == [{"country_name": "ALBANIA", "iso": "AL"}]
 
 
+async def test_like_all_of():
+    res = (
+        await rest_client()
+        .from_("countries")
+        .select("nicename, iso")
+        .like_all_of("nicename", "A*,*n")
+        .execute()
+    )
+
+    assert res.data == [{"iso": "AF", "nicename": "Afghanistan"}]
+
+
+async def test_like_any_of():
+    res = (
+        await rest_client()
+        .from_("countries")
+        .select("nicename, iso")
+        .like_any_of("nicename", "Al*,*ia")
+        .execute()
+    )
+
+    assert res.data == [
+        {"iso": "AL", "nicename": "Albania"},
+        {"iso": "DZ", "nicename": "Algeria"},
+    ]
+
+
+async def test_ilike_all_of():
+    res = (
+        await rest_client()
+        .from_("countries")
+        .select("nicename, iso")
+        .ilike_all_of("nicename", "a*,*n")
+        .execute()
+    )
+
+    assert res.data == [{"iso": "AF", "nicename": "Afghanistan"}]
+
+
+async def test_ilike_any_of():
+    res = (
+        await rest_client()
+        .from_("countries")
+        .select("nicename, iso")
+        .ilike_any_of("nicename", "al*,*ia")
+        .execute()
+    )
+
+    assert res.data == [
+        {"iso": "AL", "nicename": "Albania"},
+        {"iso": "DZ", "nicename": "Algeria"},
+    ]
+
+
 async def test_is_():
     res = (
         await rest_client()

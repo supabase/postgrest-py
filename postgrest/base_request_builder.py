@@ -321,6 +321,46 @@ class BaseFilterRequestBuilder(Generic[_ReturnT]):
         """
         return self.filter(column, Filters.LIKE, pattern)
 
+    def like_all_of(self: Self, column: str, pattern: str) -> Self:
+        """A 'LIKE' filter, to use for pattern matching.
+
+        Args:
+            column: The name of the column to apply a filter on
+            pattern: The pattern to filter by
+        """
+
+        return self.filter(column, Filters.LIKE_ALL, f"{{{pattern}}}")
+
+    def like_any_of(self: Self, column: str, pattern: str) -> Self:
+        """A 'LIKE' filter, to use for pattern matching.
+
+        Args:
+            column: The name of the column to apply a filter on
+            pattern: The pattern to filter by
+        """
+
+        return self.filter(column, Filters.LIKE_ANY, f"{{{pattern}}}")
+
+    def ilike_all_of(self: Self, column: str, pattern: str) -> Self:
+        """A 'ILIKE' filter, to use for pattern matching (case insensitive).
+
+        Args:
+            column: The name of the column to apply a filter on
+            pattern: The pattern to filter by
+        """
+
+        return self.filter(column, Filters.ILIKE_ALL, f"{{{pattern}}}")
+
+    def ilike_any_of(self: Self, column: str, pattern: str) -> Self:
+        """A 'ILIKE' filter, to use for pattern matching (case insensitive).
+
+        Args:
+            column: The name of the column to apply a filter on
+            pattern: The pattern to filter by
+        """
+
+        return self.filter(column, Filters.ILIKE_ANY, f"{{{pattern}}}")
+
     def ilike(self: Self, column: str, pattern: str) -> Self:
         """An 'ILIKE' filter, to use for pattern matching (case insensitive).
 
