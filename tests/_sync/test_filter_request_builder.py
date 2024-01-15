@@ -200,3 +200,9 @@ def test_in_(filter_request_builder):
     builder = filter_request_builder.in_("x", ["a", "b"])
 
     assert str(builder.params) == "x=in.%28a%2Cb%29"
+
+
+def test_in_(filter_request_builder):
+    builder = filter_request_builder.or_("x.eq.1")
+
+    assert str(builder.params) == "or=%28x.eq.1%29"

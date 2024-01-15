@@ -330,6 +330,17 @@ class BaseFilterRequestBuilder(Generic[_ReturnT]):
         """
         return self.filter(column, Filters.ILIKE, pattern)
 
+    def or_(self: Self, filters: str, reference_table: Union[str, None] = None) -> Self:
+        """An 'or' filter
+
+        Args:
+            filters: The filters to use, following PostgREST syntax
+            reference_table: Set this to filter on referenced tables instead of the parent table
+        """
+        key = f"{sanitize_param(reference_table)}.or" if reference_table else "or"
+        self.params = self.params.add(key, f"({filters})")
+        return self
+
     def fts(self: Self, column: str, query: Any) -> Self:
         return self.filter(column, Filters.FTS, query)
 

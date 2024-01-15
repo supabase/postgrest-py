@@ -22,7 +22,11 @@ clean_infra:
 	docker-compose down --remove-orphans &&\
 	docker system prune -a --volumes -f
 
-run_tests: tests
+stop_infra:
+	cd infra &&\
+	docker-compose down --remove-orphans
+
+run_tests: run_infra sleep tests
 
 run_unasync:
 	poetry run unasync postgrest tests
@@ -31,3 +35,6 @@ build_sync: run_unasync remove_pytest_asyncio_from_sync
 
 remove_pytest_asyncio_from_sync:
 	sed -i 's/@pytest.mark.asyncio//g' tests/_sync/test_client.py
+
+sleep:
+	sleep 20
