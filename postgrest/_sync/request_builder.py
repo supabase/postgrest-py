@@ -62,9 +62,15 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
             headers=self.headers,
         )
         try:
-            if (
-                200 <= r.status_code <= 299
-            ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
+            if r.is_success:
+                if self.http_method != "HEAD":
+                    print(self.headers.get("Accept"))
+                    if self.headers.get("Accept") == "text/csv":
+                        return APIResponse[_ReturnT].text_from_http_request_response(r)
+                    if self.headers.get(
+                        "Accept"
+                    ) and "application/vnd.pgrst.plan+text" in self.headers.get("Accept"):
+                        return APIResponse[_ReturnT].text_from_http_request_response(r)
                 return APIResponse[_ReturnT].from_http_request_response(r)
             else:
                 raise APIError(r.json())
@@ -393,6 +399,3 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         return SyncFilterRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )
-
-    def stub(self):
-        return None

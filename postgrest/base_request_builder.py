@@ -9,6 +9,7 @@ from typing import (
     Generic,
     Iterable,
     List,
+    Literal,
     NamedTuple,
     Optional,
     Tuple,
@@ -169,6 +170,15 @@ class APIResponse(BaseModel, Generic[_ReturnT]):
             if (is_count_in_prefer_header and content_range_header)
             else None
         )
+
+    @classmethod
+    def text_from_http_request_response(
+        cls: Type[Self], request_response: RequestResponse
+    ) -> Self:
+        data = [request_response.text]
+        # the type-ignore here is as pydantic needs us to pass the type parameter
+        # here explicitly, but pylance already knows that cls is correctly parametrized
+        return cls[_ReturnT](data=data, count=None)  # type: ignore
 
     @classmethod
     def from_http_request_response(
@@ -503,7 +513,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
         settings: bool = False,
         buffers: bool = False,
         wal: bool = False,
-        format: str = "",
+        format: Literal["text", "json"] = "text",
     ) -> Self:
         options = [
             key
@@ -511,8 +521,9 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
             if key not in ["self", "format"] and value
         ]
         options_str = "|".join(options)
-        options_str = f'options="{options_str};"' if options_str else ""
-        self.headers["Accept"] = f"application/vnd.pgrst.plan+{format}; {options_str}"
+        self.headers[
+            "Accept"
+        ] = f'application/vnd.pgrst.plan+{format}; options="{options_str};"'
         return self
 
     def order(
