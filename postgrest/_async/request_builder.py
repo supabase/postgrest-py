@@ -64,12 +64,13 @@ class AsyncQueryRequestBuilder(Generic[_ReturnT]):
         try:
             if r.is_success:
                 if self.http_method != "HEAD":
+                    body = r.text
                     if self.headers.get("Accept") == "text/csv":
-                        return APIResponse[_ReturnT].text_from_http_request_response(r)
+                        return body
                     if self.headers.get(
                         "Accept"
                     ) and "application/vnd.pgrst.plan+text" in self.headers.get("Accept"):
-                        return APIResponse[_ReturnT].text_from_http_request_response(r)
+                        return body
                 return APIResponse[_ReturnT].from_http_request_response(r)
             else:
                 raise APIError(r.json())

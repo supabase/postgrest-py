@@ -172,15 +172,6 @@ class APIResponse(BaseModel, Generic[_ReturnT]):
         )
 
     @classmethod
-    def text_from_http_request_response(
-        cls: Type[Self], request_response: RequestResponse
-    ) -> Self:
-        data = [request_response.text]
-        # the type-ignore here is as pydantic needs us to pass the type parameter
-        # here explicitly, but pylance already knows that cls is correctly parametrized
-        return cls[_ReturnT](data=data, count=None)  # type: ignore
-
-    @classmethod
     def from_http_request_response(
         cls: Type[Self], request_response: RequestResponse
     ) -> Self:
