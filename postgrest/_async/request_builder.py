@@ -68,9 +68,7 @@ class AsyncQueryRequestBuilder(Generic[_ReturnT]):
                         return APIResponse[_ReturnT].text_from_http_request_response(r)
                     if self.headers.get(
                         "Accept"
-                    ) and "application/vnd.pgrst.plan+text" in self.headers.get(
-                        "Accept"
-                    ):
+                    ) and "application/vnd.pgrst.plan+text" in self.headers.get("Accept"):
                         return APIResponse[_ReturnT].text_from_http_request_response(r)
                 return APIResponse[_ReturnT].from_http_request_response(r)
             else:
