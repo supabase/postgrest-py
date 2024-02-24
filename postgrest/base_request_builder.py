@@ -569,3 +569,44 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
         self.headers["Range-Unit"] = "items"
         self.headers["Range"] = f"{start}-{end - 1}"
         return self
+
+
+class BaseRPCRequestBuilder(BaseSelectRequestBuilder[_ReturnT]):
+    def __init__(
+        self,
+        session: Union[AsyncClient, SyncClient],
+        headers: Headers,
+        params: QueryParams,
+    ) -> None:
+        # Generic[T] is an instance of typing._GenericAlias, so doing Generic[T].__init__
+        # tries to call _GenericAlias.__init__ - which is the wrong method
+        # The __origin__ attribute of the _GenericAlias is the actual class
+        get_origin_and_cast(BaseSelectRequestBuilder[_ReturnT]).__init__(
+            self, session, headers, params
+        )
+
+    def select(
+        self,
+        *columns: str,
+    ) -> Self:
+        """Run a SELECT query.
+
+        Args:
+            *columns: The names of the columns to fetch.
+        Returns:
+            :class:`BaseSelectRequestBuilder`
+        """
+        method, params, headers, json = pre_select(*columns, count=None)
+        self.params = self.params.add("select", params.get("select"))
+        self.headers["Prefer"] = "return=representation"
+        return self
+
+    def maybe_single(self) -> Self:
+        """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error."""
+        self.headers["Accept"] = "application/vnd.pgrst.object+json"
+        return self
+
+    def csv(self) -> Self:
+        """Specify that the query must retrieve data as a single CSV string."""
+        self.headers["Accept"] = "text/csv"
+        return self
