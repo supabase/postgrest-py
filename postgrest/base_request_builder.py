@@ -565,7 +565,14 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
         )
         return self
 
-    def range(self: Self, start: int, end: int) -> Self:
-        self.headers["Range-Unit"] = "items"
-        self.headers["Range"] = f"{start}-{end - 1}"
+    def range(
+        self: Self, start: int, end: int, foreign_table: Optional[str] = None
+    ) -> Self:
+        self.params = self.params.add(
+            f"{foreign_table}.offset" if foreign_table else "offset", start
+        )
+        self.params = self.params.add(
+            f"{foreign_table}.limit" if foreign_table else "limit",
+            end - start + 1,
+        )
         return self
