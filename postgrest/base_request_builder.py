@@ -601,6 +601,15 @@ class BaseRPCRequestBuilder(BaseSelectRequestBuilder[_ReturnT]):
         self.headers["Prefer"] = "return=representation"
         return self
 
+    def single(self) -> Self:
+        """Specify that the query will only return a single row in response.
+
+        .. caution::
+            The API will raise an error if the query returned more than one row.
+        """
+        self.headers["Accept"] = "application/vnd.pgrst.object+json"
+        return self
+
     def maybe_single(self) -> Self:
         """Retrieves at most one row from the result. Result must be at most one row (e.g. using `eq` on a UNIQUE column), otherwise this will result in an error."""
         self.headers["Accept"] = "application/vnd.pgrst.object+json"
