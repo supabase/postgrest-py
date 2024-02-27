@@ -380,3 +380,44 @@ def test_or_on_reference_table():
             ],
         },
     ]
+
+
+def test_rpc_with_single():
+    res = (
+        rest_client()
+        .rpc("list_stored_countries", {})
+        .select("nicename, country_name, iso")
+        .eq("nicename", "Albania")
+        .single()
+        .execute()
+    )
+
+    assert res.data == {"nicename": "Albania", "country_name": "ALBANIA", "iso": "AL"}
+
+
+def test_rpc_with_limit():
+    res = (
+        rest_client()
+        .rpc("list_stored_countries", {})
+        .select("nicename, country_name, iso")
+        .eq("nicename", "Albania")
+        .limit(1)
+        .execute()
+    )
+
+    assert res.data == [{"nicename": "Albania", "country_name": "ALBANIA", "iso": "AL"}]
+
+
+def test_rpc_with_range():
+    res = (
+        rest_client()
+        .rpc("list_stored_countries", {})
+        .select("nicename, iso")
+        .range(1, 2)
+        .execute()
+    )
+
+    assert res.data == [
+        {"nicename": "Albania", "iso": "AL"},
+        {"nicename": "Algeria", "iso": "DZ"},
+    ]

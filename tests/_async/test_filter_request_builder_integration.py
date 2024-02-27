@@ -389,6 +389,7 @@ async def test_or_on_reference_table():
     ]
 
 
+
 async def test_explain_json():
     res = (
         await rest_client()
@@ -414,3 +415,43 @@ async def test_explain_text():
         "((cities_1.country_id = countries.id) AND ((cities_1.country_id = '10'::bigint) OR (cities_1.name = 'Paris'::text)))"
         in res
     )
+
+async def test_rpc_with_single():
+    res = (
+        await rest_client()
+        .rpc("list_stored_countries", {})
+        .select("nicename, country_name, iso")
+        .eq("nicename", "Albania")
+        .single()
+        .execute()
+    )
+
+    assert res.data == {"nicename": "Albania", "country_name": "ALBANIA", "iso": "AL"}
+
+
+async def test_rpc_with_limit():
+    res = (
+        await rest_client()
+        .rpc("list_stored_countries", {})
+        .select("nicename, country_name, iso")
+        .eq("nicename", "Albania")
+        .limit(1)
+        .execute()
+    )
+
+    assert res.data == [{"nicename": "Albania", "country_name": "ALBANIA", "iso": "AL"}]
+
+
+async def test_rpc_with_range():
+    res = (
+        await rest_client()
+        .rpc("list_stored_countries", {})
+        .select("nicename, iso")
+        .range(1, 2)
+        .execute()
+    )
+
+    assert res.data == [
+        {"nicename": "Albania", "iso": "AL"},
+        {"nicename": "Algeria", "iso": "DZ"},
+    ]
