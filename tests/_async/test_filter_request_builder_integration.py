@@ -387,3 +387,30 @@ async def test_or_on_reference_table():
             ],
         },
     ]
+
+
+async def test_explain_json():
+    res = (
+        await rest_client()
+        .from_("countries")
+        .select("country_name, cities!inner(name)")
+        .or_("country_id.eq.10,name.eq.Paris", reference_table="cities")
+        .explain(format="json", analyze=True)
+        .execute()
+    )
+    assert res.data[0]["Plan"]["Node Type"] == "Aggregate"
+
+
+async def test_explain_text():
+    res = (
+        await rest_client()
+        .from_("countries")
+        .select("country_name, cities!inner(name)")
+        .or_("country_id.eq.10,name.eq.Paris", reference_table="cities")
+        .explain(analyze=True, verbose=True, settings=True, buffers=True, wal=True)
+        .execute()
+    )
+    assert (
+        "((cities_1.country_id = countries.id) AND ((cities_1.country_id = '10'::bigint) OR (cities_1.name = 'Paris'::text)))"
+        in res
+    )

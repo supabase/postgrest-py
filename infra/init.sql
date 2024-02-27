@@ -69,3 +69,6 @@ insert into public.issues (id, title, tags) values
     (2, 'Use better names', array['is:open', 'severity:low', 'priority:medium']),
     (3, 'Add missing postgrest filters', array['is:open', 'severity:low', 'priority:high']),
     (4, 'Add alias to filters', array['is:closed', 'severity:low', 'priority:medium']);
+
+alter role authenticator set pgrst.db_plan_enabled to true;
+notify pgrst, 'reload config';

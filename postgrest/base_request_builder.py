@@ -514,7 +514,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
         options_str = "|".join(options)
         self.headers[
             "Accept"
-        ] = f'application/vnd.pgrst.plan+{format}; options="{options_str};"'
+        ] = f"application/vnd.pgrst.plan+{format}; options={options_str}"
         return self
 
     def order(
