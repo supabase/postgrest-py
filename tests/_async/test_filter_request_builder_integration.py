@@ -401,6 +401,18 @@ async def test_explain_json():
     assert res.data[0]["Plan"]["Node Type"] == "Aggregate"
 
 
+async def test_csv():
+    res = (
+        await rest_client()
+        .from_("countries")
+        .select("country_name, iso")
+        .in_("nicename", ["Albania", "Algeria"])
+        .csv()
+        .execute()
+    )
+    assert "ALBANIA,AL\nALGERIA,DZ" in res.data
+
+
 async def test_explain_text():
     res = (
         await rest_client()
