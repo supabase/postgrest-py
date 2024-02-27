@@ -1,5 +1,3 @@
-import pytest
-
 from .client import rest_client
 
 
@@ -417,14 +415,16 @@ async def test_rpc_with_limit():
     assert res.data == [{"nicename": "Albania", "country_name": "ALBANIA", "iso": "AL"}]
 
 
-@pytest.mark.skip(reason="Need to re-implement range to use query parameters")
 async def test_rpc_with_range():
     res = (
         await rest_client()
         .rpc("list_stored_countries", {})
         .select("nicename, iso")
-        .range(0, 1)
+        .range(1, 2)
         .execute()
     )
 
-    assert res.data == [{"nicename": "Albania", "iso": "AL"}]
+    assert res.data == [
+        {"nicename": "Albania", "iso": "AL"},
+        {"nicename": "Algeria", "iso": "DZ"},
+    ]
