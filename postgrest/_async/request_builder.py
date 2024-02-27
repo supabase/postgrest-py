@@ -9,6 +9,7 @@ from pydantic import ValidationError
 from ..base_request_builder import (
     APIResponse,
     BaseFilterRequestBuilder,
+    BaseRPCRequestBuilder,
     BaseSelectRequestBuilder,
     CountMethod,
     SingleAPIResponse,
@@ -164,7 +165,7 @@ class AsyncFilterRequestBuilder(BaseFilterRequestBuilder[_ReturnT], AsyncQueryRe
 
 # this exists for type-safety. see https://gist.github.com/anand2312/93d3abf401335fd3310d9e30112303bf
 class AsyncRPCFilterRequestBuilder(
-    BaseFilterRequestBuilder[_ReturnT], AsyncSingleRequestBuilder[_ReturnT]
+    BaseRPCRequestBuilder[_ReturnT], AsyncSingleRequestBuilder[_ReturnT]
 ):
     def __init__(
         self,

@@ -69,3 +69,10 @@ insert into public.issues (id, title, tags) values
     (2, 'Use better names', array['is:open', 'severity:low', 'priority:medium']),
     (3, 'Add missing postgrest filters', array['is:open', 'severity:low', 'priority:high']),
     (4, 'Add alias to filters', array['is:closed', 'severity:low', 'priority:medium']);
+
+create or replace function public.list_stored_countries()
+    returns setof countries
+    language sql
+as $function$
+    select * from countries;
+$function$

@@ -1,3 +1,5 @@
+import pytest
+
 from .client import rest_client
 
 
@@ -387,3 +389,42 @@ async def test_or_on_reference_table():
             ],
         },
     ]
+
+
+async def test_rpc_with_single():
+    res = (
+        await rest_client()
+        .rpc("list_stored_countries", {})
+        .select("nicename, country_name, iso")
+        .eq("nicename", "Albania")
+        .single()
+        .execute()
+    )
+
+    assert res.data == {"nicename": "Albania", "country_name": "ALBANIA", "iso": "AL"}
+
+
+async def test_rpc_with_limit():
+    res = (
+        await rest_client()
+        .rpc("list_stored_countries", {})
+        .select("nicename, country_name, iso")
+        .eq("nicename", "Albania")
+        .limit(1)
+        .execute()
+    )
+
+    assert res.data == [{"nicename": "Albania", "country_name": "ALBANIA", "iso": "AL"}]
+
+
+@pytest.mark.skip(reason="Need to re-implement range to use query parameters")
+async def test_rpc_with_range():
+    res = (
+        await rest_client()
+        .rpc("list_stored_countries", {})
+        .select("nicename, iso")
+        .range(0, 1)
+        .execute()
+    )
+
+    assert res.data == [{"nicename": "Albania", "iso": "AL"}]
