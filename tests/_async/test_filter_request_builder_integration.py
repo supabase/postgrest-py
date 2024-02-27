@@ -389,7 +389,6 @@ async def test_or_on_reference_table():
     ]
 
 
-
 async def test_explain_json():
     res = (
         await rest_client()
@@ -415,6 +414,7 @@ async def test_explain_text():
         "((cities_1.country_id = countries.id) AND ((cities_1.country_id = '10'::bigint) OR (cities_1.name = 'Paris'::text)))"
         in res
     )
+
 
 async def test_rpc_with_single():
     res = (
