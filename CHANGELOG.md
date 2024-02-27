@@ -2,7 +2,18 @@
 
 
 
+## v0.16.0 (2024-02-27)
+
+### Feature
+
+* feat: Add RPC request builder class for additional filters (#372) ([`0002e8f`](https://github.com/supabase-community/postgrest-py/commit/0002e8f7ec32b6787b44996079b4c2f43fc43717))
+
+
 ## v0.15.1 (2024-02-27)
+
+### Chore
+
+* chore(release): bump version to v0.15.1 ([`6d55e49`](https://github.com/supabase-community/postgrest-py/commit/6d55e49b461fd0b52e9267a6b1e47038756bfd7f))
 
 ### Fix
 
