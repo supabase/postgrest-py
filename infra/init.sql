@@ -76,6 +76,3 @@ create or replace function public.list_stored_countries()
 as $function$
     select * from countries;
 $function$;
-
-alter role authenticator set pgrst.db_plan_enabled to true;
-notify pgrst, 'reload config';

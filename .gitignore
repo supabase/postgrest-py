@@ -136,3 +136,7 @@ dmypy.json
 
 # Poetry local config
 poetry.toml
+
+# MacOS annoyance
+.DS_Store
+**/.DS_Store
