@@ -2,7 +2,35 @@
 
 
 
+## v0.16.1 (2024-02-29)
+
+### Chore
+
+* chore(deps): bump pydantic from 2.5.3 to 2.6.2 (#374)
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`b858685`](https://github.com/supabase-community/postgrest-py/commit/b858685c52291aba780d2db3626c6d618b826d1a))
+
+### Fix
+
+* fix: explain functionality to show results (#371)
+
+Co-authored-by: Rodrigo Mansueli Nunes &lt;rodrigo@mansueli.com&gt; ([`3e0ea2e`](https://github.com/supabase-community/postgrest-py/commit/3e0ea2ef54fb2b50d4e5cb5619abc1c96471836f))
+
+### Test
+
+* test: remove skip from rpc with range test (#376) ([`a3fc560`](https://github.com/supabase-community/postgrest-py/commit/a3fc56044ed26eefdde3dea18353ad7cc2f03b2c))
+
+### Unknown
+
+* Bump action versions (#377) ([`602d66e`](https://github.com/supabase-community/postgrest-py/commit/602d66e6e40402281aa388a3bb9e8ddef6d5c718))
+
+
 ## v0.16.0 (2024-02-27)
+
+### Chore
+
+* chore(release): bump version to v0.16.0 ([`3dc51d4`](https://github.com/supabase-community/postgrest-py/commit/3dc51d4859721c99a8c7c69d4fe144ff37d9e16f))
 
 ### Feature
 
