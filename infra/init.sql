@@ -75,4 +75,4 @@ create or replace function public.list_stored_countries()
     language sql
 as $function$
     select * from countries;
-$function$
+$function$;

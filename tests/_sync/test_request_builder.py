@@ -147,9 +147,7 @@ class TestExplain:
         )
         assert builder.params["select"] == "*"
         assert "application/vnd.pgrst.plan+json" in str(builder.headers.get("accept"))
-        assert 'options="analyze|verbose|buffers|wal;' in str(
-            builder.headers.get("accept")
-        )
+        assert "options=analyze|verbose|buffers|wal" in str(builder.headers.get("accept"))
 
 
 class TestRange:

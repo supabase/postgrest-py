@@ -1,25 +1,28 @@
-version: "3"
+# docker-compose.yml
+version: '3'
 services:
-  server:
-    image: postgrest/postgrest
+  rest:
+    image: postgrest/postgrest:v11.2.2
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
-      PGRST_DB_URI: postgres://app_user:password@db:5432/app_db
-      PGRST_DB_SCHEMA: public
-      PGRST_DB_ANON_ROLE: app_user # In production this role should not be the same as the one used for connection
-      PGRST_OPENAPI_SERVER_PROXY_URI: "http://127.0.0.1:3000"
+      PGRST_DB_URI: postgres://postgres:postgres@db:5432/postgres
+      PGRST_DB_SCHEMAS: public,personal
+      PGRST_DB_EXTRA_SEARCH_PATH: extensions
+      PGRST_DB_ANON_ROLE: postgres
+      PGRST_DB_PLAN_ENABLED: 1
+      PGRST_DB_TX_END: commit-allow-override
     depends_on:
       - db
   db:
-    image: postgres
+    image: supabase/postgres:15.1.0.37
     ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_DB: app_db
-      POSTGRES_USER: app_user
-      POSTGRES_PASSWORD: password
-# Uncomment this if you want to persist the data. Create your boostrap SQL file in the project root
+      - '5432:5432'
     volumes:
-      # - "./pgdata:/var/lib/postgresql/data"
-      - "./init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - .:/docker-entrypoint-initdb.d/
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: /var/run/postgresql
+      POSTGRES_PORT: 5432
