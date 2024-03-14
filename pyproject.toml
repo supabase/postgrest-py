@@ -41,7 +41,7 @@ optional = true
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "^7.1.2"
-furo = "^2023.9.10"
+furo = ">=2023.9.10,<2025.0.0"
 
 [tool.semantic_release]
 version_variables = ["postgrest/__init__.py:__version__"]
