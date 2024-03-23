@@ -51,7 +51,7 @@ jobs:
           token: ${{ secrets.SILENTWORKS_PAT }}
       - name: Python Semantic Release
         id: release
-        uses: python-semantic-release/python-semantic-release@v8.0.0
+        uses: python-semantic-release/python-semantic-release@v9.3.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
