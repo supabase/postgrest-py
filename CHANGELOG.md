@@ -2,9 +2,40 @@
 
 
 
+## v0.16.2 (2024-03-23)
+
+### Chore
+
+* chore(deps-dev): bump black from 23.12.1 to 24.3.0 (#385)
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`b10e114`](https://github.com/supabase-community/postgrest-py/commit/b10e1146fe87087315c038309b531ef87d7c5ce1))
+
+* chore(deps): bump pydantic from 2.6.2 to 2.6.4 (#384)
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`9bd4fb1`](https://github.com/supabase-community/postgrest-py/commit/9bd4fb1d6eec03c0c006eb06ef37fb62e83f9e7c))
+
+* chore(deps): bump furo from 2023.9.10 to 2024.1.29 (#383)
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`7eec5ce`](https://github.com/supabase-community/postgrest-py/commit/7eec5ced4c33fa604ab09aa1d64a708e52928a5d))
+
+* chore(deps-dev): bump pytest-asyncio from 0.23.5 to 0.23.5.post1 (#382)
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`ae09035`](https://github.com/supabase-community/postgrest-py/commit/ae090355aa07065e4ee37c4a39dd1b853b0de63d))
+
+### Fix
+
+* fix: update dependencies and tests (#392) ([`d04d76c`](https://github.com/supabase-community/postgrest-py/commit/d04d76caa914afd5efffa9efd6481a38429742e8))
+
+
 ## v0.16.1 (2024-02-29)
 
 ### Chore
+
+* chore(release): bump version to v0.16.1 ([`6d8b32a`](https://github.com/supabase-community/postgrest-py/commit/6d8b32a5210846081cb4d6f2f54dd8e8100129c4))
 
 * chore(deps): bump pydantic from 2.5.3 to 2.6.2 (#374)
 

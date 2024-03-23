@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "postgrest"
-version = "0.16.1"
+version = "0.16.2"
 description = "PostgREST client for Python. This library provides an ORM interface to PostgREST."
 authors = ["Lương Quang Mạnh <luongquangmanh85@gmail.com>", "Joel Lee <joel@joellee.org>", "Anand", "Oliver Rice", "Andrew Smith <a.smith@silentworks.co.uk>"]
 homepage = "https://github.com/supabase-community/postgrest-py"
