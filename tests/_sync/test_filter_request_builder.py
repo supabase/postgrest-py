@@ -181,13 +181,13 @@ def test_overlaps(filter_request_builder):
 def test_like(filter_request_builder):
     builder = filter_request_builder.like("x", "%a%")
 
-    assert str(builder.params) == "x=like.%25a%25"
+    assert str(builder.params) == "x=like.%a%"
 
 
 def test_ilike(filter_request_builder):
     builder = filter_request_builder.ilike("x", "%a%")
 
-    assert str(builder.params) == "x=ilike.%25a%25"
+    assert str(builder.params) == "x=ilike.%a%"
 
 
 def test_like_all_of(filter_request_builder):

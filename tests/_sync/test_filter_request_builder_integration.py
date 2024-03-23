@@ -360,18 +360,6 @@ def test_or_in():
     ]
 
 
-def test_csv():
-    res = (
-        rest_client()
-        .from_("countries")
-        .select("country_name, iso")
-        .in_("nicename", ["Albania", "Algeria"])
-        .csv()
-        .execute()
-    )
-    assert "ALBANIA,AL\nALGERIA,DZ" in res.data
-
-
 def test_or_on_reference_table():
     res = (
         rest_client()
@@ -404,6 +392,18 @@ def test_explain_json():
         .execute()
     )
     assert res.data[0]["Plan"]["Node Type"] == "Aggregate"
+
+
+def test_csv():
+    res = (
+        rest_client()
+        .from_("countries")
+        .select("country_name, iso")
+        .in_("nicename", ["Albania", "Algeria"])
+        .csv()
+        .execute()
+    )
+    assert "ALBANIA,AL\nALGERIA,DZ" in res.data
 
 
 def test_explain_text():
