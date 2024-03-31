@@ -45,6 +45,11 @@ class QueryArgs(NamedTuple):
     headers: Headers
     json: Dict[Any, Any]
 
+def _unique_columns(json: List[Dict]):
+    unique_keys = {key for row in json for key in row.keys()}
+    columns = ",".join([f'"{k}"' for k in unique_keys])
+    return columns
+
 
 def pre_select(
     *columns: str,
@@ -61,28 +66,36 @@ def pre_select(
 
 
 def pre_insert(
-    json: dict,
+    json: Union[dict, list],
     *,
     count: Optional[CountMethod],
     returning: ReturnMethod,
     upsert: bool,
+    default_to_null: bool = True,
 ) -> QueryArgs:
     prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
     if upsert:
         prefer_headers.append("resolution=merge-duplicates")
+    if not default_to_null:
+        prefer_headers.append("missing=default")
     headers = Headers({"Prefer": ",".join(prefer_headers)})
-    return QueryArgs(RequestMethod.POST, QueryParams(), headers, json)
+    # Adding 'columns' query parameters
+    query_params = {}
+    if isinstance(json, list):
+        query_params = {"columns": _unique_columns(json)}
+    return QueryArgs(RequestMethod.POST, QueryParams(query_params), headers, json)
 
 
 def pre_upsert(
-    json: dict,
+    json: Union[dict, list],
     *,
     count: Optional[CountMethod],
     returning: ReturnMethod,
     ignore_duplicates: bool,
     on_conflict: str = "",
+    default_to_null: bool = True,
 ) -> QueryArgs:
     query_params = {}
     prefer_headers = [f"return={returning}"]
@@ -90,9 +103,14 @@ def pre_upsert(
         prefer_headers.append(f"count={count}")
     resolution = "ignore" if ignore_duplicates else "merge"
     prefer_headers.append(f"resolution={resolution}-duplicates")
+    if not default_to_null:
+        prefer_headers.append("missing=default")
     headers = Headers({"Prefer": ",".join(prefer_headers)})
     if on_conflict:
         query_params["on_conflict"] = on_conflict
+    # Adding 'columns' query parameters
+    if isinstance(json, list):
+        query_params["columns"] = _unique_columns(json)
     return QueryArgs(RequestMethod.POST, QueryParams(query_params), headers, json)
 
 
