@@ -73,7 +73,7 @@ class TestInsert:
     
     def test_upsert_with_default_single(self, request_builder: AsyncRequestBuilder):
         builder = request_builder.upsert(
-            {"key1": "val1"}
+            [{"key1": "val1"}]
         , default_to_null=False)
         assert builder.headers.get_list("prefer", True) == [
             "return=representation",
@@ -81,8 +81,8 @@ class TestInsert:
             "missing=default",
         ]
         assert builder.http_method == "POST"
-        assert builder.json == {"key1": "val1"}, {"key3": "val3"}
-        assert builder.params.get("columns") is None
+        assert builder.json == [{"key1": "val1"}]
+        assert builder.params.get("columns") == '"key1"'
     
     def test_bulk_insert_using_default(self, request_builder: AsyncRequestBuilder):
         builder = request_builder.insert([
