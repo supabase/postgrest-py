@@ -71,7 +71,7 @@ class TestInsert:
         assert builder.http_method == "POST"
         assert builder.json == {"key1": "val1"}
         
-    def test_bullk_insert_using_default(self, request_builder: SyncRequestBuilder):
+    def test_bulk_insert_using_default(self, request_builder: SyncRequestBuilder):
         builder = request_builder.insert([
             {"key1": "val1", "key2": "val2"}, {"key3": "val3"}
         ], default_to_null=False)
