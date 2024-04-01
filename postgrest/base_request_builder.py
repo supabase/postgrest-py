@@ -45,6 +45,7 @@ class QueryArgs(NamedTuple):
     headers: Headers
     json: Dict[Any, Any]
 
+
 def _unique_columns(json: List[Dict]):
     unique_keys = {key for row in json for key in row.keys()}
     columns = ",".join([f'"{k}"' for k in unique_keys])
