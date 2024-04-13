@@ -71,6 +71,20 @@ class TestInsert:
         assert builder.http_method == "POST"
         assert builder.json == {"key1": "val1"}
 
+    def test_bulk_insert_using_default(self, request_builder: SyncRequestBuilder):
+        builder = request_builder.insert(
+            [{"key1": "val1", "key2": "val2"}, {"key3": "val3"}], default_to_null=False
+        )
+        assert builder.headers.get_list("prefer", True) == [
+            "return=representation",
+            "missing=default",
+        ]
+        assert builder.http_method == "POST"
+        assert builder.json == [{"key1": "val1", "key2": "val2"}, {"key3": "val3"}]
+        assert set(builder.params["columns"].split(",")) == set(
+            '"key1","key2","key3"'.split(",")
+        )
+
     def test_upsert(self, request_builder: SyncRequestBuilder):
         builder = request_builder.upsert({"key1": "val1"})
 
@@ -80,6 +94,32 @@ class TestInsert:
         ]
         assert builder.http_method == "POST"
         assert builder.json == {"key1": "val1"}
+
+    def test_upsert_with_default_single(self, request_builder: SyncRequestBuilder):
+        builder = request_builder.upsert([{"key1": "val1"}], default_to_null=False)
+        assert builder.headers.get_list("prefer", True) == [
+            "return=representation",
+            "resolution=merge-duplicates",
+            "missing=default",
+        ]
+        assert builder.http_method == "POST"
+        assert builder.json == [{"key1": "val1"}]
+        assert builder.params.get("columns") == '"key1"'
+
+    def test_bulk_upsert_with_default(self, request_builder: SyncRequestBuilder):
+        builder = request_builder.upsert(
+            [{"key1": "val1", "key2": "val2"}, {"key3": "val3"}], default_to_null=False
+        )
+        assert builder.headers.get_list("prefer", True) == [
+            "return=representation",
+            "resolution=merge-duplicates",
+            "missing=default",
+        ]
+        assert builder.http_method == "POST"
+        assert builder.json == [{"key1": "val1", "key2": "val2"}, {"key3": "val3"}]
+        assert set(builder.params["columns"].split(",")) == set(
+            '"key1","key2","key3"'.split(",")
+        )
 
 
 class TestUpdate:

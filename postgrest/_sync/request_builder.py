@@ -34,7 +34,7 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
         http_method: str,
         headers: Headers,
         params: QueryParams,
-        json: dict,
+        json: Union[dict, list],
     ) -> None:
         self.session = session
         self.path = path
@@ -289,7 +289,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             *columns: The names of the columns to fetch.
             count: The method to use to get the count of rows returned.
         Returns:
-            :class:`AsyncSelectRequestBuilder`
+            :class:`SyncSelectRequestBuilder`
         """
         method, params, headers, json = pre_select(*columns, count=count)
         return SyncSelectRequestBuilder[_ReturnT](
@@ -303,6 +303,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
         upsert: bool = False,
+        default_to_null: bool = True,
     ) -> SyncQueryRequestBuilder[_ReturnT]:
         """Run an INSERT query.
 
@@ -311,14 +312,18 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
             upsert: Whether the query should be an upsert.
+            default_to_null: Make missing fields default to `null`.
+                Otherwise, use the default value for the column.
+                Only applies for bulk inserts.
         Returns:
-            :class:`AsyncQueryRequestBuilder`
+            :class:`SyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_insert(
             json,
             count=count,
             returning=returning,
             upsert=upsert,
+            default_to_null=default_to_null,
         )
         return SyncQueryRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
@@ -332,6 +337,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         returning: ReturnMethod = ReturnMethod.representation,
         ignore_duplicates: bool = False,
         on_conflict: str = "",
+        default_to_null: bool = True,
     ) -> SyncQueryRequestBuilder[_ReturnT]:
         """Run an upsert (INSERT ... ON CONFLICT DO UPDATE) query.
 
@@ -341,8 +347,12 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             returning: Either 'minimal' or 'representation'
             ignore_duplicates: Whether duplicate rows should be ignored.
             on_conflict: Specified columns to be made to work with UNIQUE constraint.
+            default_to_null: Make missing fields default to `null`. Otherwise, use the
+                default value for the column. This only applies when inserting new rows,
+                not when merging with existing rows under `ignoreDuplicates: false`.
+                This also only applies when doing bulk upserts.
         Returns:
-            :class:`AsyncQueryRequestBuilder`
+            :class:`SyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_upsert(
             json,
@@ -350,6 +360,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             returning=returning,
             ignore_duplicates=ignore_duplicates,
             on_conflict=on_conflict,
+            default_to_null=default_to_null,
         )
         return SyncQueryRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
@@ -369,7 +380,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`AsyncFilterRequestBuilder`
+            :class:`SyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_update(
             json,
@@ -392,7 +403,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`AsyncFilterRequestBuilder`
+            :class:`SyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_delete(
             count=count,

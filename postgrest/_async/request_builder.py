@@ -303,6 +303,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
         upsert: bool = False,
+        default_to_null: bool = True,
     ) -> AsyncQueryRequestBuilder[_ReturnT]:
         """Run an INSERT query.
 
@@ -311,6 +312,9 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
             upsert: Whether the query should be an upsert.
+            default_to_null: Make missing fields default to `null`.
+                Otherwise, use the default value for the column.
+                Only applies for bulk inserts.
         Returns:
             :class:`AsyncQueryRequestBuilder`
         """
@@ -319,6 +323,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
             count=count,
             returning=returning,
             upsert=upsert,
+            default_to_null=default_to_null,
         )
         return AsyncQueryRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
@@ -332,6 +337,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
         returning: ReturnMethod = ReturnMethod.representation,
         ignore_duplicates: bool = False,
         on_conflict: str = "",
+        default_to_null: bool = True,
     ) -> AsyncQueryRequestBuilder[_ReturnT]:
         """Run an upsert (INSERT ... ON CONFLICT DO UPDATE) query.
 
@@ -341,6 +347,10 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
             returning: Either 'minimal' or 'representation'
             ignore_duplicates: Whether duplicate rows should be ignored.
             on_conflict: Specified columns to be made to work with UNIQUE constraint.
+            default_to_null: Make missing fields default to `null`. Otherwise, use the
+                default value for the column. This only applies when inserting new rows,
+                not when merging with existing rows under `ignoreDuplicates: false`.
+                This also only applies when doing bulk upserts.
         Returns:
             :class:`AsyncQueryRequestBuilder`
         """
@@ -350,6 +360,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
             returning=returning,
             ignore_duplicates=ignore_duplicates,
             on_conflict=on_conflict,
+            default_to_null=default_to_null,
         )
         return AsyncQueryRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
