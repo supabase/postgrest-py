@@ -2,9 +2,38 @@
 
 
 
+## v0.16.4 (2024-04-29)
+
+### Chore
+
+* chore(deps): bump python-semantic-release/python-semantic-release from 9.4.1 to 9.5.0 (#414) ([`059aceb`](https://github.com/supabase-community/postgrest-py/commit/059aceb78f1efbed03014ddbc328bed65563d387))
+
+* chore(deps-dev): bump python-semantic-release from 9.4.1 to 9.5.0 (#413) ([`5444cda`](https://github.com/supabase-community/postgrest-py/commit/5444cdaf76103ca3ab97b0603c033967c6432158))
+
+* chore(deps): bump pydantic from 2.7.0 to 2.7.1 (#412) ([`0e08ecb`](https://github.com/supabase-community/postgrest-py/commit/0e08ecbc214515e9bccdbcbaf5f98599963666be))
+
+* chore(deps): bump pydantic from 2.6.4 to 2.7.0 (#408) ([`4b3a664`](https://github.com/supabase-community/postgrest-py/commit/4b3a664abf2c35b7a08919ae7bf71c90f3fa9ef8))
+
+* chore(deps): bump idna from 3.6 to 3.7 (#407) ([`9046f41`](https://github.com/supabase-community/postgrest-py/commit/9046f417b2c6dec2a450c538d0dd0193230c25ed))
+
+* chore(deps): bump codecov/codecov-action from 4.1.0 to 4.3.0 (#406) ([`a496a78`](https://github.com/supabase-community/postgrest-py/commit/a496a78c90a4bd7981109d6ae67a0a11a1850e4c))
+
+* chore(deps): bump python-semantic-release/python-semantic-release from 9.3.1 to 9.4.1 (#405) ([`e153778`](https://github.com/supabase-community/postgrest-py/commit/e153778b0a5acfe7864e5cbfa8b69cd87dab99ee))
+
+* chore(deps-dev): bump python-semantic-release from 9.3.0 to 9.4.1 (#404) ([`364a9a9`](https://github.com/supabase-community/postgrest-py/commit/364a9a951d0a52174a9e263a24f7032821c46f44))
+
+* chore(deps-dev): bump pytest-cov from 4.1.0 to 5.0.0 (#394) ([`64e8819`](https://github.com/supabase-community/postgrest-py/commit/64e88199bc8abdab884c76618e6197f1cd4fe748))
+
+### Fix
+
+* fix: increase timeout (#417) ([`a387471`](https://github.com/supabase-community/postgrest-py/commit/a3874712ab1440915a7ccd3788fe11289febcc00))
+
+
 ## v0.16.3 (2024-04-13)
 
 ### Chore
+
+* chore(release): bump version to v0.16.3 ([`980d262`](https://github.com/supabase-community/postgrest-py/commit/980d2624fda078544ff0a9da1001cb3e00dca483))
 
 * chore(deps): bump codecov/codecov-action from 4.1.0 to 4.1.1 (#396) ([`dcadb43`](https://github.com/supabase-community/postgrest-py/commit/dcadb436d48445fdea1d7870b483ea77bda0927a))
 
