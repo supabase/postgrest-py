@@ -531,9 +531,9 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
             if key not in ["self", "format"] and value
         ]
         options_str = "|".join(options)
-        self.headers[
-            "Accept"
-        ] = f"application/vnd.pgrst.plan+{format}; options={options_str}"
+        self.headers["Accept"] = (
+            f"application/vnd.pgrst.plan+{format}; options={options_str}"
+        )
         return self
 
     def order(
