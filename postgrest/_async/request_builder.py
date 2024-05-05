@@ -71,14 +71,14 @@ class AsyncQueryRequestBuilder(Generic[_ReturnT]):
                     if self.headers.get(
                         "Accept"
                     ) and "application/vnd.pgrst.plan" in self.headers.get("Accept"):
-                        if not "+json" in self.headers.get("Accept"):
+                        if "+json" not in self.headers.get("Accept"):
                             return body
                 return APIResponse[_ReturnT].from_http_request_response(r)
             else:
                 raise APIError(r.json())
         except ValidationError as e:
             raise APIError(r.json()) from e
-        except JSONDecodeError as e:
+        except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
 
 
@@ -127,7 +127,7 @@ class AsyncSingleRequestBuilder(Generic[_ReturnT]):
                 raise APIError(r.json())
         except ValidationError as e:
             raise APIError(r.json()) from e
-        except JSONDecodeError as e:
+        except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
 
 
