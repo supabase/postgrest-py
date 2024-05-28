@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Union, cast
+from typing import Any, Dict, Optional, Union, cast
 
 from deprecation import deprecated
 from httpx import Headers, QueryParams, Timeout
+
+from postgrest.types import CountMethod
 
 from .. import __version__
 from ..base_client import BasePostgrestClient
@@ -78,12 +80,22 @@ class SyncPostgrestClient(BasePostgrestClient):
         """Alias to :meth:`from_`."""
         return self.from_(table)
 
-    def rpc(self, func: str, params: dict) -> SyncRPCFilterRequestBuilder[Any]:
+    def rpc(
+        self,
+        func: str,
+        params: dict,
+        count: Optional[CountMethod] = None,
+        head: bool = False,
+        get: bool = False,
+    ) -> SyncRPCFilterRequestBuilder[Any]:
         """Perform a stored procedure call.
 
         Args:
             func: The name of the remote procedure to run.
             params: The parameters to be passed to the remote procedure.
+            count: The method to use to get the count of rows returned.
+            head: When set to `true`, `data` will not be returned. Useful if you only need the count.
+            get: When set to `true`, the function will be called with read-only access mode.
         Returns:
             :class:`AsyncRPCFilterRequestBuilder`
         Example:
@@ -97,7 +109,13 @@ class SyncPostgrestClient(BasePostgrestClient):
             This method now returns a :class:`AsyncFilterRequestBuilder` which allows you to
             filter on the RPC's resultset.
         """
+        method = "POST"
+        if head or get:
+            method = "HEAD" if head else "GET"
+
+        headers = Headers({"Prefer": f"count={count}"}) if count else Headers()
+
         # the params here are params to be sent to the RPC and not the queryparams!
         return SyncRPCFilterRequestBuilder[Any](
-            self.session, f"/rpc/{func}", "POST", Headers(), QueryParams(), json=params
+            self.session, f"/rpc/{func}", method, headers, QueryParams(), json=params
         )
