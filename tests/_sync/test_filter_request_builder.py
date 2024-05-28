@@ -178,6 +178,15 @@ def test_overlaps(filter_request_builder):
     assert str(builder.params) == "x=ov.%7Bis%3Aclosed%2Cseverity%3Ahigh%7D"
 
 
+def test_overlaps_with_timestamp_range(filter_request_builder):
+    builder = filter_request_builder.overlaps("x", "[2000-01-01 12:45, 2000-01-01 13:15)")
+
+    # {a,["b",%20"c"]}
+    assert (
+        str(builder.params) == "x=ov.%5B2000-01-01%2012%3A45%2C%202000-01-01%2013%3A15%29"
+    )
+
+
 def test_like(filter_request_builder):
     builder = filter_request_builder.like("x", "%a%")
 
