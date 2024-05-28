@@ -5,14 +5,13 @@ from typing import Any, Dict, Optional, Union, cast
 from deprecation import deprecated
 from httpx import Headers, QueryParams, Timeout
 
-from postgrest.types import CountMethod
-
 from .. import __version__
 from ..base_client import BasePostgrestClient
 from ..constants import (
     DEFAULT_POSTGREST_CLIENT_HEADERS,
     DEFAULT_POSTGREST_CLIENT_TIMEOUT,
 )
+from ..types import CountMethod
 from ..utils import AsyncClient
 from .request_builder import AsyncRequestBuilder, AsyncRPCFilterRequestBuilder
 
