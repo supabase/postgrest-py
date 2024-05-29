@@ -330,6 +330,8 @@ class BaseFilterRequestBuilder(Generic[_ReturnT]):
             column: The name of the column to apply a filter on
             value: The value to filter by
         """
+        if value is None:
+            value = "null"
         return self.filter(column, Filters.IS, value)
 
     def like(self: Self, column: str, pattern: str) -> Self:
