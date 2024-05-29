@@ -18,13 +18,14 @@ class BasePostgrestClient(ABC):
         schema: str,
         headers: Dict[str, str],
         timeout: Union[int, float, Timeout],
+        verify: bool = True,
     ) -> None:
         headers = {
             **headers,
             "Accept-Profile": schema,
             "Content-Profile": schema,
         }
-        self.session = self.create_session(base_url, headers, timeout)
+        self.session = self.create_session(base_url, headers, timeout, verify)
 
     @abstractmethod
     def create_session(
@@ -32,6 +33,7 @@ class BasePostgrestClient(ABC):
         base_url: str,
         headers: Dict[str, str],
         timeout: Union[int, float, Timeout],
+        verify: bool = True,
     ) -> Union[SyncClient, AsyncClient]:
         raise NotImplementedError()
 
