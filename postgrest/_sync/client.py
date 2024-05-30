@@ -47,6 +47,7 @@ class SyncPostgrestClient(BasePostgrestClient):
             base_url=base_url,
             headers=headers,
             timeout=timeout,
+            follow_redirects=True,
         )
 
     def __enter__(self) -> SyncPostgrestClient:
