@@ -451,9 +451,16 @@ class BaseFilterRequestBuilder(Generic[_ReturnT]):
             return self.filter(column, Filters.CD, f"{{{stringified_values}}}")
         return self.filter(column, Filters.CD, json.dumps(value))
 
-    def ov(self: Self, column: str, values: Iterable[Any]) -> Self:
-        values = ",".join(values)
-        return self.filter(column, Filters.OV, f"{{{values}}}")
+    def ov(self: Self, column: str, value: Iterable[Any]) -> Self:
+        if isinstance(value, str):
+            # range types can be inclusive '[', ']' or exclusive '(', ')' so just
+            # keep it simple and accept a string
+            return self.filter(column, Filters.OV, value)
+        if not isinstance(value, dict) and isinstance(value, Iterable):
+            # Expected to be some type of iterable
+            stringified_values = ",".join(value)
+            return self.filter(column, Filters.OV, f"{{{stringified_values}}}")
+        return self.filter(column, Filters.OV, json.dumps(value))
 
     def sl(self: Self, column: str, range: Tuple[int, int]) -> Self:
         return self.filter(column, Filters.SL, f"({range[0]},{range[1]})")
