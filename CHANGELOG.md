@@ -2,7 +2,18 @@
 
 
 
+## v0.16.7 (2024-06-01)
+
+### Fix
+
+* fix: add get, head and count parameters to the rpc method. (#444) ([`b1d48bc`](https://github.com/supabase-community/postgrest-py/commit/b1d48bca84e707c802448a851608d623c080d72a))
+
+
 ## v0.16.6 (2024-06-01)
+
+### Chore
+
+* chore(release): bump version to v0.16.6 ([`465232a`](https://github.com/supabase-community/postgrest-py/commit/465232aef70545484ca6c35ceacfaa3aa976b391))
 
 ### Fix
 
