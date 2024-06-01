@@ -2,9 +2,18 @@
 
 
 
+## v0.16.6 (2024-06-01)
+
+### Fix
+
+* fix: convert None to a string null for the is method (#446) ([`9970ac3`](https://github.com/supabase-community/postgrest-py/commit/9970ac379f06ebb56d5532ab6730b9330fcccc40))
+
+
 ## v0.16.5 (2024-06-01)
 
 ### Chore
+
+* chore(release): bump version to v0.16.5 ([`901108a`](https://github.com/supabase-community/postgrest-py/commit/901108a11dcba0549d63efa96b40a837b58c54ec))
 
 * chore(deps-dev): bump python-semantic-release from 9.7.3 to 9.8.0 (#443) ([`d8ce53a`](https://github.com/supabase-community/postgrest-py/commit/d8ce53a2b3b66fa42af3c28594749029b0f70b2e))
 
