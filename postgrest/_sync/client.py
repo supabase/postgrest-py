@@ -108,9 +108,7 @@ class SyncPostgrestClient(BasePostgrestClient):
             This method now returns a :class:`AsyncFilterRequestBuilder` which allows you to
             filter on the RPC's resultset.
         """
-        method = "POST"
-        if head or get:
-            method = "HEAD" if head else "GET"
+        method = "HEAD" if head else "GET" if get else "POST"
 
         headers = Headers({"Prefer": f"count={count}"}) if count else Headers()
 
