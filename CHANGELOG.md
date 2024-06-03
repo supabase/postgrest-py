@@ -2,9 +2,78 @@
 
 
 
+## v0.16.7 (2024-06-01)
+
+### Fix
+
+* fix: add get, head and count parameters to the rpc method. (#444) ([`b1d48bc`](https://github.com/supabase-community/postgrest-py/commit/b1d48bca84e707c802448a851608d623c080d72a))
+
+
+## v0.16.6 (2024-06-01)
+
+### Chore
+
+* chore(release): bump version to v0.16.6 ([`465232a`](https://github.com/supabase-community/postgrest-py/commit/465232aef70545484ca6c35ceacfaa3aa976b391))
+
+### Fix
+
+* fix: convert None to a string null for the is method (#446) ([`9970ac3`](https://github.com/supabase-community/postgrest-py/commit/9970ac379f06ebb56d5532ab6730b9330fcccc40))
+
+
+## v0.16.5 (2024-06-01)
+
+### Chore
+
+* chore(release): bump version to v0.16.5 ([`901108a`](https://github.com/supabase-community/postgrest-py/commit/901108a11dcba0549d63efa96b40a837b58c54ec))
+
+* chore(deps-dev): bump python-semantic-release from 9.7.3 to 9.8.0 (#443) ([`d8ce53a`](https://github.com/supabase-community/postgrest-py/commit/d8ce53a2b3b66fa42af3c28594749029b0f70b2e))
+
+* chore(deps): bump python-semantic-release/python-semantic-release from 9.7.3 to 9.8.0 (#442) ([`42a4a32`](https://github.com/supabase-community/postgrest-py/commit/42a4a3226ee129ed8e51fe58347266181d8165bb))
+
+* chore(deps-dev): bump requests from 2.31.0 to 2.32.0 (#440) ([`9fe1070`](https://github.com/supabase-community/postgrest-py/commit/9fe1070e0b446d8f1a0d5c4b312b5d4c8659926c))
+
+* chore: code style fixes (#425) ([`11076da`](https://github.com/supabase-community/postgrest-py/commit/11076dae41d3bc6172799245f491f8a1e50dc9ca))
+
+* chore(deps-dev): bump jinja2 from 3.1.3 to 3.1.4 (#428) ([`d786fc7`](https://github.com/supabase-community/postgrest-py/commit/d786fc7667e3074dc29a0513eccbc18edf850358))
+
+* chore(deps): bump codecov/codecov-action from 4.3.0 to 4.4.1 (#437) ([`fe50d11`](https://github.com/supabase-community/postgrest-py/commit/fe50d111cd7ad4831fc9772113fff85cdc926bd9))
+
+* chore(deps-dev): bump pytest-asyncio from 0.23.6 to 0.23.7 (#439) ([`f41e7af`](https://github.com/supabase-community/postgrest-py/commit/f41e7afd112b9f76c6f0fb3ec02676333c9d7513))
+
+* chore(deps-dev): bump pytest from 8.1.1 to 8.2.1 (#438) ([`9722855`](https://github.com/supabase-community/postgrest-py/commit/9722855535dc1d85506b499b07c7adad060b12ae))
+
+* chore(deps-dev): bump python-semantic-release from 9.7.1 to 9.7.3 (#434) ([`7cc3c38`](https://github.com/supabase-community/postgrest-py/commit/7cc3c380628e719c055879df63cec48bc31f86a9))
+
+* chore(deps): bump python-semantic-release/python-semantic-release from 9.5.0 to 9.7.3 (#436) ([`6115096`](https://github.com/supabase-community/postgrest-py/commit/6115096e9371be0fd0b7a4ff5b7a32d927f17813))
+
+* chore(deps-dev): bump black from 24.3.0 to 24.4.2 (#416) ([`5dceb98`](https://github.com/supabase-community/postgrest-py/commit/5dceb982315773d72a5e46de6429157a6b1af3d8))
+
+* chore(deps-dev): bump python-semantic-release from 9.5.0 to 9.7.1 (#430)
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`56f7f5d`](https://github.com/supabase-community/postgrest-py/commit/56f7f5dea3649a9eb5e9e25beba562d81d32e562))
+
+* chore(deps): bump furo from 2024.1.29 to 2024.5.6 (#431)
+
+Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
+Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`4692500`](https://github.com/supabase-community/postgrest-py/commit/46925008794dd12de8823cc94116e99802d0a5a6))
+
+### Fix
+
+* fix: update overlaps to work with timestamp range (#445) ([`b39f332`](https://github.com/supabase-community/postgrest-py/commit/b39f3326566c998dc517089a7053fb4d5d44d128))
+
+### Unknown
+
+* Update .pre-commit-config.yaml (#424) ([`82a9e9b`](https://github.com/supabase-community/postgrest-py/commit/82a9e9ba6e503a1797ea565b84003de4f944de7d))
+
+* Add stale bot (#422) ([`44f3672`](https://github.com/supabase-community/postgrest-py/commit/44f36724b6366aabee0177f795f8fe386df3d7e5))
+
+
 ## v0.16.4 (2024-04-29)
 
 ### Chore
+
+* chore(release): bump version to v0.16.4 ([`b2bd803`](https://github.com/supabase-community/postgrest-py/commit/b2bd8032c17a32f3094a03b5d9414f4d5767d19e))
 
 * chore(deps): bump python-semantic-release/python-semantic-release from 9.4.1 to 9.5.0 (#414) ([`059aceb`](https://github.com/supabase-community/postgrest-py/commit/059aceb78f1efbed03014ddbc328bed65563d387))
 

@@ -200,6 +200,20 @@ async def test_overlaps():
     ]
 
 
+async def test_overlaps_with_timestamp_range():
+    res = (
+        await rest_client()
+        .from_("reservations")
+        .select("room_name")
+        .overlaps("during", "[2000-01-01 12:45, 2000-01-01 13:15)")
+        .execute()
+    )
+
+    assert res.data == [
+        {"room_name": "Emerald"},
+    ]
+
+
 async def test_like():
     res = (
         await rest_client()
