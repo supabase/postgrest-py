@@ -2,7 +2,26 @@
 
 
 
+## v0.16.8 (2024-06-04)
+
+### Chore
+
+* chore(deps): bump pydantic from 2.7.1 to 2.7.2 (#447) ([`3161d15`](https://github.com/supabase-community/postgrest-py/commit/3161d154cae451449e30c0bb7e7c7b53672d30b0))
+
+### Fix
+
+* fix: add &#34;verify&#34; flag to the creation of client ([`ffe9e28`](https://github.com/supabase-community/postgrest-py/commit/ffe9e28aede84f5e3906c2429bfed945a18ca8f5))
+
+### Unknown
+
+* Follow redirects (#449) ([`bb851bf`](https://github.com/supabase-community/postgrest-py/commit/bb851bfae70d36f40d75a85da58274e75e19eadb))
+
+
 ## v0.16.7 (2024-06-01)
+
+### Chore
+
+* chore(release): bump version to v0.16.7 ([`bc2fc64`](https://github.com/supabase-community/postgrest-py/commit/bc2fc648c709dd2099740d75e5c2b9ade97b57d5))
 
 ### Fix
 
