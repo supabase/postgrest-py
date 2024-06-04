@@ -28,6 +28,7 @@ class SyncPostgrestClient(BasePostgrestClient):
         schema: str = "public",
         headers: Dict[str, str] = DEFAULT_POSTGREST_CLIENT_HEADERS,
         timeout: Union[int, float, Timeout] = DEFAULT_POSTGREST_CLIENT_TIMEOUT,
+        verify: bool = True,
     ) -> None:
         BasePostgrestClient.__init__(
             self,
@@ -35,6 +36,7 @@ class SyncPostgrestClient(BasePostgrestClient):
             schema=schema,
             headers=headers,
             timeout=timeout,
+            verify=verify,
         )
         self.session = cast(SyncClient, self.session)
 
@@ -43,11 +45,13 @@ class SyncPostgrestClient(BasePostgrestClient):
         base_url: str,
         headers: Dict[str, str],
         timeout: Union[int, float, Timeout],
+        verify: bool = True,
     ) -> SyncClient:
         return SyncClient(
             base_url=base_url,
             headers=headers,
             timeout=timeout,
+            verify=verify,
             follow_redirects=True,
         )
 
