@@ -341,7 +341,7 @@ class BaseFilterRequestBuilder(Generic[_ReturnT]):
             column: The name of the column to apply a filter on
             pattern: The pattern to filter by
         """
-        return self.filter(column, Filters.LIKE, pattern)
+        return self.filter(column, Filters.LIKE, f"{{{pattern}}}")
 
     def like_all_of(self: Self, column: str, pattern: str) -> Self:
         """A 'LIKE' filter, to use for pattern matching.
@@ -390,7 +390,7 @@ class BaseFilterRequestBuilder(Generic[_ReturnT]):
             column: The name of the column to apply a filter on
             pattern: The pattern to filter by
         """
-        return self.filter(column, Filters.ILIKE, pattern)
+        return self.filter(column, Filters.ILIKE, f"{{{pattern}}}")
 
     def or_(self: Self, filters: str, reference_table: Union[str, None] = None) -> Self:
         """An 'or' filter
