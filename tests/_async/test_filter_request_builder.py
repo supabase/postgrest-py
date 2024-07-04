@@ -192,6 +192,10 @@ def test_like(filter_request_builder):
 
     assert str(builder.params) == "x=like.%2Aa%2A"
 
+    builder = filter_request_builder.like("x", f"%{85770204020}%")
+    print("builder.params\t", builder.params)
+    assert str(builder.params) == "x=like.%2A85770204020%2A"
+
 
 def test_ilike(filter_request_builder):
     builder = filter_request_builder.ilike("x", "%a%")
