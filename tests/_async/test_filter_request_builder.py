@@ -206,7 +206,7 @@ def test_ilike(filter_request_builder):
 
 
 def test_ilike2(filter_request_builder):
-    builder = filter_request_builder.ilike("x", f"%{85770204020}%")
+    builder = filter_request_builder.ilike("x", f"%{85770204020}%")  # See bug #830.
 
     assert str(builder.params) == "x=ilike.%2A85770204020%2A"
 
