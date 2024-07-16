@@ -1,10 +1,48 @@
 # CHANGELOG
 
+## v0.16.9 (2024-07-16)
 
+### Chore
+
+* chore(deps-dev): bump zipp from 3.18.1 to 3.19.1 (#470) ([`a0bbb4f`](https://github.com/supabase-community/postgrest-py/commit/a0bbb4f0a17a8e1b4aed0c3893517955d9dede63))
+
+* chore(deps-dev): bump python-semantic-release from 9.8.3 to 9.8.5 (#469) ([`61be87c`](https://github.com/supabase-community/postgrest-py/commit/61be87cb8cea268b340c88b97bcbe7ffcbd02945))
+
+* chore(deps): bump python-semantic-release/python-semantic-release from 9.8.3 to 9.8.5 (#468) ([`7a62fde`](https://github.com/supabase-community/postgrest-py/commit/7a62fdef8ddaf0614149713a0584c2a715cd46f5))
+
+* chore(deps): bump certifi from 2024.2.2 to 2024.7.4 (#467) ([`f7eb0f4`](https://github.com/supabase-community/postgrest-py/commit/f7eb0f43b0284bd5bf40f31492fe317f58429348))
+
+* chore(deps): bump pydantic from 2.7.4 to 2.8.2 (#464) ([`b7c425d`](https://github.com/supabase-community/postgrest-py/commit/b7c425d3786bca9aa802dc72d0787e9e5c2982bf))
+
+* chore(deps-dev): bump python-semantic-release from 9.8.0 to 9.8.3 (#460) ([`ce704b3`](https://github.com/supabase-community/postgrest-py/commit/ce704b32393c8e8be95b66ce9fb1ecf20aed9041))
+
+* chore(deps): bump python-semantic-release/python-semantic-release from 9.8.1 to 9.8.3 (#459) ([`87995dd`](https://github.com/supabase-community/postgrest-py/commit/87995dda60eb8f69da5cbd82e31cc2318741fb4f))
+
+* chore(deps-dev): bump urllib3 from 2.2.1 to 2.2.2 (#458) ([`27b16fa`](https://github.com/supabase-community/postgrest-py/commit/27b16fabc8676f38acca9ac383cef13ed25806b7))
+
+* chore(deps): bump codecov/codecov-action from 4.4.1 to 4.5.0 (#455) ([`9d6bf07`](https://github.com/supabase-community/postgrest-py/commit/9d6bf07fa6ef10db9c46799d0cdd2f425eda56ae))
+
+* chore(deps): bump pydantic from 2.7.2 to 2.7.4 (#454) ([`6b1b003`](https://github.com/supabase-community/postgrest-py/commit/6b1b0034249230f3c0005eb3a527cc68d7dafda0))
+
+* chore(deps): bump python-semantic-release/python-semantic-release from 9.8.0 to 9.8.1 (#452) ([`73eb0cf`](https://github.com/supabase-community/postgrest-py/commit/73eb0cf8d91b32fe9a17193a487c9d4799844868))
+
+* chore(deps-dev): bump pytest from 8.2.1 to 8.2.2 (#450) ([`f2f3d4f`](https://github.com/supabase-community/postgrest-py/commit/f2f3d4fa5955b69fbc108627298d18aebca4fe46))
+
+### Fix
+
+* fix: version bump (#471) ([`b509b3a`](https://github.com/supabase-community/postgrest-py/commit/b509b3ad0d69f7ab34d3043350bbc7eb579ab029))
+
+### Unknown
+
+* Fix 830 (#461) ([`ea791f4`](https://github.com/supabase-community/postgrest-py/commit/ea791f44406c57be3096ba44a14271e65cb2df30))
+
+* Enable HTTP2 (#462) ([`0ea293d`](https://github.com/supabase-community/postgrest-py/commit/0ea293d5cd632ec8032ce7bf008cfa05f50b5685))
 
 ## v0.16.8 (2024-06-04)
 
 ### Chore
+
+* chore(release): bump version to v0.16.8 ([`3871911`](https://github.com/supabase-community/postgrest-py/commit/38719110badf6dd985beb77b5e8a25f413b69abd))
 
 * chore(deps): bump pydantic from 2.7.1 to 2.7.2 (#447) ([`3161d15`](https://github.com/supabase-community/postgrest-py/commit/3161d154cae451449e30c0bb7e7c7b53672d30b0))
 
@@ -16,7 +54,6 @@
 
 * Follow redirects (#449) ([`bb851bf`](https://github.com/supabase-community/postgrest-py/commit/bb851bfae70d36f40d75a85da58274e75e19eadb))
 
-
 ## v0.16.7 (2024-06-01)
 
 ### Chore
@@ -27,7 +64,6 @@
 
 * fix: add get, head and count parameters to the rpc method. (#444) ([`b1d48bc`](https://github.com/supabase-community/postgrest-py/commit/b1d48bca84e707c802448a851608d623c080d72a))
 
-
 ## v0.16.6 (2024-06-01)
 
 ### Chore
@@ -37,7 +73,6 @@
 ### Fix
 
 * fix: convert None to a string null for the is method (#446) ([`9970ac3`](https://github.com/supabase-community/postgrest-py/commit/9970ac379f06ebb56d5532ab6730b9330fcccc40))
-
 
 ## v0.16.5 (2024-06-01)
 
@@ -87,7 +122,6 @@ Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.githu
 
 * Add stale bot (#422) ([`44f3672`](https://github.com/supabase-community/postgrest-py/commit/44f36724b6366aabee0177f795f8fe386df3d7e5))
 
-
 ## v0.16.4 (2024-04-29)
 
 ### Chore
@@ -116,7 +150,6 @@ Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.githu
 
 * fix: increase timeout (#417) ([`a387471`](https://github.com/supabase-community/postgrest-py/commit/a3874712ab1440915a7ccd3788fe11289febcc00))
 
-
 ## v0.16.3 (2024-04-13)
 
 ### Chore
@@ -139,7 +172,6 @@ Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.githu
 ### Unknown
 
 * Revert &#34;chore(deps): bump codecov/codecov-action from 4.1.0 to 4.1.1&#34; (#397) ([`b4c740d`](https://github.com/supabase-community/postgrest-py/commit/b4c740d3e6cbe1709b18cdd56d89b8e592785ec7))
-
 
 ## v0.16.2 (2024-03-23)
 
@@ -171,7 +203,6 @@ Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.githu
 
 * fix: update dependencies and tests (#392) ([`d04d76c`](https://github.com/supabase-community/postgrest-py/commit/d04d76caa914afd5efffa9efd6481a38429742e8))
 
-
 ## v0.16.1 (2024-02-29)
 
 ### Chore
@@ -197,7 +228,6 @@ Co-authored-by: Rodrigo Mansueli Nunes &lt;rodrigo@mansueli.com&gt; ([`3e0ea2e`]
 
 * Bump action versions (#377) ([`602d66e`](https://github.com/supabase-community/postgrest-py/commit/602d66e6e40402281aa388a3bb9e8ddef6d5c718))
 
-
 ## v0.16.0 (2024-02-27)
 
 ### Chore
@@ -208,7 +238,6 @@ Co-authored-by: Rodrigo Mansueli Nunes &lt;rodrigo@mansueli.com&gt; ([`3e0ea2e`]
 
 * feat: Add RPC request builder class for additional filters (#372) ([`0002e8f`](https://github.com/supabase-community/postgrest-py/commit/0002e8f7ec32b6787b44996079b4c2f43fc43717))
 
-
 ## v0.15.1 (2024-02-27)
 
 ### Chore
@@ -218,7 +247,6 @@ Co-authored-by: Rodrigo Mansueli Nunes &lt;rodrigo@mansueli.com&gt; ([`3e0ea2e`]
 ### Fix
 
 * fix: update range to use query parameters instead of headers (#375) ([`eae612c`](https://github.com/supabase-community/postgrest-py/commit/eae612ce0548b392d574e9afc12c11f73e54cf8f))
-
 
 ## v0.15.0 (2024-01-15)
 
@@ -234,7 +262,6 @@ Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.githu
 ### Feature
 
 * feat: add like_any_of, like_all_of, ilike_any_of and ilike_all_of filters (#358) ([`d4e3f57`](https://github.com/supabase-community/postgrest-py/commit/d4e3f57aafd75138272b558f4ce507b2bef70e37))
-
 
 ## v0.14.0 (2024-01-15)
 
@@ -254,7 +281,6 @@ Co-authored-by: sourcery-ai[bot] &lt;58596630+sourcery-ai[bot]@users.noreply.git
 
 * update ci for publishing package (#349) ([`496d95a`](https://github.com/supabase-community/postgrest-py/commit/496d95a227c8412a064a8f31a365e758d8c7d844))
 
-
 ## v0.13.2 (2024-01-11)
 
 ### Chore
@@ -264,7 +290,6 @@ Co-authored-by: sourcery-ai[bot] &lt;58596630+sourcery-ai[bot]@users.noreply.git
 ### Fix
 
 * fix: add missing RPCFilterRequestBuilder and MaybeSingleRequestBuilder exports ([`3ab20e4`](https://github.com/supabase-community/postgrest-py/commit/3ab20e4682a16b31b414fa7e5f2e1a565828f60e))
-
 
 ## v0.13.1 (2024-01-04)
 
@@ -393,7 +418,6 @@ Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.githu
 
 * fix: update httpx and other dev dependencies ([`bfc6714`](https://github.com/supabase-community/postgrest-py/commit/bfc6714dc05a21374b67b0c84c0029e1143b3a99))
 
-
 ## v0.13.0 (2023-10-22)
 
 ### Chore
@@ -422,7 +446,6 @@ Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.githu
 * feat: add offset (#326)
 
 Co-authored-by: joel@joellee.org &lt;joel@joellee.org&gt; ([`7cd6751`](https://github.com/supabase-community/postgrest-py/commit/7cd67512705853f6e4488cfa34491ae97c526041))
-
 
 ## v0.12.1 (2023-10-17)
 
@@ -461,7 +484,6 @@ Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.githu
 
 * fix: make rpc function sync (#322) ([`04f4980`](https://github.com/supabase-community/postgrest-py/commit/04f49804db614427b2545414b934b93baef91a71))
 
-
 ## v0.12.0 (2023-10-06)
 
 ### Chore
@@ -487,7 +509,6 @@ Co-authored-by: Sourcery AI &lt;&gt;
 ---------
 
 Co-authored-by: sourcery-ai[bot] &lt;58596630+sourcery-ai[bot]@users.noreply.github.com&gt; ([`4f6e9d9`](https://github.com/supabase-community/postgrest-py/commit/4f6e9d9a8f340dd25d47f2399218873c7b9abc01))
-
 
 ## v0.11.0 (2023-09-28)
 
@@ -682,7 +703,6 @@ Co-authored-by: joel@joellee.org &lt;joel@joellee.org&gt; ([`166fa7c`](https://g
 
 * re-enable pydantic 1.9 (#283) ([`8d1f249`](https://github.com/supabase-community/postgrest-py/commit/8d1f249c4ed89e6ed6843647177c6ae4d3edf601))
 
-
 ## v0.10.8 (2023-08-04)
 
 ### Chore
@@ -704,7 +724,6 @@ Co-authored-by: Sourcery AI &lt;&gt;
 
 Co-authored-by: joel@joellee.org &lt;joel@joellee.org&gt;
 Co-authored-by: sourcery-ai[bot] &lt;58596630+sourcery-ai[bot]@users.noreply.github.com&gt; ([`561548e`](https://github.com/supabase-community/postgrest-py/commit/561548ea4c17d89cef1777d2843176efe6ead614))
-
 
 ## v0.10.7 (2023-08-04)
 
@@ -1013,7 +1032,6 @@ Co-authored-by: joel@joellee.org &lt;joel@joellee.org&gt; ([`39ae07d`](https://g
 
 * `maybe_single` with no matching rows returns None (#231) ([`d148298`](https://github.com/supabase-community/postgrest-py/commit/d148298195ea34c0048ea8e11b8a903f5a6f2342))
 
-
 ## v0.10.6 (2023-02-26)
 
 ### Chore
@@ -1067,7 +1085,6 @@ Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.githu
 * Add tests for filter queries that include special characters in column name
 
 * Add missing test for equals operator ([`36a0702`](https://github.com/supabase-community/postgrest-py/commit/36a070262444832d3f43af0d82803ab3a953ac77))
-
 
 ## v0.10.5 (2023-02-19)
 
@@ -1455,7 +1472,6 @@ Signed-off-by: Bariq &lt;bariqhibat@gmail.com&gt;
 
 Signed-off-by: Bariq &lt;bariqhibat@gmail.com&gt; ([`5d17f81`](https://github.com/supabase-community/postgrest-py/commit/5d17f81054d9b753c117b342528ab41cc8b7f9f7))
 
-
 ## v0.10.3 (2022-10-11)
 
 ### Chore
@@ -1724,7 +1740,6 @@ Co-authored-by: Anand &lt;40204976+anand2312@users.noreply.github.com&gt;
 Co-authored-by: privaterepo &lt;hauntedanon420@gmail.com&gt;
 Co-authored-by: Anand &lt;40204976+anand2312@users.noreply.github.com&gt; ([`bf27b85`](https://github.com/supabase-community/postgrest-py/commit/bf27b850367a8126d8262fc5921e2e4f57bc6d60))
 
-
 ## v0.10.2 (2022-04-18)
 
 ### Chore
@@ -1845,7 +1860,6 @@ down the chain of builders, and finally pass it to the execute method.
 
 * docs: add rtd config ([`442a45a`](https://github.com/supabase-community/postgrest-py/commit/442a45a5638253888d7675f3c664e01c1e61d7d3))
 
-
 ## v0.10.1 (2022-04-07)
 
 ### Chore
@@ -1954,7 +1968,6 @@ Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.githu
 
 * deps: upgrade black in pre-commit ([`53f7d18`](https://github.com/supabase-community/postgrest-py/commit/53f7d18807aa292aa7326af573bd55828a3bb6e4))
 
-
 ## v0.10.0 (2022-03-13)
 
 ### Chore
@@ -1974,7 +1987,6 @@ Automatically generated by python-semantic-release ([`cbbdf5c`](https://github.c
 * Add tests
 
 * Describe percent-encoded strings ([`7189e09`](https://github.com/supabase-community/postgrest-py/commit/7189e095bd792fcbc5b89e4f03ef7174e1dd30b7))
-
 
 ## v0.9.2 (2022-03-12)
 
@@ -2007,7 +2019,6 @@ Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.githu
 * fix: make api error properties optionals (#101)
 
 For avoid linter error ([`eb92326`](https://github.com/supabase-community/postgrest-py/commit/eb92326db0088fbf2d96bb68b206160b03e63747))
-
 
 ## v0.9.1 (2022-03-08)
 
@@ -2073,7 +2084,6 @@ Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.githu
 ### Fix
 
 * fix: fix APIError (#97) ([`ff29024`](https://github.com/supabase-community/postgrest-py/commit/ff290240cf9364902ffca19e854604d6a40770f9))
-
 
 ## v0.9.0 (2022-02-19)
 
@@ -2182,7 +2192,6 @@ updated-dependencies:
 Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
 
 Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`7bf8b47`](https://github.com/supabase-community/postgrest-py/commit/7bf8b47a0b9be3adb3305488f07a4afebe65b141))
-
 
 ## v0.8.2 (2022-01-30)
 
@@ -2315,7 +2324,6 @@ Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
 
 Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`0cefdc7`](https://github.com/supabase-community/postgrest-py/commit/0cefdc7895319ab0fdba25662d62fc54bcaffc7e))
 
-
 ## v0.8.1 (2022-01-22)
 
 ### Chore
@@ -2383,7 +2391,6 @@ updated-dependencies:
 Signed-off-by: dependabot[bot] &lt;support@github.com&gt;
 
 Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.github.com&gt; ([`1d80268`](https://github.com/supabase-community/postgrest-py/commit/1d80268f62b3e196f4a56a1930d34644b5a3d1e8))
-
 
 ## v0.8.0 (2022-01-16)
 
@@ -2472,7 +2479,6 @@ Co-authored-by: dependabot[bot] &lt;49699333+dependabot[bot]@users.noreply.githu
 
 * Fix codecov badge (#68) ([`5697d8e`](https://github.com/supabase-community/postgrest-py/commit/5697d8e677f48044a963b3bc44df757d4a3219d1))
 
-
 ## v0.7.1 (2022-01-04)
 
 ### Chore
@@ -2504,7 +2510,6 @@ Automatically generated by python-semantic-release ([`c80c3ff`](https://github.c
 * avoid escaping characters by using single quotes
 
 * fix tests ([`0eb871a`](https://github.com/supabase-community/postgrest-py/commit/0eb871a53b91bca5edc68f9cc3ba67e83e7ae0a0))
-
 
 ## v0.7.0 (2022-01-02)
 
@@ -2549,7 +2554,6 @@ Automatically generated by python-semantic-release ([`c80c3ff`](https://github.c
 * fix: suggestion of sourcery
 
 * fix: suggestion of sourcery ([`b631e3b`](https://github.com/supabase-community/postgrest-py/commit/b631e3be6ae2e47477813feae85780219c6c6baf))
-
 
 ## v0.6.0 (2022-01-01)
 
@@ -2795,7 +2799,6 @@ Co-authored-by: Joel Lee &lt;joel@joellee.org&gt; ([`9031297`](https://github.co
 
 Co-authored-by: Joel Lee &lt;joel@joellee.org&gt; ([`9eadbe1`](https://github.com/supabase-community/postgrest-py/commit/9eadbe1275f8c4154ab021f600a57ec2d6f926eb))
 
-
 ## v0.5.0 (2021-09-09)
 
 ### Unknown
@@ -2813,7 +2816,6 @@ Co-authored-by: Joel Lee &lt;joel@joellee.org&gt; ([`9eadbe1`](https://github.co
 * Update Python workflow ([`3ffb7fb`](https://github.com/supabase-community/postgrest-py/commit/3ffb7fb20f1f8b5c9f10b8c7d08980d7bb3016dd))
 
 * Upgrade dependencies ([`cf743d9`](https://github.com/supabase-community/postgrest-py/commit/cf743d95a2d045eebeff5eafc1941e1db1e18a79))
-
 
 ## v0.4.0 (2021-09-09)
 
@@ -2843,8 +2845,11 @@ This reverts commit 899f75bd6a477a95eef47f2aabb8fdce7cbba200. ([`b3e7df2`](https
 
 * Add tests for RequestBuilder ([`4f0ed78`](https://github.com/supabase-community/postgrest-py/commit/4f0ed783d1aa7e994358dba2e835171f07d61775))
 
-
 ## v0.3.2 (2020-08-20)
+
+### Documentation
+
+* docs: adds enterprise sponsors ([`9df43d5`](https://github.com/supabase-community/postgrest-py/commit/9df43d59954b191128dd755057190ca62762d404))
 
 ### Unknown
 
@@ -2856,7 +2861,6 @@ This reverts commit 899f75bd6a477a95eef47f2aabb8fdce7cbba200. ([`b3e7df2`](https
 
 * Add badges to README.md ([`9d328d8`](https://github.com/supabase-community/postgrest-py/commit/9d328d8cdc71f34bc29af428668ec9e3794874b1))
 
-
 ## v0.3.1 (2020-08-19)
 
 ### Unknown
@@ -2865,12 +2869,7 @@ This reverts commit 899f75bd6a477a95eef47f2aabb8fdce7cbba200. ([`b3e7df2`](https
 
 * Remove dummy test cases and PyPy3 from Travis CI ([`a185327`](https://github.com/supabase-community/postgrest-py/commit/a18532780b0ab5d4ba0b37c63c4c60727a093687))
 
-
 ## v0.3.0 (2020-08-19)
-
-### Documentation
-
-* docs: adds enterprise sponsors ([`9df43d5`](https://github.com/supabase-community/postgrest-py/commit/9df43d59954b191128dd755057190ca62762d404))
 
 ### Unknown
 
@@ -2889,7 +2888,6 @@ This reverts commit 899f75bd6a477a95eef47f2aabb8fdce7cbba200. ([`b3e7df2`](https
 * Update RequestBuilder ([`d115f0d`](https://github.com/supabase-community/postgrest-py/commit/d115f0de857b5dd03ac67b81caf6b331db3eee62))
 
 * Rename project ([`12734e1`](https://github.com/supabase-community/postgrest-py/commit/12734e198935f14316d07572fe7ca5e857af2798))
-
 
 ## v0.2.0 (2020-08-11)
 
@@ -2913,13 +2911,11 @@ This reverts commit 899f75bd6a477a95eef47f2aabb8fdce7cbba200. ([`b3e7df2`](https
 
 * Remove dead code ([`f9ee777`](https://github.com/supabase-community/postgrest-py/commit/f9ee777f1cc90a99ad1d187ed31825862111ecdc))
 
-
 ## v0.1.1 (2020-08-07)
 
 ### Unknown
 
 * Bump version to 0.1.1 ([`25da534`](https://github.com/supabase-community/postgrest-py/commit/25da5340f74565170b71decc40837c0f735c25c5))
-
 
 ## v0.1.0 (2020-08-07)
 
