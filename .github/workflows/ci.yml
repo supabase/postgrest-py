@@ -33,7 +33,7 @@ jobs:
 
   publish:
     needs: test
-    if: ${{ !startsWith(github.event.head_commit.message, 'bump') && !startsWith(github.event.head_commit.message, 'chore') && github.ref == 'refs/heads/master' && contains(fromJSON('["push", "workflow_dispatch"]'), github.event_name) && github.repository_owner == 'supabase-community' }}
+    if: ${{ !startsWith(github.event.head_commit.message, 'bump') && !startsWith(github.event.head_commit.message, 'chore') && github.ref == 'refs/heads/master' && contains(fromJSON('["push", "workflow_dispatch"]'), github.event_name) && github.repository_owner == 'supabase' }}
     runs-on: ubuntu-latest
     name: "Bump version, create changelog and publish"
     environment:
