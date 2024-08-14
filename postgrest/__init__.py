@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-__version__ = "0.16.9"
-
 from httpx import Timeout
 
 from ._async.client import AsyncPostgrestClient
@@ -29,3 +27,4 @@ from .constants import DEFAULT_POSTGREST_CLIENT_HEADERS
 from .deprecated_client import Client, PostgrestClient
 from .deprecated_get_request_builder import GetRequestBuilder
 from .exceptions import APIError
+from .version import __version__
