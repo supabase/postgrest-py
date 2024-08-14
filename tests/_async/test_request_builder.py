@@ -140,6 +140,11 @@ class TestUpdate:
         assert builder.http_method == "PATCH"
         assert builder.json == {"key1": "val1"}
 
+    def test_update_with_on_conflict(self, request_builder: AsyncRequestBuilder):
+        builder = request_builder.update({"key1": "val1"}, on_conflict="key1")
+
+        assert builder.params["on_conflict"] == "key1"
+
 
 class TestDelete:
     def test_delete(self, request_builder: AsyncRequestBuilder):
