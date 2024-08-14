@@ -5,7 +5,6 @@ from typing import Any, Dict, Optional, Union, cast
 from deprecation import deprecated
 from httpx import Headers, QueryParams, Timeout
 
-from .. import __version__
 from ..base_client import BasePostgrestClient
 from ..constants import (
     DEFAULT_POSTGREST_CLIENT_HEADERS,
@@ -13,6 +12,7 @@ from ..constants import (
 )
 from ..types import CountMethod
 from ..utils import SyncClient
+from ..version import __version__
 from .request_builder import SyncRequestBuilder, SyncRPCFilterRequestBuilder
 
 _TableT = Dict[str, Any]

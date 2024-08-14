@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from deprecation import deprecated
 
-from . import __version__
 from ._async.request_builder import AsyncSelectRequestBuilder
+from .version import __version__
 
 
 class GetRequestBuilder(AsyncSelectRequestBuilder):
