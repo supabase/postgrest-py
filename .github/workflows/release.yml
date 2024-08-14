@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 permissions:
   id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
