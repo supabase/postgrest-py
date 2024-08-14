@@ -119,13 +119,17 @@ def pre_update(
     json: dict,
     *,
     count: Optional[CountMethod],
+    on_conflict: Optional[str] = None,
     returning: ReturnMethod,
 ) -> QueryArgs:
     prefer_headers = [f"return={returning}"]
     if count:
         prefer_headers.append(f"count={count}")
     headers = Headers({"Prefer": ",".join(prefer_headers)})
-    return QueryArgs(RequestMethod.PATCH, QueryParams(), headers, json)
+    query_params = {}
+    if on_conflict:
+        query_params["on_conflict"] = on_conflict
+    return QueryArgs(RequestMethod.PATCH, QueryParams(query_params), headers, json)
 
 
 def pre_delete(

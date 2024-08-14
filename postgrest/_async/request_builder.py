@@ -371,6 +371,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
         json: dict,
         *,
         count: Optional[CountMethod] = None,
+        on_conflict: Optional[str] = None,
         returning: ReturnMethod = ReturnMethod.representation,
     ) -> AsyncFilterRequestBuilder[_ReturnT]:
         """Run an UPDATE query.
@@ -378,6 +379,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
         Args:
             json: The updated fields.
             count: The method to use to get the count of rows returned.
+            on_conflict: Specified columns to be made to work with UNIQUE constraint.
             returning: Either 'minimal' or 'representation'
         Returns:
             :class:`AsyncFilterRequestBuilder`
@@ -385,6 +387,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
         method, params, headers, json = pre_update(
             json,
             count=count,
+            on_conflict=on_conflict,
             returning=returning,
         )
         return AsyncFilterRequestBuilder[_ReturnT](
