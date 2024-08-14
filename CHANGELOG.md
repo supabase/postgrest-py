@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.16.10](https://github.com/supabase/postgrest-py/compare/v0.16.9...v0.16.10) (2024-08-14)
+
+
+### Bug Fixes
+
+* revert sanitize_pattern_param in like and ilike ([#481](https://github.com/supabase/postgrest-py/issues/481)) ([18ed416](https://github.com/supabase/postgrest-py/commit/18ed4162cd8eeb6910b87ee7d06bcfba298bca72))
+
 ## v0.16.9 (2024-07-16)
 
 ### Chore
