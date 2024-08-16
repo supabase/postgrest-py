@@ -28,10 +28,10 @@ jobs:
       uses: abatilo/actions-poetry@v3.0.0
       with:
         poetry-version: 1.8.3
-    
+
     - name: Run Tests
       run: make run_tests
-    
+
     - name: Upload Coverage
       uses: codecov/codecov-action@v4.5.0
   release-please:
