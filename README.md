@@ -113,7 +113,7 @@ poetry run pytest
 
 ## CHANGELOG
 
-Read more [here](https://github.com/supabase/postgrest-py/blob/master/CHANGELOG.md).
+Read more [here](https://github.com/supabase/postgrest-py/blob/main/CHANGELOG.md).
 
 ## SPONSORS
 
