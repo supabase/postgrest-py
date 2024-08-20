@@ -12,15 +12,13 @@
 [![Github Watchers](https://img.shields.io/github/watchers/supabase-community/postgrest-py?style=flat&logo=github)](https://github.com/supabase-community/postgrest-py)
 [![GitHub contributors](https://img.shields.io/github/contributors/supabase-community/postgrest-py)](https://github.com/supabase-community/postgrest-py/graphs/contributors)
 
-PostgREST client for Python. This library provides an ORM interface to PostgREST.
-
-Status: **Unstable**
+[PostgREST](https://postgrest.org) client for Python. This library provides an "ORM-like" interface to PostgREST.
 
 ## INSTALLATION
 
 ### Requirements
 
-- Python >= 3.7
+- Python >= 3.9
 - PostgreSQL >= 12
 - PostgREST >= 7
 
