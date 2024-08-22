@@ -474,3 +474,20 @@ def test_rpc_with_range():
         {"nicename": "Albania", "iso": "AL"},
         {"nicename": "Algeria", "iso": "DZ"},
     ]
+
+
+def test_order():
+    res = (
+        rest_client()
+        .from_("countries")
+        .select("country_name, iso")
+        .limit(3)
+        .order("nicename", desc=True)
+        .execute()
+    )
+
+    assert res.data == [
+        {"country_name": "ZIMBABWE", "iso": "ZW"},
+        {"country_name": "UNITED STATES", "iso": "US"},
+        {"country_name": "UNITED KINGDOM", "iso": "GB"},
+    ]

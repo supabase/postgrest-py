@@ -563,9 +563,20 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
         .. versionchanged:: 0.10.3
            Allow ordering results for foreign tables with the foreign_table parameter.
         """
+
+        new_order_parameter = (
+            f"{foreign_table + '(' if foreign_table else ''}{column}{')' if foreign_table else ''}"
+            f"{'.desc' if desc else ''}{'.nullsfirst' if nullsfirst else ''}"
+        )
+
+        existing_order_parameter = self.params.get("order")
+        if existing_order_parameter:
+            self.params = self.params.remove("order")
+            new_order_parameter = f"{existing_order_parameter},{new_order_parameter}"
+
         self.params = self.params.add(
-            f"{foreign_table}.order" if foreign_table else "order",
-            f"{column}{'.desc' if desc else ''}{'.nullsfirst' if nullsfirst else ''}",
+            "order",
+            new_order_parameter,
         )
         return self
 

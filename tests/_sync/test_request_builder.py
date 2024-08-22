@@ -71,6 +71,17 @@ class TestInsert:
         assert builder.http_method == "POST"
         assert builder.json == {"key1": "val1"}
 
+    def test_upsert_with_default_single(self, request_builder: SyncRequestBuilder):
+        builder = request_builder.upsert([{"key1": "val1"}], default_to_null=False)
+        assert builder.headers.get_list("prefer", True) == [
+            "return=representation",
+            "resolution=merge-duplicates",
+            "missing=default",
+        ]
+        assert builder.http_method == "POST"
+        assert builder.json == [{"key1": "val1"}]
+        assert builder.params.get("columns") == '"key1"'
+
     def test_bulk_insert_using_default(self, request_builder: SyncRequestBuilder):
         builder = request_builder.insert(
             [{"key1": "val1", "key2": "val2"}, {"key3": "val3"}], default_to_null=False
@@ -94,17 +105,6 @@ class TestInsert:
         ]
         assert builder.http_method == "POST"
         assert builder.json == {"key1": "val1"}
-
-    def test_upsert_with_default_single(self, request_builder: SyncRequestBuilder):
-        builder = request_builder.upsert([{"key1": "val1"}], default_to_null=False)
-        assert builder.headers.get_list("prefer", True) == [
-            "return=representation",
-            "resolution=merge-duplicates",
-            "missing=default",
-        ]
-        assert builder.http_method == "POST"
-        assert builder.json == [{"key1": "val1"}]
-        assert builder.params.get("columns") == '"key1"'
 
     def test_bulk_upsert_with_default(self, request_builder: SyncRequestBuilder):
         builder = request_builder.upsert(
@@ -188,6 +188,32 @@ class TestExplain:
         assert builder.params["select"] == "*"
         assert "application/vnd.pgrst.plan+json;" in str(builder.headers.get("accept"))
         assert "options=analyze|verbose|buffers|wal" in str(builder.headers.get("accept"))
+
+
+class TestOrder:
+    def test_order(self, request_builder: SyncRequestBuilder):
+        builder = request_builder.select().order("country_name", desc=True)
+        assert str(builder.params) == "order=country_name.desc"
+
+    def test_multiple_orders(self, request_builder: SyncRequestBuilder):
+        builder = (
+            request_builder.select()
+            .order("country_name", desc=True)
+            .order("iso", desc=True)
+        )
+        assert str(builder.params) == "order=country_name.desc%2Ciso.desc"
+
+    def test_multiple_orders_on_foreign_table(self, request_builder: SyncRequestBuilder):
+        foreign_table = "cities"
+        builder = (
+            request_builder.select()
+            .order("city_name", desc=True, foreign_table=foreign_table)
+            .order("id", desc=True, foreign_table=foreign_table)
+        )
+        assert (
+            str(builder.params)
+            == "order=cities%28city_name%29.desc%2Ccities%28id%29.desc"
+        )
 
 
 class TestRange:
