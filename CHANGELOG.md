@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.16.11](https://github.com/supabase/postgrest-py/compare/v0.16.10...v0.16.11) (2024-08-22)
+
+
+### Bug Fixes
+
+* fixed the 'order' method for 'BaseSelectRequestBuilder' ([#495](https://github.com/supabase/postgrest-py/issues/495)) ([97d520e](https://github.com/supabase/postgrest-py/commit/97d520ea339fcf7f706d679d06e8111f0cfdec19))
+
 ## [0.16.10](https://github.com/supabase/postgrest-py/compare/v0.16.9...v0.16.10) (2024-08-14)
 
 
