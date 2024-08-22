@@ -190,6 +190,20 @@ class TestExplain:
         assert "options=analyze|verbose|buffers|wal" in str(builder.headers.get("accept"))
 
 
+class TestOrder:
+    def test_order(self, request_builder: AsyncRequestBuilder):
+        builder = request_builder.select().order("country_name", desc=True)
+        assert str(builder.params) == "order=country_name.desc"
+
+    def test_multiple_orders(self, request_builder: AsyncRequestBuilder):
+        builder = (
+            request_builder.select()
+            .order("country_name", desc=True)
+            .order("iso", desc=True)
+        )
+        assert str(builder.params) == "order=country_name.desc%2Ciso.desc"
+
+
 class TestRange:
     def test_range_on_own_table(self, request_builder: AsyncRequestBuilder):
         builder = request_builder.select("*").range(0, 1)
