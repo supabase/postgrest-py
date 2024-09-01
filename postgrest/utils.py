@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Any, Type, TypeVar, cast, get_origin
 
 from httpx import AsyncClient  # noqa: F401
