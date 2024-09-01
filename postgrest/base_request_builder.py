@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import json
 from json import JSONDecodeError
 from re import search
