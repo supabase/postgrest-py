@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from deprecation import deprecated
 
 from ._async.request_builder import AsyncSelectRequestBuilder
