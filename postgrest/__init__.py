@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from httpx import Timeout
 
 from ._async.client import AsyncPostgrestClient
