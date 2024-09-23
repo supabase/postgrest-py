@@ -29,6 +29,7 @@ class SyncPostgrestClient(BasePostgrestClient):
         headers: Dict[str, str] = DEFAULT_POSTGREST_CLIENT_HEADERS,
         timeout: Union[int, float, Timeout] = DEFAULT_POSTGREST_CLIENT_TIMEOUT,
         verify: bool = True,
+        proxy: str | None = None,
     ) -> None:
         BasePostgrestClient.__init__(
             self,
@@ -37,6 +38,7 @@ class SyncPostgrestClient(BasePostgrestClient):
             headers=headers,
             timeout=timeout,
             verify=verify,
+            proxy=proxy,
         )
         self.session = cast(SyncClient, self.session)
 
