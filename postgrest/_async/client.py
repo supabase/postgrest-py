@@ -48,12 +48,14 @@ class AsyncPostgrestClient(BasePostgrestClient):
         headers: Dict[str, str],
         timeout: Union[int, float, Timeout],
         verify: bool = True,
+        proxy: Optional[str] = None,
     ) -> AsyncClient:
         return AsyncClient(
             base_url=base_url,
             headers=headers,
             timeout=timeout,
             verify=verify,
+            proxy=proxy,
             follow_redirects=True,
             http2=True,
         )
