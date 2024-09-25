@@ -201,7 +201,7 @@ class TestExplain:
 class TestOrder:
     def test_order(self, request_builder: AsyncRequestBuilder):
         builder = request_builder.select().order("country_name", desc=True)
-        assert str(builder.params) == "order=country_name.desc"
+        assert str(builder.params) == "select=%2A&order=country_name.desc"
 
     def test_multiple_orders(self, request_builder: AsyncRequestBuilder):
         builder = (
@@ -209,7 +209,7 @@ class TestOrder:
             .order("country_name", desc=True)
             .order("iso", desc=True)
         )
-        assert str(builder.params) == "order=country_name.desc%2Ciso.desc"
+        assert str(builder.params) == "select=%2A&order=country_name.desc%2Ciso.desc"
 
     def test_multiple_orders_on_foreign_table(self, request_builder: AsyncRequestBuilder):
         foreign_table = "cities"
@@ -220,7 +220,7 @@ class TestOrder:
         )
         assert (
             str(builder.params)
-            == "order=cities%28city_name%29.desc%2Ccities%28id%29.desc"
+            == "select=%2A&order=cities%28city_name%29.desc%2Ccities%28id%29.desc"
         )
 
 
