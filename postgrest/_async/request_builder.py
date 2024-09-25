@@ -282,6 +282,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
         self,
         *columns: str,
         count: Optional[CountMethod] = None,
+        head: Optional[bool] = None,
     ) -> AsyncSelectRequestBuilder[_ReturnT]:
         """Run a SELECT query.
 
@@ -291,7 +292,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
         Returns:
             :class:`AsyncSelectRequestBuilder`
         """
-        method, params, headers, json = pre_select(*columns, count=count)
+        method, params, headers, json = pre_select(*columns, count=count, head=head)
         return AsyncSelectRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )

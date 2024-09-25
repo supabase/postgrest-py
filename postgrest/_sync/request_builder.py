@@ -282,6 +282,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         self,
         *columns: str,
         count: Optional[CountMethod] = None,
+        head: Optional[bool] = None,
     ) -> SyncSelectRequestBuilder[_ReturnT]:
         """Run a SELECT query.
 
@@ -291,7 +292,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         Returns:
             :class:`SyncSelectRequestBuilder`
         """
-        method, params, headers, json = pre_select(*columns, count=count)
+        method, params, headers, json = pre_select(*columns, count=count, head=head)
         return SyncSelectRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )

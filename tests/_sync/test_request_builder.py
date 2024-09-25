@@ -31,8 +31,16 @@ class TestSelect:
     def test_select_with_count(self, request_builder: SyncRequestBuilder):
         builder = request_builder.select(count=CountMethod.exact)
 
-        assert builder.params.get("select") is None
+        assert builder.params["select"] == "*"
         assert builder.headers["prefer"] == "count=exact"
+        assert builder.http_method == "GET"
+        assert builder.json == {}
+
+    def test_select_with_head(self, request_builder: SyncRequestBuilder):
+        builder = request_builder.select("col1", "col2", head=True)
+
+        assert builder.params.get("select") == "col1,col2"
+        assert builder.headers.get("prefer") is None
         assert builder.http_method == "HEAD"
         assert builder.json == {}
 

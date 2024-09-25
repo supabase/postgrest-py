@@ -52,16 +52,29 @@ def _unique_columns(json: List[Dict]):
     return columns
 
 
+def _cleaned_columns(columns: str) -> str:
+    quoted = False
+    result = []
+
+    for c in columns:
+        if c.isspace() and not quoted:
+            continue
+        if c == '"':
+            quoted = not quoted
+        result.append(c)
+
+    return ",".join(result)
+
+
 def pre_select(
     *columns: str,
     count: Optional[CountMethod] = None,
+    head: Optional[bool] = None,
 ) -> QueryArgs:
-    if columns:
-        method = RequestMethod.GET
-        params = QueryParams({"select": ",".join(columns)})
-    else:
-        method = RequestMethod.HEAD
-        params = QueryParams()
+    method = RequestMethod.HEAD if head else RequestMethod.GET
+    cleaned_columns = _cleaned_columns(columns or "*")
+    params = QueryParams({"select": cleaned_columns})
+
     headers = Headers({"Prefer": f"count={count}"}) if count else Headers()
     return QueryArgs(method, params, headers, {})
 
