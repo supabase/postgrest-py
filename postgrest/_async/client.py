@@ -29,6 +29,7 @@ class AsyncPostgrestClient(BasePostgrestClient):
         headers: Dict[str, str] = DEFAULT_POSTGREST_CLIENT_HEADERS,
         timeout: Union[int, float, Timeout] = DEFAULT_POSTGREST_CLIENT_TIMEOUT,
         verify: bool = True,
+        proxy: Optional[str] = None,
     ) -> None:
         BasePostgrestClient.__init__(
             self,
@@ -37,6 +38,7 @@ class AsyncPostgrestClient(BasePostgrestClient):
             headers=headers,
             timeout=timeout,
             verify=verify,
+            proxy=proxy,
         )
         self.session = cast(AsyncClient, self.session)
 
@@ -46,12 +48,14 @@ class AsyncPostgrestClient(BasePostgrestClient):
         headers: Dict[str, str],
         timeout: Union[int, float, Timeout],
         verify: bool = True,
+        proxy: Optional[str] = None,
     ) -> AsyncClient:
         return AsyncClient(
             base_url=base_url,
             headers=headers,
             timeout=timeout,
             verify=verify,
+            proxy=proxy,
             follow_redirects=True,
             http2=True,
         )
