@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [0.17.0](https://github.com/supabase/postgrest-py/compare/v0.16.11...v0.17.0) (2024-09-28)
+
+
+### Features
+
+* Proxy support ([#508](https://github.com/supabase/postgrest-py/issues/508)) ([8629f6f](https://github.com/supabase/postgrest-py/commit/8629f6f8d194d54efb8944f9fe5811ee8190cbf1))
+* select all columns by default ([#509](https://github.com/supabase/postgrest-py/issues/509)) ([ffb304f](https://github.com/supabase/postgrest-py/commit/ffb304fbc102ed9efa431e5ccfd8027d4d5c3f54))
+
+
+### Bug Fixes
+
+* **deps:** bump pydantic from 2.8.2 to 2.9.2 ([#506](https://github.com/supabase/postgrest-py/issues/506)) ([ccf2885](https://github.com/supabase/postgrest-py/commit/ccf28850fe0a0888accc09d2dedf42f7d9242e2e))
+
 ## [0.16.11](https://github.com/supabase/postgrest-py/compare/v0.16.10...v0.16.11) (2024-08-22)
 
 
