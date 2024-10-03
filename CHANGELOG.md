@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.17.1](https://github.com/supabase/postgrest-py/compare/v0.17.0...v0.17.1) (2024-10-02)
+
+
+### Bug Fixes
+
+* httpx minimum version update ([#512](https://github.com/supabase/postgrest-py/issues/512)) ([5107584](https://github.com/supabase/postgrest-py/commit/5107584f4f49d46bf7df6567109a3edce820c726))
+
 ## [0.17.0](https://github.com/supabase/postgrest-py/compare/v0.16.11...v0.17.0) (2024-09-28)
 
 
