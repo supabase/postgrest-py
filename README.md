@@ -18,7 +18,7 @@
 
 ### Requirements
 
-- Python >= 3.9
+- Python >= 3.8
 - PostgreSQL >= 12
 - PostgREST >= 7
 
