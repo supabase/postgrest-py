@@ -405,7 +405,7 @@ class BaseFilterRequestBuilder(Generic[_ReturnT]):
         """
         return self.filter(column, Filters.ILIKE, pattern)
 
-    def or_(self: Self, filters: str, reference_table: Union[str, None] = None) -> Self:
+    def or_(self: Self, filters: str, reference_table: Optional[str] = None) -> Self:
         """An 'or' filter
 
         Args:
