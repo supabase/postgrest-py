@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.17.2](https://github.com/supabase/postgrest-py/compare/v0.17.1...v0.17.2) (2024-10-10)
+
+
+### Bug Fixes
+
+* Types to use Option[T] ([#514](https://github.com/supabase/postgrest-py/issues/514)) ([645b677](https://github.com/supabase/postgrest-py/commit/645b677715b8ff338047240bf48dd19dd86b71b4))
+
 ## [0.17.1](https://github.com/supabase/postgrest-py/compare/v0.17.0...v0.17.1) (2024-10-02)
 
 
