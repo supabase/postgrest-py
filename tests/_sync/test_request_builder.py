@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import pytest
 from httpx import Request, Response
@@ -192,6 +192,50 @@ class TestUpdate:
         assert builder.http_method == "PATCH"
         assert builder.json == {"key1": "val1"}
 
+    @pytest.mark.parametrize(
+        "handling, max_affected, max_affected_should_be_in_headers",
+        [
+            pytest.param(
+                Handling.strict,
+                10,
+                True,
+                id="when-handling-is-strict-can-set-max-affected-parameter",
+            ),
+            pytest.param(
+                Handling.lenient,
+                10,
+                False,
+                id="when-handling-is-lenient-max-affected-parameter-cant-be-set",
+            ),
+            pytest.param(
+                Handling.lenient,
+                None,
+                False,
+                id="when-max-affected-is-not-set-then-not-add-it-to-headers",
+            ),
+            pytest.param(
+                Handling.strict,
+                None,
+                False,
+                id="when-max-affected-is-not-set-then-not-add-it-to-headers-even-handling-is-strict",
+            ),
+        ],
+    )
+    def test_update_with_max_affected(
+        self,
+        request_builder: SyncRequestBuilder,
+        handling: Handling,
+        max_affected: Optional[int],
+        max_affected_should_be_in_headers: bool,
+    ):
+        builder = request_builder.update(
+            {"key1": "val1"}, handling=handling, max_affected=max_affected
+        )
+
+        assert (
+            f"max-affected={max_affected}" in builder.headers.get_list("prefer", True)
+        ) is max_affected_should_be_in_headers
+
 
 class TestDelete:
     def test_delete(self, request_builder: SyncRequestBuilder):
@@ -224,6 +268,48 @@ class TestDelete:
         ]
         assert builder.http_method == "DELETE"
         assert builder.json == {}
+
+    @pytest.mark.parametrize(
+        "handling, max_affected, max_affected_should_be_in_headers",
+        [
+            pytest.param(
+                Handling.strict,
+                10,
+                True,
+                id="when-handling-is-strict-can-set-max-affected-parameter",
+            ),
+            pytest.param(
+                Handling.lenient,
+                10,
+                False,
+                id="when-handling-is-lenient-max-affected-parameter-cant-be-set",
+            ),
+            pytest.param(
+                Handling.lenient,
+                None,
+                False,
+                id="when-max-affected-is-not-set-then-not-add-it-to-headers",
+            ),
+            pytest.param(
+                Handling.strict,
+                None,
+                False,
+                id="when-max-affected-is-not-set-then-not-add-it-to-headers-even-handling-is-strict",
+            ),
+        ],
+    )
+    def test_delete_with_max_affected(
+        self,
+        request_builder: SyncRequestBuilder,
+        handling: Handling,
+        max_affected: Optional[int],
+        max_affected_should_be_in_headers: bool,
+    ):
+        builder = request_builder.delete(handling=handling, max_affected=max_affected)
+
+        assert (
+            f"max-affected={max_affected}" in builder.headers.get_list("prefer", True)
+        ) is max_affected_should_be_in_headers
 
 
 class TestTextSearch:

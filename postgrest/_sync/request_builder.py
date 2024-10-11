@@ -384,6 +384,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
         handling: Handling = Handling.lenient,
+        max_affected: Optional[int] = None,
     ) -> SyncFilterRequestBuilder[_ReturnT]:
         """Run an UPDATE query.
 
@@ -392,6 +393,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
             handling: Either 'lenient' or 'strict'
+            max_affected: Limit of rows that can be affected during request. Working only with handling=strict.
         Returns:
             :class:`SyncFilterRequestBuilder`
         """
@@ -400,6 +402,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             count=count,
             returning=returning,
             handling=handling,
+            max_affected=max_affected,
         )
         return SyncFilterRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
@@ -411,6 +414,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
         handling: Handling = Handling.lenient,
+        max_affected: Optional[int] = None,
     ) -> SyncFilterRequestBuilder[_ReturnT]:
         """Run a DELETE query.
 
@@ -418,6 +422,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
             handling: Either 'lenient' or 'strict'
+            max_affected: Limit of rows that can be affected during request. Working only with handling=strict.
         Returns:
             :class:`SyncFilterRequestBuilder`
         """
@@ -425,6 +430,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             count=count,
             returning=returning,
             handling=handling,
+            max_affected=max_affected,
         )
         return SyncFilterRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json

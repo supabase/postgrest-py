@@ -143,6 +143,7 @@ def pre_update(
     count: Optional[CountMethod],
     returning: ReturnMethod,
     handling: Handling = Handling.lenient,
+    max_affected: Optional[int] = None,
 ) -> QueryArgs:
     prefer_headers = [
         f"return={returning}",
@@ -150,6 +151,8 @@ def pre_update(
     ]
     if count:
         prefer_headers.append(f"count={count}")
+    if max_affected and handling == handling.strict:
+        prefer_headers.append(f"max-affected={max_affected}")
     headers = Headers({"Prefer": ",".join(prefer_headers)})
     return QueryArgs(RequestMethod.PATCH, QueryParams(), headers, json)
 
@@ -159,6 +162,7 @@ def pre_delete(
     count: Optional[CountMethod],
     returning: ReturnMethod,
     handling: Handling = Handling.lenient,
+    max_affected: Optional[int] = None,
 ) -> QueryArgs:
     prefer_headers = [
         f"return={returning}",
@@ -166,6 +170,8 @@ def pre_delete(
     ]
     if count:
         prefer_headers.append(f"count={count}")
+    if max_affected and handling == handling.strict:
+        prefer_headers.append(f"max-affected={max_affected}")
     headers = Headers({"Prefer": ",".join(prefer_headers)})
     return QueryArgs(RequestMethod.DELETE, QueryParams(), headers, {})
 
