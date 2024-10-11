@@ -20,7 +20,7 @@ from ..base_request_builder import (
     pre_upsert,
 )
 from ..exceptions import APIError, generate_default_error_message
-from ..types import ReturnMethod
+from ..types import Handling, ReturnMethod
 from ..utils import SyncClient, get_origin_and_cast
 
 _ReturnT = TypeVar("_ReturnT")
@@ -34,7 +34,7 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
         http_method: str,
         headers: Headers,
         params: QueryParams,
-        json: Union[dict, list],
+        json: dict,
     ) -> None:
         self.session = session
         self.path = path
@@ -283,16 +283,20 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         *columns: str,
         count: Optional[CountMethod] = None,
         head: Optional[bool] = None,
+        handling: Handling = Handling.lenient,
     ) -> SyncSelectRequestBuilder[_ReturnT]:
         """Run a SELECT query.
 
         Args:
             *columns: The names of the columns to fetch.
             count: The method to use to get the count of rows returned.
+            handling: Either 'lenient' or 'strict'
         Returns:
             :class:`SyncSelectRequestBuilder`
         """
-        method, params, headers, json = pre_select(*columns, count=count, head=head)
+        method, params, headers, json = pre_select(
+            *columns, count=count, head=head, handling=handling
+        )
         return SyncSelectRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )
@@ -305,6 +309,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         returning: ReturnMethod = ReturnMethod.representation,
         upsert: bool = False,
         default_to_null: bool = True,
+        handling: Handling = Handling.lenient,
     ) -> SyncQueryRequestBuilder[_ReturnT]:
         """Run an INSERT query.
 
@@ -316,6 +321,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             default_to_null: Make missing fields default to `null`.
                 Otherwise, use the default value for the column.
                 Only applies for bulk inserts.
+            handling: Either 'lenient' or 'strict'
         Returns:
             :class:`SyncQueryRequestBuilder`
         """
@@ -325,6 +331,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             returning=returning,
             upsert=upsert,
             default_to_null=default_to_null,
+            handling=handling,
         )
         return SyncQueryRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
@@ -339,6 +346,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         ignore_duplicates: bool = False,
         on_conflict: str = "",
         default_to_null: bool = True,
+        handling: Handling = Handling.lenient,
     ) -> SyncQueryRequestBuilder[_ReturnT]:
         """Run an upsert (INSERT ... ON CONFLICT DO UPDATE) query.
 
@@ -352,6 +360,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
                 default value for the column. This only applies when inserting new rows,
                 not when merging with existing rows under `ignoreDuplicates: false`.
                 This also only applies when doing bulk upserts.
+            handling: Either 'lenient' or 'strict'
         Returns:
             :class:`SyncQueryRequestBuilder`
         """
@@ -362,6 +371,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             ignore_duplicates=ignore_duplicates,
             on_conflict=on_conflict,
             default_to_null=default_to_null,
+            handling=handling,
         )
         return SyncQueryRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
@@ -373,6 +383,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
+        handling: Handling = Handling.lenient,
     ) -> SyncFilterRequestBuilder[_ReturnT]:
         """Run an UPDATE query.
 
@@ -380,6 +391,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             json: The updated fields.
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
+            handling: Either 'lenient' or 'strict'
         Returns:
             :class:`SyncFilterRequestBuilder`
         """
@@ -387,6 +399,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             json,
             count=count,
             returning=returning,
+            handling=handling,
         )
         return SyncFilterRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
@@ -397,18 +410,21 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
+        handling: Handling = Handling.lenient,
     ) -> SyncFilterRequestBuilder[_ReturnT]:
         """Run a DELETE query.
 
         Args:
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
+            handling: Either 'lenient' or 'strict'
         Returns:
             :class:`SyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_delete(
             count=count,
             returning=returning,
+            handling=handling,
         )
         return SyncFilterRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json

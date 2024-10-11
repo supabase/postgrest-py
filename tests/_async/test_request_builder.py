@@ -5,7 +5,7 @@ from httpx import Request, Response
 
 from postgrest import AsyncRequestBuilder, AsyncSingleRequestBuilder
 from postgrest.base_request_builder import APIResponse, SingleAPIResponse
-from postgrest.types import CountMethod
+from postgrest.types import CountMethod, Handling
 from postgrest.utils import AsyncClient
 
 
@@ -24,7 +24,7 @@ class TestSelect:
         builder = request_builder.select("col1", "col2")
 
         assert builder.params["select"] == "col1,col2"
-        assert builder.headers.get("prefer") is None
+        assert builder.headers.get_list("prefer") == ["handling=lenient"]
         assert builder.http_method == "GET"
         assert builder.json == {}
 
@@ -32,7 +32,10 @@ class TestSelect:
         builder = request_builder.select(count=CountMethod.exact)
 
         assert builder.params["select"] == "*"
-        assert builder.headers["prefer"] == "count=exact"
+        assert builder.headers.get_list("prefer", True) == [
+            "handling=lenient",
+            "count=exact",
+        ]
         assert builder.http_method == "GET"
         assert builder.json == {}
 
@@ -40,7 +43,7 @@ class TestSelect:
         builder = request_builder.select("col1", "col2", head=True)
 
         assert builder.params.get("select") == "col1,col2"
-        assert builder.headers.get("prefer") is None
+        assert builder.headers.get_list("prefer") == ["handling=lenient"]
         assert builder.http_method == "HEAD"
         assert builder.json == {}
 
@@ -50,12 +53,23 @@ class TestSelect:
         assert builder.headers["Accept"] == "text/csv"
         assert isinstance(builder, AsyncSingleRequestBuilder)
 
+    def test_select_with_handling_strict(self, request_builder: AsyncRequestBuilder):
+        builder = request_builder.select("col1", "col2", handling=Handling.strict)
+
+        assert builder.params["select"] == "col1,col2"
+        assert builder.headers.get_list("prefer") == ["handling=strict"]
+        assert builder.http_method == "GET"
+        assert builder.json == {}
+
 
 class TestInsert:
     def test_insert(self, request_builder: AsyncRequestBuilder):
         builder = request_builder.insert({"key1": "val1"})
 
-        assert builder.headers.get_list("prefer", True) == ["return=representation"]
+        assert builder.headers.get_list("prefer", True) == [
+            "return=representation",
+            "handling=lenient",
+        ]
         assert builder.http_method == "POST"
         assert builder.json == {"key1": "val1"}
 
@@ -64,6 +78,7 @@ class TestInsert:
 
         assert builder.headers.get_list("prefer", True) == [
             "return=representation",
+            "handling=lenient",
             "count=exact",
         ]
         assert builder.http_method == "POST"
@@ -74,6 +89,7 @@ class TestInsert:
 
         assert builder.headers.get_list("prefer", True) == [
             "return=representation",
+            "handling=lenient",
             "resolution=merge-duplicates",
         ]
         assert builder.http_method == "POST"
@@ -83,6 +99,7 @@ class TestInsert:
         builder = request_builder.upsert([{"key1": "val1"}], default_to_null=False)
         assert builder.headers.get_list("prefer", True) == [
             "return=representation",
+            "handling=lenient",
             "resolution=merge-duplicates",
             "missing=default",
         ]
@@ -96,6 +113,7 @@ class TestInsert:
         )
         assert builder.headers.get_list("prefer", True) == [
             "return=representation",
+            "handling=lenient",
             "missing=default",
         ]
         assert builder.http_method == "POST"
@@ -109,6 +127,7 @@ class TestInsert:
 
         assert builder.headers.get_list("prefer", True) == [
             "return=representation",
+            "handling=lenient",
             "resolution=merge-duplicates",
         ]
         assert builder.http_method == "POST"
@@ -120,6 +139,7 @@ class TestInsert:
         )
         assert builder.headers.get_list("prefer", True) == [
             "return=representation",
+            "handling=lenient",
             "resolution=merge-duplicates",
             "missing=default",
         ]
@@ -129,12 +149,25 @@ class TestInsert:
             '"key1","key2","key3"'.split(",")
         )
 
+    def test_insert_with_handling_strict(self, request_builder: AsyncRequestBuilder):
+        builder = request_builder.insert({"key1": "val1"}, handling=Handling.strict)
+
+        assert builder.headers.get_list("prefer", True) == [
+            "return=representation",
+            "handling=strict",
+        ]
+        assert builder.http_method == "POST"
+        assert builder.json == {"key1": "val1"}
+
 
 class TestUpdate:
     def test_update(self, request_builder: AsyncRequestBuilder):
         builder = request_builder.update({"key1": "val1"})
 
-        assert builder.headers.get_list("prefer", True) == ["return=representation"]
+        assert builder.headers.get_list("prefer", True) == [
+            "return=representation",
+            "handling=lenient",
+        ]
         assert builder.http_method == "PATCH"
         assert builder.json == {"key1": "val1"}
 
@@ -143,7 +176,18 @@ class TestUpdate:
 
         assert builder.headers.get_list("prefer", True) == [
             "return=representation",
+            "handling=lenient",
             "count=exact",
+        ]
+        assert builder.http_method == "PATCH"
+        assert builder.json == {"key1": "val1"}
+
+    def test_update_with_handling_strict(self, request_builder: AsyncRequestBuilder):
+        builder = request_builder.update({"key1": "val1"}, handling=Handling.strict)
+
+        assert builder.headers.get_list("prefer", True) == [
+            "return=representation",
+            "handling=strict",
         ]
         assert builder.http_method == "PATCH"
         assert builder.json == {"key1": "val1"}
@@ -153,7 +197,10 @@ class TestDelete:
     def test_delete(self, request_builder: AsyncRequestBuilder):
         builder = request_builder.delete()
 
-        assert builder.headers.get_list("prefer", True) == ["return=representation"]
+        assert builder.headers.get_list("prefer", True) == [
+            "return=representation",
+            "handling=lenient",
+        ]
         assert builder.http_method == "DELETE"
         assert builder.json == {}
 
@@ -162,7 +209,18 @@ class TestDelete:
 
         assert builder.headers.get_list("prefer", True) == [
             "return=representation",
+            "handling=lenient",
             "count=exact",
+        ]
+        assert builder.http_method == "DELETE"
+        assert builder.json == {}
+
+    def test_delete_with_handling_strict(self, request_builder: AsyncRequestBuilder):
+        builder = request_builder.delete(handling=Handling.strict)
+
+        assert builder.headers.get_list("prefer", True) == [
+            "return=representation",
+            "handling=strict",
         ]
         assert builder.http_method == "DELETE"
         assert builder.json == {}

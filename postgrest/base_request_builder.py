@@ -34,7 +34,7 @@ except ImportError:
     # < 2.0.0
     from pydantic import validator as field_validator
 
-from .types import CountMethod, Filters, RequestMethod, ReturnMethod
+from .types import CountMethod, Filters, Handling, RequestMethod, ReturnMethod
 from .utils import AsyncClient, SyncClient, get_origin_and_cast, sanitize_param
 
 
@@ -70,12 +70,16 @@ def pre_select(
     *columns: str,
     count: Optional[CountMethod] = None,
     head: Optional[bool] = None,
+    handling: Handling = Handling.lenient,
 ) -> QueryArgs:
     method = RequestMethod.HEAD if head else RequestMethod.GET
     cleaned_columns = _cleaned_columns(columns or "*")
     params = QueryParams({"select": cleaned_columns})
 
-    headers = Headers({"Prefer": f"count={count}"}) if count else Headers()
+    prefer_headers = [f"handling={handling}"]
+    if count:
+        prefer_headers.append(f"count={count}")
+    headers = Headers({"Prefer": ",".join(prefer_headers)})
     return QueryArgs(method, params, headers, {})
 
 
@@ -86,8 +90,9 @@ def pre_insert(
     returning: ReturnMethod,
     upsert: bool,
     default_to_null: bool = True,
+    handling: Handling = Handling.lenient,
 ) -> QueryArgs:
-    prefer_headers = [f"return={returning}"]
+    prefer_headers = [f"return={returning}", f"handling={handling}"]
     if count:
         prefer_headers.append(f"count={count}")
     if upsert:
@@ -110,9 +115,13 @@ def pre_upsert(
     ignore_duplicates: bool,
     on_conflict: str = "",
     default_to_null: bool = True,
+    handling: Handling = Handling.lenient,
 ) -> QueryArgs:
     query_params = {}
-    prefer_headers = [f"return={returning}"]
+    prefer_headers = [
+        f"return={returning}",
+        f"handling={handling}",
+    ]
     if count:
         prefer_headers.append(f"count={count}")
     resolution = "ignore" if ignore_duplicates else "merge"
@@ -133,8 +142,12 @@ def pre_update(
     *,
     count: Optional[CountMethod],
     returning: ReturnMethod,
+    handling: Handling = Handling.lenient,
 ) -> QueryArgs:
-    prefer_headers = [f"return={returning}"]
+    prefer_headers = [
+        f"return={returning}",
+        f"handling={handling}",
+    ]
     if count:
         prefer_headers.append(f"count={count}")
     headers = Headers({"Prefer": ",".join(prefer_headers)})
@@ -145,8 +158,12 @@ def pre_delete(
     *,
     count: Optional[CountMethod],
     returning: ReturnMethod,
+    handling: Handling = Handling.lenient,
 ) -> QueryArgs:
-    prefer_headers = [f"return={returning}"]
+    prefer_headers = [
+        f"return={returning}",
+        f"handling={handling}",
+    ]
     if count:
         prefer_headers.append(f"count={count}")
     headers = Headers({"Prefer": ",".join(prefer_headers)})
