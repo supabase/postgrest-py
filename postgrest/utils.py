@@ -38,5 +38,5 @@ def get_origin_and_cast(typ: type[type[_T]]) -> type[_T]:
     return cast(Type[_T], get_origin(typ))
 
 
-def is_https_url(url: str) -> bool:
+def is_http_url(url: str) -> bool:
     return urlparse(url).scheme in {"https", "http"}
