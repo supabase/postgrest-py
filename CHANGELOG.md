@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [0.17.2](https://github.com/supabase/postgrest-py/compare/v0.17.1...v0.17.2) (2024-10-18)
+
+
+### Bug Fixes
+
+* bump minimal version of Python to 3.9 ([#522](https://github.com/supabase/postgrest-py/issues/522)) ([11da550](https://github.com/supabase/postgrest-py/commit/11da55084fdd22d0e081aee5867b946337783d73))
+* **deps:** install strenum package only with Python 3.10 and older ([#519](https://github.com/supabase/postgrest-py/issues/519)) ([9dfefd0](https://github.com/supabase/postgrest-py/commit/9dfefd0bd2e31775e4ff423654797cf40b1940fe))
+* Types to use Option[T] ([#514](https://github.com/supabase/postgrest-py/issues/514)) ([645b677](https://github.com/supabase/postgrest-py/commit/645b677715b8ff338047240bf48dd19dd86b71b4))
+
 ## [0.17.1](https://github.com/supabase/postgrest-py/compare/v0.17.0...v0.17.1) (2024-10-02)
 
 

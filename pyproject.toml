@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "postgrest"
-version = "0.17.1" # {x-release-please-version}
+version = "0.17.2" # {x-release-please-version}
 description = "PostgREST client for Python. This library provides an ORM interface to PostgREST."
 authors = ["Lương Quang Mạnh <luongquangmanh85@gmail.com>", "Joel Lee <joel@joellee.org>", "Anand", "Oliver Rice", "Andrew Smith <a.smith@silentworks.co.uk>"]
 homepage = "https://github.com/supabase/postgrest-py"
@@ -18,18 +18,18 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 httpx = {version = ">=0.26,<0.28", extras = ["http2"]}
 deprecation = "^2.1.0"
 pydantic = ">=1.9,<3.0"
-strenum = "^0.4.9"
+strenum = {version = "^0.4.9", python = "<3.11"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.3"
-flake8 = "^5.0.4"
+flake8 = "^7.1.1"
 black = "^24.8"
 isort = "^5.12.0"
-pre-commit = "^3.5.0"
+pre-commit = "^4.0.1"
 pytest-cov = "^5.0.0"
 pytest-depends = "^1.0.1"
 pytest-asyncio = "^0.24.0"
