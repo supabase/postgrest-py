@@ -5,7 +5,7 @@ from typing import Dict, Optional, Union
 
 from httpx import BasicAuth, Timeout
 
-from .utils import AsyncClient, SyncClient, is_https_url
+from .utils import AsyncClient, SyncClient, is_http_url
 
 
 class BasePostgrestClient(ABC):
@@ -21,7 +21,7 @@ class BasePostgrestClient(ABC):
         verify: bool = True,
         proxy: Optional[str] = None,
     ) -> None:
-        if not is_https_url(base_url):
+        if not is_http_url(base_url):
             ValueError("base_url must be a valid HTTP URL string")
         headers = {
             **headers,
