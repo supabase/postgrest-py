@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.18.0](https://github.com/supabase/postgrest-py/compare/v0.17.2...v0.18.0) (2024-10-31)
+
+
+### Features
+
+* Check if url is an HTTP URL ([#526](https://github.com/supabase/postgrest-py/issues/526)) ([eb7f319](https://github.com/supabase/postgrest-py/commit/eb7f3193b35a8e727511b290c3f5bd7a8a19b9c8))
+
 ## [0.17.2](https://github.com/supabase/postgrest-py/compare/v0.17.1...v0.17.2) (2024-10-18)
 
 
