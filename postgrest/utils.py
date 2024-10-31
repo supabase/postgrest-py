@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Type, TypeVar, cast, get_origin
+from urllib.parse import urlparse
 
 from httpx import AsyncClient  # noqa: F401
 from httpx import Client as BaseClient  # noqa: F401
@@ -35,3 +36,7 @@ def get_origin_and_cast(typ: type[type[_T]]) -> type[_T]:
     # See: definitions of request builders that use multiple-inheritance
     # like AsyncFilterRequestBuilder
     return cast(Type[_T], get_origin(typ))
+
+
+def is_http_url(url: str) -> bool:
+    return urlparse(url).scheme in {"https", "http"}
