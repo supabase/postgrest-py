@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.19.0](https://github.com/supabase/postgrest-py/compare/v0.18.0...v0.19.0) (2024-11-22)
+
+
+### Features
+
+* Check if token is a JWT ([#529](https://github.com/supabase/postgrest-py/issues/529)) ([ed892c4](https://github.com/supabase/postgrest-py/commit/ed892c45346b3f866df0fc0afb997f292c17cbf2))
+
 ## [0.18.0](https://github.com/supabase/postgrest-py/compare/v0.17.2...v0.18.0) (2024-10-31)
 
 
