@@ -25,7 +25,7 @@ pydantic = ">=1.9,<3.0"
 strenum = {version = "^0.4.9", python = "<3.11"}
 
 [tool.poetry.dev-dependencies]
-pytest = "^8.3.3"
+pytest = "^8.3.4"
 flake8 = "^7.1.1"
 black = "^24.8"
 isort = "^5.12.0"
