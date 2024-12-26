@@ -207,11 +207,11 @@ class APIResponse(BaseModel, Generic[_ReturnT]):
     def from_http_request_response(
         cls: Type[Self], request_response: RequestResponse
     ) -> Self:
+        count = cls._get_count_from_http_request_response(request_response)
         try:
             data = request_response.json()
         except JSONDecodeError:
-            return cls(data=[], count=0)
-        count = cls._get_count_from_http_request_response(request_response)
+            data = request_response.text if len(request_response.text) > 0 else []
         # the type-ignore here is as pydantic needs us to pass the type parameter
         # here explicitly, but pylance already knows that cls is correctly parametrized
         return cls[_ReturnT](data=data, count=count)  # type: ignore
