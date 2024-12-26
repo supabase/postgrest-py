@@ -96,7 +96,7 @@ def test_contains_dictionary(filter_request_builder):
     builder = filter_request_builder.contains("x", {"a": "b"})
 
     # {"a":"b"}
-    assert str(builder.params) == "x=cs.%7B%22a%22%3A%20%22b%22%7D"
+    assert str(builder.params) == "x=cs.%7B%22a%22%3A+%22b%22%7D"
 
 
 def test_contains_any_item(filter_request_builder):
@@ -109,15 +109,15 @@ def test_contains_any_item(filter_request_builder):
 def test_contains_in_list(filter_request_builder):
     builder = filter_request_builder.contains("x", '[{"a": "b"}]')
 
-    # [{"a":%20"b"}] (the %20 represents the space)
-    assert str(builder.params) == "x=cs.%5B%7B%22a%22%3A%20%22b%22%7D%5D"
+    # [{"a":+"b"}] (the + represents the space)
+    assert str(builder.params) == "x=cs.%5B%7B%22a%22%3A+%22b%22%7D%5D"
 
 
 def test_contained_by_mixed_items(filter_request_builder):
     builder = filter_request_builder.contained_by("x", ["a", '["b", "c"]'])
 
-    # {a,["b",%20"c"]}
-    assert str(builder.params) == "x=cd.%7Ba%2C%5B%22b%22%2C%20%22c%22%5D%7D"
+    # {a,["b",+"c"]}
+    assert str(builder.params) == "x=cd.%7Ba%2C%5B%22b%22%2C+%22c%22%5D%7D"
 
 
 def test_range_greater_than(filter_request_builder):
@@ -125,8 +125,8 @@ def test_range_greater_than(filter_request_builder):
         "x", ["2000-01-02 08:30", "2000-01-02 09:30"]
     )
 
-    # {a,["b",%20"c"]}
-    assert str(builder.params) == "x=sr.%282000-01-02%2008%3A30%2C2000-01-02%2009%3A30%29"
+    # {a,["b",+"c"]}
+    assert str(builder.params) == "x=sr.%282000-01-02+08%3A30%2C2000-01-02+09%3A30%29"
 
 
 def test_range_greater_than_or_equal_to(filter_request_builder):
@@ -134,10 +134,8 @@ def test_range_greater_than_or_equal_to(filter_request_builder):
         "x", ["2000-01-02 08:30", "2000-01-02 09:30"]
     )
 
-    # {a,["b",%20"c"]}
-    assert (
-        str(builder.params) == "x=nxl.%282000-01-02%2008%3A30%2C2000-01-02%2009%3A30%29"
-    )
+    # {a,["b",+"c"]}
+    assert str(builder.params) == "x=nxl.%282000-01-02+08%3A30%2C2000-01-02+09%3A30%29"
 
 
 def test_range_less_than(filter_request_builder):
@@ -145,8 +143,8 @@ def test_range_less_than(filter_request_builder):
         "x", ["2000-01-02 08:30", "2000-01-02 09:30"]
     )
 
-    # {a,["b",%20"c"]}
-    assert str(builder.params) == "x=sl.%282000-01-02%2008%3A30%2C2000-01-02%2009%3A30%29"
+    # {a,["b",+"c"]}
+    assert str(builder.params) == "x=sl.%282000-01-02+08%3A30%2C2000-01-02+09%3A30%29"
 
 
 def test_range_less_than_or_equal_to(filter_request_builder):
@@ -154,10 +152,8 @@ def test_range_less_than_or_equal_to(filter_request_builder):
         "x", ["2000-01-02 08:30", "2000-01-02 09:30"]
     )
 
-    # {a,["b",%20"c"]}
-    assert (
-        str(builder.params) == "x=nxr.%282000-01-02%2008%3A30%2C2000-01-02%2009%3A30%29"
-    )
+    # {a,["b",+"c"]}
+    assert str(builder.params) == "x=nxr.%282000-01-02+08%3A30%2C2000-01-02+09%3A30%29"
 
 
 def test_range_adjacent(filter_request_builder):
@@ -165,26 +161,22 @@ def test_range_adjacent(filter_request_builder):
         "x", ["2000-01-02 08:30", "2000-01-02 09:30"]
     )
 
-    # {a,["b",%20"c"]}
-    assert (
-        str(builder.params) == "x=adj.%282000-01-02%2008%3A30%2C2000-01-02%2009%3A30%29"
-    )
+    # {a,["b",+"c"]}
+    assert str(builder.params) == "x=adj.%282000-01-02+08%3A30%2C2000-01-02+09%3A30%29"
 
 
 def test_overlaps(filter_request_builder):
     builder = filter_request_builder.overlaps("x", ["is:closed", "severity:high"])
 
-    # {a,["b",%20"c"]}
+    # {a,["b",+"c"]}
     assert str(builder.params) == "x=ov.%7Bis%3Aclosed%2Cseverity%3Ahigh%7D"
 
 
 def test_overlaps_with_timestamp_range(filter_request_builder):
     builder = filter_request_builder.overlaps("x", "[2000-01-01 12:45, 2000-01-01 13:15)")
 
-    # {a,["b",%20"c"]}
-    assert (
-        str(builder.params) == "x=ov.%5B2000-01-01%2012%3A45%2C%202000-01-01%2013%3A15%29"
-    )
+    # {a,["b",+"c"]}
+    assert str(builder.params) == "x=ov.%5B2000-01-01+12%3A45%2C+2000-01-01+13%3A15%29"
 
 
 def test_like(filter_request_builder):
@@ -246,5 +238,5 @@ def test_or_in_contain(filter_request_builder):
 
     assert (
         str(builder.params)
-        == "or=%28id.in.%285%2C6%2C7%29%2C%20arraycol.cs.%7B%27a%27%2C%27b%27%7D%29"
+        == "or=%28id.in.%285%2C6%2C7%29%2C+arraycol.cs.%7B%27a%27%2C%27b%27%7D%29"
     )
