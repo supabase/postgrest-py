@@ -19,7 +19,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-httpx = {version = ">=0.26,<0.28", extras = ["http2"]}
+httpx = {version = ">=0.26,<0.29", extras = ["http2"]}
 deprecation = "^2.1.0"
 pydantic = ">=1.9,<3.0"
 strenum = {version = "^0.4.9", python = "<3.11"}
