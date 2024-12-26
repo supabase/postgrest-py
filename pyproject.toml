@@ -19,7 +19,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-httpx = {version = ">=0.26,<0.28", extras = ["http2"]}
+httpx = {version = ">=0.26,<0.29", extras = ["http2"]}
 deprecation = "^2.1.0"
 pydantic = ">=1.9,<3.0"
 strenum = {version = "^0.4.9", python = "<3.11"}
@@ -33,7 +33,7 @@ pre-commit = "^4.0.1"
 pytest-cov = "^6.0.0"
 pytest-depends = "^1.0.1"
 pytest-asyncio = "^0.25.0"
-unasync-cli = "^0.0.9"
+unasync-cli = { git = "https://github.com/supabase-community/unasync-cli.git", branch = "main" }
 
 [tool.poetry.group.docs]
 optional = true
