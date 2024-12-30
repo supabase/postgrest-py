@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.19.1](https://github.com/supabase/postgrest-py/compare/v0.19.0...v0.19.1) (2024-12-30)
+
+
+### Bug Fixes
+
+* head=True breaking count ([#545](https://github.com/supabase/postgrest-py/issues/545)) ([576987b](https://github.com/supabase/postgrest-py/commit/576987bb2512f6e18360008316377b8d4f2f255b))
+
 ## [0.19.0](https://github.com/supabase/postgrest-py/compare/v0.18.0...v0.19.0) (2024-11-22)
 
 
