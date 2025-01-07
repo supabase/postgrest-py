@@ -52,7 +52,7 @@ def _unique_columns(json: List[Dict]):
     return columns
 
 
-def _cleaned_columns(columns: str) -> str:
+def _cleaned_columns(columns: Tuple[str]) -> str:
     quoted = False
     result = []
 
