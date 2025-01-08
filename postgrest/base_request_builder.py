@@ -52,18 +52,21 @@ def _unique_columns(json: List[Dict]):
     return columns
 
 
-def _cleaned_columns(columns: str) -> str:
+def _cleaned_columns(columns: Tuple[str, ...]) -> str:
     quoted = False
-    result = []
+    cleaned = []
 
-    for c in columns:
-        if c.isspace() and not quoted:
-            continue
-        if c == '"':
-            quoted = not quoted
-        result.append(c)
+    for column in columns:
+        clean_column = ""
+        for char in column:
+            if char.isspace() and not quoted:
+                continue
+            if char == '"':
+                quoted = not quoted
+            clean_column += char
+        cleaned.append(clean_column)
 
-    return ",".join(result)
+    return ",".join(cleaned)
 
 
 def pre_select(
