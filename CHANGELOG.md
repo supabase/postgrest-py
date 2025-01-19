@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.19.2](https://github.com/supabase/postgrest-py/compare/v0.19.1...v0.19.2) (2025-01-08)
+
+
+### Bug Fixes
+
+* _cleaned_columns function now works with python multiline and typings ([#556](https://github.com/supabase/postgrest-py/issues/556)) ([4127576](https://github.com/supabase/postgrest-py/commit/412757633e9319a4e55e00bdc09464aa807db1b9))
+
 ## [0.19.1](https://github.com/supabase/postgrest-py/compare/v0.19.0...v0.19.1) (2024-12-30)
 
 
