@@ -79,23 +79,35 @@ def test_params_purged_after_execute(postgrest_client: SyncPostgrestClient):
 
 
 def test_response_status_code_outside_ok(postgrest_client: SyncPostgrestClient):
-    with pytest.raises(APIError) as exc_info:
-        postgrest_client.from_("test").select("a", "b").eq(
-            "c", "d"
-        ).execute()  # gives status_code = 400
-    exc_response = exc_info.value.json()
-    assert not exc_response.get("success")
-    assert isinstance(exc_response.get("errors"), list)
-    assert (
-        isinstance(exc_response["errors"][0], dict)
-        and "code" in exc_response["errors"][0]
-    )
-    assert exc_response["errors"][0].get("code") == 400
+    with patch(
+        "postgrest._sync.request_builder.SyncSelectRequestBuilder.execute",
+        side_effect=APIError(
+            {
+                "message": "mock error",
+                "code": "400",
+                "hint": "mock",
+                "details": "mock",
+                "errors": [{"code": 400}],
+            }
+        ),
+    ):
+        with pytest.raises(APIError) as exc_info:
+            postgrest_client.from_("test").select("a", "b").eq(
+                "c", "d"
+            ).execute()  # gives status_code = 400
+        exc_response = exc_info.value.json()
+        assert not exc_response.get("success")
+        assert isinstance(exc_response.get("errors"), list)
+        assert (
+            isinstance(exc_response["errors"][0], dict)
+            and "code" in exc_response["errors"][0]
+        )
+        assert exc_response["errors"][0].get("code") == 400
 
 
 def test_response_maybe_single(postgrest_client: SyncPostgrestClient):
     with patch(
-        "postgrest._async.request_builder.AsyncSingleRequestBuilder.execute",
+        "postgrest._sync.request_builder.SyncSingleRequestBuilder.execute",
         side_effect=APIError(
             {"message": "mock error", "code": "400", "hint": "mock", "details": "mock"}
         ),
