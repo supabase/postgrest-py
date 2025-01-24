@@ -20,4 +20,4 @@ def test_constructor(query_request_builder: AsyncQueryRequestBuilder):
     assert len(builder.headers) == 0
     assert len(builder.params) == 0
     assert builder.http_method == "GET"
-    assert builder.json == {}
+    assert builder.json == None
