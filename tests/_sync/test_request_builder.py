@@ -42,7 +42,7 @@ class TestSelect:
         assert builder.params.get("select") == "col1,col2"
         assert builder.headers.get("prefer") is None
         assert builder.http_method == "HEAD"
-        assert builder.json == {}
+        assert builder.json == None
 
     def test_select_as_csv(self, request_builder: SyncRequestBuilder):
         builder = request_builder.select("*").csv()
