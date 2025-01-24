@@ -33,9 +33,11 @@ jobs:
       run: make run_tests
 
     - name: Upload coverage to Coveralls
+      if: ${{ matrix.python-version }} == "3.12"
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
+        fail-on-error: false
 
   release-please:
     needs: test

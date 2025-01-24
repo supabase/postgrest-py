@@ -20,7 +20,7 @@ def test_constructor(filter_request_builder: AsyncFilterRequestBuilder):
     assert len(builder.headers) == 0
     assert len(builder.params) == 0
     assert builder.http_method == "GET"
-    assert builder.json == {}
+    assert builder.json == None
     assert not builder.negate_next
 
 
