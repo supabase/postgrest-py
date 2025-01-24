@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.19.3](https://github.com/supabase/postgrest-py/compare/v0.19.2...v0.19.3) (2025-01-24)
+
+
+### Bug Fixes
+
+* client is sending a body in a GET and HEAD requests ([#562](https://github.com/supabase/postgrest-py/issues/562)) ([6947a53](https://github.com/supabase/postgrest-py/commit/6947a5391b1b2178c4d4a2f13a9592e996f4fa6e))
+
 ## [0.19.2](https://github.com/supabase/postgrest-py/compare/v0.19.1...v0.19.2) (2025-01-08)
 
 
