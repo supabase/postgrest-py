@@ -41,7 +41,7 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
         self.http_method = http_method
         self.headers = headers
         self.params = params
-        self.json = None if http_method == "GET" else json
+        self.json = None if http_method in {"GET", "HEAD"} else json
 
     def execute(self) -> APIResponse[_ReturnT]:
         """Execute the query.
