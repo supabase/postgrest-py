@@ -31,11 +31,24 @@ jobs:
       run: make run_tests
 
     - name: Upload coverage to Coveralls
-      if: ${{ matrix.python-version }} == "3.12"
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        fail-on-error: false
+        flag-name: run-${{ join(matrix.*, '-') }}
+          parallel: true
+
+  finish_tests:
+    needs: test
+    name: Upload tests coveralls results
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+          carryforward: "run-ubuntu-latest-3.9,run-ubuntu-latest-3.10,run-ubuntu-latest-3.11,run-ubuntu-latest-3.12,run-ubuntu-latest-3.13"
 
   release-please:
     needs: test
