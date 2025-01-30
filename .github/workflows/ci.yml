@@ -35,7 +35,7 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         flag-name: run-${{ join(matrix.*, '-') }}
-          parallel: true
+        parallel: true
 
   finish_tests:
     needs: test
