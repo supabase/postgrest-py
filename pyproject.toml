@@ -27,7 +27,7 @@ strenum = {version = "^0.4.9", python = "<3.11"}
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.4"
 flake8 = "^7.1.1"
-black = "^24.8"
+black = "^25.1"
 isort = "^6.0.0"
 pre-commit = "^4.0.1"
 pytest-cov = "^6.0.0"
