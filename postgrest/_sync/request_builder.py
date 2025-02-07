@@ -3,7 +3,7 @@ from __future__ import annotations
 from json import JSONDecodeError
 from typing import Any, Generic, Optional, TypeVar, Union
 
-from httpx import Headers, QueryParams
+from httpx import Headers, NetworkError, QueryParams, ReadError, TimeoutException
 from pydantic import ValidationError
 
 from ..base_request_builder import (
@@ -35,6 +35,7 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
         headers: Headers,
         params: QueryParams,
         json: Union[dict, list],
+        max_retries: int,
     ) -> None:
         self.session = session
         self.path = path
@@ -42,6 +43,8 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
         self.headers = headers
         self.params = params
         self.json = None if http_method in {"GET", "HEAD"} else json
+        self.max_retries = max_retries
+        self.attempt = 1
 
     def execute(self) -> APIResponse[_ReturnT]:
         """Execute the query.
@@ -55,14 +58,15 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
         Raises:
             :class:`APIError` If the API raised an error.
         """
-        r = self.session.request(
-            self.http_method,
-            self.path,
-            json=self.json,
-            params=self.params,
-            headers=self.headers,
-        )
+
         try:
+            r = self.session.request(
+                self.http_method,
+                self.path,
+                json=self.json,
+                params=self.params,
+                headers=self.headers,
+            )
             if r.is_success:
                 if self.http_method != "HEAD":
                     body = r.text
@@ -74,12 +78,18 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
                         if "+json" not in self.headers.get("Accept"):
                             return body
                 return APIResponse[_ReturnT].from_http_request_response(r)
-            else:
-                raise APIError(r.json())
+            # else:
+            #     raise APIError(r.json())
+        except (TimeoutException, NetworkError, ReadError) as e:
+            if self.attempt < self.max_retries:
+                self.attempt += 1
+                self.execute()
         except ValidationError as e:
             raise APIError(r.json()) from e
         except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
+        except Exception as e:
+            raise APIError(r.json())
 
 
 class SyncSingleRequestBuilder(Generic[_ReturnT]):
@@ -91,6 +101,7 @@ class SyncSingleRequestBuilder(Generic[_ReturnT]):
         headers: Headers,
         params: QueryParams,
         json: dict,
+        max_retries: int,
     ) -> None:
         self.session = session
         self.path = path
@@ -98,6 +109,8 @@ class SyncSingleRequestBuilder(Generic[_ReturnT]):
         self.headers = headers
         self.params = params
         self.json = json
+        self.max_retries = max_retries
+        self.attempt = 1
 
     def execute(self) -> SingleAPIResponse[_ReturnT]:
         """Execute the query.
@@ -111,24 +124,31 @@ class SyncSingleRequestBuilder(Generic[_ReturnT]):
         Raises:
             :class:`APIError` If the API raised an error.
         """
-        r = self.session.request(
-            self.http_method,
-            self.path,
-            json=self.json,
-            params=self.params,
-            headers=self.headers,
-        )
+
         try:
+            r = self.session.request(
+                self.http_method,
+                self.path,
+                json=self.json,
+                params=self.params,
+                headers=self.headers,
+            )
             if (
                 200 <= r.status_code <= 299
             ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
                 return SingleAPIResponse[_ReturnT].from_http_request_response(r)
             else:
                 raise APIError(r.json())
+        except (TimeoutException, NetworkError, ReadError) as e:
+            if self.attempt < self.max_retries:
+                self.attempt += 1
+                self.execute()
         except ValidationError as e:
             raise APIError(r.json()) from e
         except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
+        except Exception as e:
+            raise APIError(r.json())
 
 
 class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder[_ReturnT]):
@@ -182,12 +202,13 @@ class SyncRPCFilterRequestBuilder(
         headers: Headers,
         params: QueryParams,
         json: dict,
+        max_retries: int,
     ) -> None:
         get_origin_and_cast(BaseFilterRequestBuilder[_ReturnT]).__init__(
             self, session, headers, params
         )
         get_origin_and_cast(SyncSingleRequestBuilder[_ReturnT]).__init__(
-            self, session, path, http_method, headers, params, json
+            self, session, path, http_method, headers, params, json, max_retries,
         )
 
 
@@ -201,12 +222,14 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequ
         headers: Headers,
         params: QueryParams,
         json: dict,
+        max_retries: int,
     ) -> None:
+        self.max_retries = max_retries
         get_origin_and_cast(BaseSelectRequestBuilder[_ReturnT]).__init__(
             self, session, headers, params
         )
         get_origin_and_cast(SyncQueryRequestBuilder[_ReturnT]).__init__(
-            self, session, path, http_method, headers, params, json
+            self, session, path, http_method, headers, params, json, self.max_retries
         )
 
     def single(self) -> SyncSingleRequestBuilder[_ReturnT]:
@@ -223,6 +246,7 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequ
             params=self.params,
             path=self.path,
             session=self.session,  # type: ignore
+            max_retries=self.max_retries,
         )
 
     def maybe_single(self) -> SyncMaybeSingleRequestBuilder[_ReturnT]:
@@ -235,6 +259,7 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequ
             params=self.params,
             path=self.path,
             session=self.session,  # type: ignore
+            max_retries=self.max_retries,
         )
 
     def text_search(
@@ -258,6 +283,7 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequ
             params=self.params,
             path=self.path,
             session=self.session,  # type: ignore
+            max_retries=self.max_retries,
         )
 
     def csv(self) -> SyncSingleRequestBuilder[str]:
@@ -270,13 +296,15 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequ
             headers=self.headers,
             params=self.params,
             json=self.json,
+            max_retries=self.max_retries,
         )
 
 
 class SyncRequestBuilder(Generic[_ReturnT]):
-    def __init__(self, session: SyncClient, path: str) -> None:
+    def __init__(self, session: SyncClient, path: str, max_retries: int) -> None:
         self.session = session
         self.path = path
+        self.max_retries = max_retries
 
     def select(
         self,
@@ -292,9 +320,11 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         Returns:
             :class:`SyncSelectRequestBuilder`
         """
+        if not (columns or count):
+            raise ValueError("Specify columns or count")
         method, params, headers, json = pre_select(*columns, count=count, head=head)
         return SyncSelectRequestBuilder[_ReturnT](
-            self.session, self.path, method, headers, params, json
+            self.session, self.path, method, headers, params, json, self.max_retries,
         )
 
     def insert(
@@ -327,7 +357,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             default_to_null=default_to_null,
         )
         return SyncQueryRequestBuilder[_ReturnT](
-            self.session, self.path, method, headers, params, json
+            self.session, self.path, method, headers, params, json, self.max_retries,
         )
 
     def upsert(
@@ -364,7 +394,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             default_to_null=default_to_null,
         )
         return SyncQueryRequestBuilder[_ReturnT](
-            self.session, self.path, method, headers, params, json
+            self.session, self.path, method, headers, params, json, self.max_retries,
         )
 
     def update(
