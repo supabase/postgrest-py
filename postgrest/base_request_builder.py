@@ -556,7 +556,9 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
             if key not in ["self", "format"] and value
         ]
         options_str = "|".join(options)
-        media_type = self.headers['Accept'] if 'Accept' in self.headers else 'application/json'
+        media_type = (
+            self.headers["Accept"] if "Accept" in self.headers else "application/json"
+        )
         self.headers["Accept"] = (
             f"application/vnd.pgrst.plan+{format}; for={media_type}; options={options_str}"
         )
