@@ -208,7 +208,14 @@ class SyncRPCFilterRequestBuilder(
             self, session, headers, params
         )
         get_origin_and_cast(SyncSingleRequestBuilder[_ReturnT]).__init__(
-            self, session, path, http_method, headers, params, json, max_retries,
+            self,
+            session,
+            path,
+            http_method,
+            headers,
+            params,
+            json,
+            max_retries,
         )
 
 
@@ -324,7 +331,13 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             raise ValueError("Specify columns or count")
         method, params, headers, json = pre_select(*columns, count=count, head=head)
         return SyncSelectRequestBuilder[_ReturnT](
-            self.session, self.path, method, headers, params, json, self.max_retries,
+            self.session,
+            self.path,
+            method,
+            headers,
+            params,
+            json,
+            self.max_retries,
         )
 
     def insert(
@@ -357,7 +370,13 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             default_to_null=default_to_null,
         )
         return SyncQueryRequestBuilder[_ReturnT](
-            self.session, self.path, method, headers, params, json, self.max_retries,
+            self.session,
+            self.path,
+            method,
+            headers,
+            params,
+            json,
+            self.max_retries,
         )
 
     def upsert(
@@ -394,7 +413,13 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             default_to_null=default_to_null,
         )
         return SyncQueryRequestBuilder[_ReturnT](
-            self.session, self.path, method, headers, params, json, self.max_retries,
+            self.session,
+            self.path,
+            method,
+            headers,
+            params,
+            json,
+            self.max_retries,
         )
 
     def update(
