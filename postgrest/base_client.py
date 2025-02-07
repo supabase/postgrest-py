@@ -29,7 +29,9 @@ class BasePostgrestClient(ABC):
             "Accept-Profile": schema,
             "Content-Profile": schema,
         }
-        self.session = self.create_session(base_url, headers, timeout, verify, proxy, max_retries)
+        self.session = self.create_session(
+            base_url, headers, timeout, verify, proxy, max_retries
+        )
 
     @abstractmethod
     def create_session(
