@@ -3,7 +3,7 @@ from __future__ import annotations
 from json import JSONDecodeError
 from typing import Any, Generic, Optional, TypeVar, Union
 
-from httpx import Headers, QueryParams
+from httpx import Headers, NetworkError, QueryParams, ReadError, TimeoutException
 from pydantic import ValidationError
 
 from ..base_request_builder import (
@@ -35,13 +35,16 @@ class AsyncQueryRequestBuilder(Generic[_ReturnT]):
         headers: Headers,
         params: QueryParams,
         json: dict,
+        max_retries: int = 0,
     ) -> None:
         self.session = session
         self.path = path
         self.http_method = http_method
         self.headers = headers
         self.params = params
-        self.json = None if http_method in {"GET", "HEAD"} else json
+        self.json = json
+        self.max_retries = max_retries
+        self.attempt = 1
 
     async def execute(self) -> APIResponse[_ReturnT]:
         """Execute the query.
@@ -55,14 +58,14 @@ class AsyncQueryRequestBuilder(Generic[_ReturnT]):
         Raises:
             :class:`APIError` If the API raised an error.
         """
-        r = await self.session.request(
-            self.http_method,
-            self.path,
-            json=self.json,
-            params=self.params,
-            headers=self.headers,
-        )
         try:
+            r = await self.session.request(
+                self.http_method,
+                self.path,
+                json=self.json,
+                params=self.params,
+                headers=self.headers,
+            )
             if r.is_success:
                 if self.http_method != "HEAD":
                     body = r.text
@@ -76,6 +79,10 @@ class AsyncQueryRequestBuilder(Generic[_ReturnT]):
                 return APIResponse[_ReturnT].from_http_request_response(r)
             else:
                 raise APIError(r.json())
+        except (TimeoutException, NetworkError, ReadError) as e:
+            if self.attempt < self.max_retries:
+                self.attempt += 1
+                await self.execute()
         except ValidationError as e:
             raise APIError(r.json()) from e
         except JSONDecodeError:
@@ -91,6 +98,7 @@ class AsyncSingleRequestBuilder(Generic[_ReturnT]):
         headers: Headers,
         params: QueryParams,
         json: dict,
+        max_retries: int = 0,
     ) -> None:
         self.session = session
         self.path = path
@@ -98,6 +106,8 @@ class AsyncSingleRequestBuilder(Generic[_ReturnT]):
         self.headers = headers
         self.params = params
         self.json = json
+        self.max_retries = max_retries
+        self.attempt = 1
 
     async def execute(self) -> SingleAPIResponse[_ReturnT]:
         """Execute the query.
@@ -111,20 +121,24 @@ class AsyncSingleRequestBuilder(Generic[_ReturnT]):
         Raises:
             :class:`APIError` If the API raised an error.
         """
-        r = await self.session.request(
-            self.http_method,
-            self.path,
-            json=self.json,
-            params=self.params,
-            headers=self.headers,
-        )
         try:
+            r = await self.session.request(
+                self.http_method,
+                self.path,
+                json=self.json,
+                params=self.params,
+                headers=self.headers,
+            )
             if (
                 200 <= r.status_code <= 299
             ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
                 return SingleAPIResponse[_ReturnT].from_http_request_response(r)
             else:
                 raise APIError(r.json())
+        except (TimeoutException, NetworkError, ReadError) as e:
+            if self.attempt < self.max_retries:
+                self.attempt += 1
+                await self.execute()
         except ValidationError as e:
             raise APIError(r.json()) from e
         except JSONDecodeError:
@@ -182,12 +196,13 @@ class AsyncRPCFilterRequestBuilder(
         headers: Headers,
         params: QueryParams,
         json: dict,
+        max_retries: int = 0,
     ) -> None:
         get_origin_and_cast(BaseFilterRequestBuilder[_ReturnT]).__init__(
             self, session, headers, params
         )
         get_origin_and_cast(AsyncSingleRequestBuilder[_ReturnT]).__init__(
-            self, session, path, http_method, headers, params, json
+            self, session, path, http_method, headers, params, json, max_retries
         )
 
 
@@ -201,12 +216,14 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], AsyncQueryRe
         headers: Headers,
         params: QueryParams,
         json: dict,
+        max_retries: int = 0,
     ) -> None:
+        self.max_retries = max_retries
         get_origin_and_cast(BaseSelectRequestBuilder[_ReturnT]).__init__(
             self, session, headers, params
         )
         get_origin_and_cast(AsyncQueryRequestBuilder[_ReturnT]).__init__(
-            self, session, path, http_method, headers, params, json
+            self, session, path, http_method, headers, params, json, self.max_retries
         )
 
     def single(self) -> AsyncSingleRequestBuilder[_ReturnT]:
@@ -223,6 +240,7 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], AsyncQueryRe
             params=self.params,
             path=self.path,
             session=self.session,  # type: ignore
+            max_retries=self.max_retries,
         )
 
     def maybe_single(self) -> AsyncMaybeSingleRequestBuilder[_ReturnT]:
@@ -235,6 +253,7 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], AsyncQueryRe
             params=self.params,
             path=self.path,
             session=self.session,  # type: ignore
+            max_retries=self.max_retries,
         )
 
     def text_search(
@@ -258,6 +277,7 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], AsyncQueryRe
             params=self.params,
             path=self.path,
             session=self.session,  # type: ignore
+            max_retries=self.max_retries,
         )
 
     def csv(self) -> AsyncSingleRequestBuilder[str]:
@@ -270,13 +290,15 @@ class AsyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], AsyncQueryRe
             headers=self.headers,
             params=self.params,
             json=self.json,
+            max_retries=self.max_retries,
         )
 
 
 class AsyncRequestBuilder(Generic[_ReturnT]):
-    def __init__(self, session: AsyncClient, path: str) -> None:
+    def __init__(self, session: AsyncClient, path: str, max_retries: int = 0) -> None:
         self.session = session
         self.path = path
+        self.max_retries = max_retries
 
     def select(
         self,
@@ -294,7 +316,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
         """
         method, params, headers, json = pre_select(*columns, count=count, head=head)
         return AsyncSelectRequestBuilder[_ReturnT](
-            self.session, self.path, method, headers, params, json
+            self.session, self.path, method, headers, params, json, self.max_retries
         )
 
     def insert(
@@ -327,7 +349,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
             default_to_null=default_to_null,
         )
         return AsyncQueryRequestBuilder[_ReturnT](
-            self.session, self.path, method, headers, params, json
+            self.session, self.path, method, headers, params, json, self.max_retries
         )
 
     def upsert(
@@ -364,7 +386,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
             default_to_null=default_to_null,
         )
         return AsyncQueryRequestBuilder[_ReturnT](
-            self.session, self.path, method, headers, params, json
+            self.session, self.path, method, headers, params, json, self.max_retries
         )
 
     def update(
