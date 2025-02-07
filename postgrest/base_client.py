@@ -20,6 +20,7 @@ class BasePostgrestClient(ABC):
         timeout: Union[int, float, Timeout],
         verify: bool = True,
         proxy: Optional[str] = None,
+        max_retries: int = 1,
     ) -> None:
         if not is_http_url(base_url):
             ValueError("base_url must be a valid HTTP URL string")
@@ -28,7 +29,7 @@ class BasePostgrestClient(ABC):
             "Accept-Profile": schema,
             "Content-Profile": schema,
         }
-        self.session = self.create_session(base_url, headers, timeout, verify, proxy)
+        self.session = self.create_session(base_url, headers, timeout, verify, proxy, max_retries)
 
     @abstractmethod
     def create_session(
@@ -38,6 +39,7 @@ class BasePostgrestClient(ABC):
         timeout: Union[int, float, Timeout],
         verify: bool = True,
         proxy: Optional[str] = None,
+        max_retries: int = 1,
     ) -> Union[SyncClient, AsyncClient]:
         raise NotImplementedError()
 
