@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional, Union, cast
 
 from deprecation import deprecated
-from httpx import Headers, QueryParams, Timeout
+from httpx import Headers, QueryParams, Timeout, AsyncHTTPTransport
 
 from ..base_client import BasePostgrestClient
 from ..constants import (
@@ -30,7 +30,14 @@ class AsyncPostgrestClient(BasePostgrestClient):
         timeout: Union[int, float, Timeout] = DEFAULT_POSTGREST_CLIENT_TIMEOUT,
         verify: bool = True,
         proxy: Optional[str] = None,
+        max_retries: int = 0,
     ) -> None:
+
+        if not isinstance(max_retries, int):
+            raise ValueError("max_retries should be a valid integer.")
+
+        self.max_retries = max(max_retries, 0)
+
         BasePostgrestClient.__init__(
             self,
             base_url,
@@ -39,8 +46,10 @@ class AsyncPostgrestClient(BasePostgrestClient):
             timeout=timeout,
             verify=verify,
             proxy=proxy,
+            max_retries=max_retries,
         )
         self.session = cast(AsyncClient, self.session)
+        self.max_retries = max_retries
 
     def create_session(
         self,
@@ -49,6 +58,7 @@ class AsyncPostgrestClient(BasePostgrestClient):
         timeout: Union[int, float, Timeout],
         verify: bool = True,
         proxy: Optional[str] = None,
+        max_retries: int = 0,
     ) -> AsyncClient:
         return AsyncClient(
             base_url=base_url,
@@ -58,6 +68,7 @@ class AsyncPostgrestClient(BasePostgrestClient):
             proxy=proxy,
             follow_redirects=True,
             http2=True,
+            transport=AsyncHTTPTransport(retries=max_retries),
         )
 
     async def __aenter__(self) -> AsyncPostgrestClient:
@@ -78,7 +89,7 @@ class AsyncPostgrestClient(BasePostgrestClient):
         Returns:
             :class:`AsyncRequestBuilder`
         """
-        return AsyncRequestBuilder[_TableT](self.session, f"/{table}")
+        return AsyncRequestBuilder[_TableT](self.session, f"/{table}", self.max_retries)
 
     def table(self, table: str) -> AsyncRequestBuilder[_TableT]:
         """Alias to :meth:`from_`."""
@@ -124,5 +135,11 @@ class AsyncPostgrestClient(BasePostgrestClient):
 
         # the params here are params to be sent to the RPC and not the queryparams!
         return AsyncRPCFilterRequestBuilder[Any](
-            self.session, f"/rpc/{func}", method, headers, QueryParams(), json=params
+            self.session,
+            f"/rpc/{func}",
+            "POST",
+            Headers(),
+            QueryParams(),
+            json=params,
+            max_retries=self.max_retries,
         )
