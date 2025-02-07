@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional, Union, cast
 
 from deprecation import deprecated
-from httpx import Headers, QueryParams, Timeout, AsyncHTTPTransport
+from httpx import AsyncHTTPTransport, Headers, QueryParams, Timeout
 
 from ..base_client import BasePostgrestClient
 from ..constants import (
