@@ -13,6 +13,18 @@ async def postgrest_client():
         yield client
 
 
+async def test_retryable_request():
+    async with AsyncPostgrestClient(
+        "https://example_test.com", timeout=0.5, max_retries=2
+    ) as client:
+        res = (
+            await client.from_("countries")
+            .select("country_name, iso")
+            .in_("nicename", ["Albania", "Algeria"])
+            .execute()
+        )
+
+
 class TestConstructor:
     def test_simple(self, postgrest_client: AsyncPostgrestClient):
         session = postgrest_client.session
