@@ -35,14 +35,14 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
         headers: Headers,
         params: QueryParams,
         json: Union[dict, list],
-        max_retries: int,
+        max_retries: int = 0,
     ) -> None:
         self.session = session
         self.path = path
         self.http_method = http_method
         self.headers = headers
         self.params = params
-        self.json = None if http_method in {"GET", "HEAD"} else json
+        self.json = json
         self.max_retries = max_retries
         self.attempt = 1
 
@@ -58,7 +58,6 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
         Raises:
             :class:`APIError` If the API raised an error.
         """
-
         try:
             r = self.session.request(
                 self.http_method,
@@ -78,8 +77,8 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
                         if "+json" not in self.headers.get("Accept"):
                             return body
                 return APIResponse[_ReturnT].from_http_request_response(r)
-            # else:
-            #     raise APIError(r.json())
+            else:
+                raise APIError(r.json())
         except (TimeoutException, NetworkError, ReadError) as e:
             if self.attempt < self.max_retries:
                 self.attempt += 1
@@ -88,8 +87,6 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
             raise APIError(r.json()) from e
         except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
-        except Exception as e:
-            raise APIError(r.json())
 
 
 class SyncSingleRequestBuilder(Generic[_ReturnT]):
@@ -101,7 +98,7 @@ class SyncSingleRequestBuilder(Generic[_ReturnT]):
         headers: Headers,
         params: QueryParams,
         json: dict,
-        max_retries: int,
+        max_retries: int = 0,
     ) -> None:
         self.session = session
         self.path = path
@@ -124,7 +121,6 @@ class SyncSingleRequestBuilder(Generic[_ReturnT]):
         Raises:
             :class:`APIError` If the API raised an error.
         """
-
         try:
             r = self.session.request(
                 self.http_method,
@@ -147,8 +143,6 @@ class SyncSingleRequestBuilder(Generic[_ReturnT]):
             raise APIError(r.json()) from e
         except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
-        except Exception as e:
-            raise APIError(r.json())
 
 
 class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder[_ReturnT]):
@@ -202,20 +196,13 @@ class SyncRPCFilterRequestBuilder(
         headers: Headers,
         params: QueryParams,
         json: dict,
-        max_retries: int,
+        max_retries: int = 0,
     ) -> None:
         get_origin_and_cast(BaseFilterRequestBuilder[_ReturnT]).__init__(
             self, session, headers, params
         )
         get_origin_and_cast(SyncSingleRequestBuilder[_ReturnT]).__init__(
-            self,
-            session,
-            path,
-            http_method,
-            headers,
-            params,
-            json,
-            max_retries,
+            self, session, path, http_method, headers, params, json, max_retries
         )
 
 
@@ -229,7 +216,7 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequ
         headers: Headers,
         params: QueryParams,
         json: dict,
-        max_retries: int,
+        max_retries: int = 0,
     ) -> None:
         self.max_retries = max_retries
         get_origin_and_cast(BaseSelectRequestBuilder[_ReturnT]).__init__(
@@ -308,7 +295,7 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequ
 
 
 class SyncRequestBuilder(Generic[_ReturnT]):
-    def __init__(self, session: SyncClient, path: str, max_retries: int) -> None:
+    def __init__(self, session: SyncClient, path: str, max_retries: int = 0) -> None:
         self.session = session
         self.path = path
         self.max_retries = max_retries
@@ -327,17 +314,17 @@ class SyncRequestBuilder(Generic[_ReturnT]):
         Returns:
             :class:`SyncSelectRequestBuilder`
         """
-        if not (columns or count):
-            raise ValueError("Specify columns or count")
+        if count and not any(count_method == count for count_method in CountMethod):
+            valid_methods = ", ".join(
+                [count_method.value for count_method in CountMethod]
+            )
+            raise ValueError(
+                f"{count} is not a valid option. Available options are: {valid_methods}"
+            )
+
         method, params, headers, json = pre_select(*columns, count=count, head=head)
         return SyncSelectRequestBuilder[_ReturnT](
-            self.session,
-            self.path,
-            method,
-            headers,
-            params,
-            json,
-            self.max_retries,
+            self.session, self.path, method, headers, params, json, self.max_retries
         )
 
     def insert(
@@ -370,13 +357,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             default_to_null=default_to_null,
         )
         return SyncQueryRequestBuilder[_ReturnT](
-            self.session,
-            self.path,
-            method,
-            headers,
-            params,
-            json,
-            self.max_retries,
+            self.session, self.path, method, headers, params, json, self.max_retries
         )
 
     def upsert(
@@ -413,13 +394,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             default_to_null=default_to_null,
         )
         return SyncQueryRequestBuilder[_ReturnT](
-            self.session,
-            self.path,
-            method,
-            headers,
-            params,
-            json,
-            self.max_retries,
+            self.session, self.path, method, headers, params, json, self.max_retries
         )
 
     def update(
