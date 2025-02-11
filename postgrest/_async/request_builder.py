@@ -83,6 +83,7 @@ class AsyncQueryRequestBuilder(Generic[_ReturnT]):
             else:
                 raise APIError(r.json())
         except (TimeoutException, NetworkError, ReadError) as e:
+            # Retry for request API calls.
             if self.attempt < self.max_retries:
                 self.attempt += 1
                 await self.execute()
@@ -141,6 +142,7 @@ class AsyncSingleRequestBuilder(Generic[_ReturnT]):
             else:
                 raise APIError(r.json())
         except (TimeoutException, NetworkError, ReadError) as e:
+            # Retry for request API calls.
             if self.attempt < self.max_retries:
                 self.attempt += 1
                 await self.execute()
