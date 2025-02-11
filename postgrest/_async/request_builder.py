@@ -42,7 +42,7 @@ class AsyncQueryRequestBuilder(Generic[_ReturnT]):
         self.http_method = http_method
         self.headers = headers
         self.params = params
-        self.json = json
+        self.json = None if http_method in {"GET", "HEAD"} else json
         self.max_retries = max_retries
         self.attempt = 1
 
