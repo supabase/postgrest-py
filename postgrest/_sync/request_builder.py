@@ -27,6 +27,7 @@ _ReturnT = TypeVar("_ReturnT")
 
 
 class SyncQueryRequestBuilder(Generic[_ReturnT]):
+
     def __init__(
         self,
         session: SyncClient,
@@ -42,9 +43,11 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
         self.http_method = http_method
         self.headers = headers
         self.params = params
-        self.json = None if http_method in {"GET", "HEAD"} else json
+        # Retry for request API calls.
         self.max_retries = max_retries
         self.attempt = 1
+        # For GET and HEAD requests, the body should be None.
+        self.json = None if http_method in {"GET", "HEAD"} else json
 
     def execute(self) -> APIResponse[_ReturnT]:
         """Execute the query.
