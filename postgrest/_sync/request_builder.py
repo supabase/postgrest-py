@@ -83,6 +83,7 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
             else:
                 raise APIError(r.json())
         except (TimeoutException, NetworkError, ReadError) as e:
+            # Retry for request API calls.
             if self.attempt < self.max_retries:
                 self.attempt += 1
                 self.execute()
@@ -141,6 +142,7 @@ class SyncSingleRequestBuilder(Generic[_ReturnT]):
             else:
                 raise APIError(r.json())
         except (TimeoutException, NetworkError, ReadError) as e:
+            # Retry for request API calls.
             if self.attempt < self.max_retries:
                 self.attempt += 1
                 self.execute()
