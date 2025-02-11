@@ -90,6 +90,8 @@ class AsyncQueryRequestBuilder(Generic[_ReturnT]):
             raise APIError(r.json()) from e
         except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
+        except Exception as e:
+            raise APIError(r.json())
 
 
 class AsyncSingleRequestBuilder(Generic[_ReturnT]):
@@ -146,6 +148,8 @@ class AsyncSingleRequestBuilder(Generic[_ReturnT]):
             raise APIError(r.json()) from e
         except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
+        except Exception as e:
+            raise APIError(r.json())
 
 
 class AsyncMaybeSingleRequestBuilder(AsyncSingleRequestBuilder[_ReturnT]):
