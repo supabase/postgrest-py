@@ -91,7 +91,7 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
         except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
         except Exception as e:
-            raise APIError(r.json())
+            raise APIError(r.json()) from e
 
 
 class SyncSingleRequestBuilder(Generic[_ReturnT]):
@@ -149,7 +149,7 @@ class SyncSingleRequestBuilder(Generic[_ReturnT]):
         except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
         except Exception as e:
-            raise APIError(r.json())
+            raise APIError(r.json()) from e
 
 
 class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder[_ReturnT]):
