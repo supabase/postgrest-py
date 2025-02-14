@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import time
-
 from json import JSONDecodeError
 from typing import Any, Generic, Optional, TypeVar, Union
 
