@@ -83,10 +83,15 @@ class AsyncQueryRequestBuilder(Generic[_ReturnT]):
             else:
                 raise APIError(r.json())
         except (TimeoutException, NetworkError, ReadError) as e:
-            # Retry for request API calls.
-            if self.attempt < self.max_retries:
+            # Retry only GET requests because they are read-only operations.
+            # Resubmitting DML statements after connection errors can lead to potential blocking sessions.
+            # This is because the DML operation may have already executed successfully on the database,
+            # but the client lost the connection before receiving confirmation.
+            if self.attempt < self.max_retries and self.http_method == "GET":
                 self.attempt += 1
                 await self.execute()
+            else:
+                self.attempt = 1
         except ValidationError as e:
             raise APIError(r.json()) from e
         except JSONDecodeError:
