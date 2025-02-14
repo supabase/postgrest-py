@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import time
+
 from json import JSONDecodeError
 from typing import Any, Generic, Optional, TypeVar, Union
 
@@ -48,6 +50,10 @@ class AsyncQueryRequestBuilder(Generic[_ReturnT]):
         self.attempt = 1
         # For GET and HEAD requests, the body should be None.
         self.json = None if http_method in {"GET", "HEAD"} else json
+        # Exponential backoff for retries.
+        self.exponential_backoff = lambda: time.sleep(
+            min(1000 * 2**self.attempt, 30000) / 1000
+        )
 
     async def execute(self) -> APIResponse[_ReturnT]:
         """Execute the query.
@@ -88,6 +94,7 @@ class AsyncQueryRequestBuilder(Generic[_ReturnT]):
             # This is because the DML operation may have already executed successfully on the database,
             # but the client lost the connection before receiving confirmation.
             if self.attempt < self.max_retries and self.http_method == "GET":
+                self.exponential_backoff()
                 self.attempt += 1
                 await self.execute()
             else:
