@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional, Union, cast
 
 from deprecation import deprecated
-from httpx import Headers, QueryParams, Timeout
+from httpx import Headers, HTTPTransport, QueryParams, Timeout
 
 from ..base_client import BasePostgrestClient
 from ..constants import (
@@ -30,6 +30,7 @@ class SyncPostgrestClient(BasePostgrestClient):
         timeout: Union[int, float, Timeout] = DEFAULT_POSTGREST_CLIENT_TIMEOUT,
         verify: bool = True,
         proxy: Optional[str] = None,
+        max_retries: int = 1,
     ) -> None:
         BasePostgrestClient.__init__(
             self,
@@ -39,8 +40,10 @@ class SyncPostgrestClient(BasePostgrestClient):
             timeout=timeout,
             verify=verify,
             proxy=proxy,
+            max_retries=max_retries,
         )
         self.session = cast(SyncClient, self.session)
+        self.max_retries = max_retries
 
     def create_session(
         self,
@@ -49,6 +52,7 @@ class SyncPostgrestClient(BasePostgrestClient):
         timeout: Union[int, float, Timeout],
         verify: bool = True,
         proxy: Optional[str] = None,
+        max_retries: int = 1,
     ) -> SyncClient:
         return SyncClient(
             base_url=base_url,
@@ -58,6 +62,7 @@ class SyncPostgrestClient(BasePostgrestClient):
             proxy=proxy,
             follow_redirects=True,
             http2=True,
+            transport=HTTPTransport(retries=max_retries),
         )
 
     def __enter__(self) -> SyncPostgrestClient:
@@ -78,7 +83,7 @@ class SyncPostgrestClient(BasePostgrestClient):
         Returns:
             :class:`AsyncRequestBuilder`
         """
-        return SyncRequestBuilder[_TableT](self.session, f"/{table}")
+        return SyncRequestBuilder[_TableT](self.session, f"/{table}", self.max_retries)
 
     def table(self, table: str) -> SyncRequestBuilder[_TableT]:
         """Alias to :meth:`from_`."""
@@ -124,5 +129,11 @@ class SyncPostgrestClient(BasePostgrestClient):
 
         # the params here are params to be sent to the RPC and not the queryparams!
         return SyncRPCFilterRequestBuilder[Any](
-            self.session, f"/rpc/{func}", method, headers, QueryParams(), json=params
+            self.session,
+            f"/rpc/{func}",
+            method,
+            Headers(),
+            QueryParams(),
+            json=params,
+            max_retries=self.max_retries,
         )
