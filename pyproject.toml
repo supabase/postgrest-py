@@ -28,7 +28,7 @@ strenum = {version = "^0.4.9", python = "<3.11"}
 pytest = "^8.3.4"
 flake8 = "^7.1.2"
 black = "^25.1"
-isort = "^6.0.0"
+isort = "^6.0.1"
 pre-commit = "^4.0.1"
 pytest-cov = "^6.0.0"
 pytest-depends = "^1.0.1"
