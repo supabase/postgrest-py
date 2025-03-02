@@ -60,6 +60,17 @@ class AsyncPostgrestClient(BasePostgrestClient):
             http2=True,
         )
 
+    def schema(self, schema: str):
+        """Switch to another schema."""
+        return AsyncPostgrestClient(
+            base_url=self.base_url,
+            schema=schema,
+            headers=self.headers,
+            timeout=self.timeout,
+            verify=self.verify,
+            proxy=self.proxy,
+        )
+
     async def __aenter__(self) -> AsyncPostgrestClient:
         return self
 

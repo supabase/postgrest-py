@@ -34,7 +34,7 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
         http_method: str,
         headers: Headers,
         params: QueryParams,
-        json: Union[dict, list],
+        json: dict,
     ) -> None:
         self.session = session
         self.path = path
