@@ -60,6 +60,17 @@ class SyncPostgrestClient(BasePostgrestClient):
             http2=True,
         )
 
+    def schema(self, schema: str):
+        """Switch to another schema."""
+        return SyncPostgrestClient(
+            base_url=self.base_url,
+            schema=schema,
+            headers=self.headers,
+            timeout=self.timeout,
+            verify=self.verify,
+            proxy=self.proxy,
+        )
+
     def __enter__(self) -> SyncPostgrestClient:
         return self
 

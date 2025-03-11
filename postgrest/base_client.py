@@ -23,12 +23,19 @@ class BasePostgrestClient(ABC):
     ) -> None:
         if not is_http_url(base_url):
             ValueError("base_url must be a valid HTTP URL string")
-        headers = {
+
+        self.base_url = base_url
+        self.headers = {
             **headers,
             "Accept-Profile": schema,
             "Content-Profile": schema,
         }
-        self.session = self.create_session(base_url, headers, timeout, verify, proxy)
+        self.timeout = timeout
+        self.verify = verify
+        self.proxy = proxy
+        self.session = self.create_session(
+            self.base_url, self.headers, self.timeout, self.verify, self.proxy
+        )
 
     @abstractmethod
     def create_session(
@@ -67,14 +74,4 @@ class BasePostgrestClient(ABC):
             raise ValueError(
                 "Neither bearer token or basic authentication scheme is provided"
             )
-        return self
-
-    def schema(self, schema: str):
-        """Switch to another schema."""
-        self.session.headers.update(
-            {
-                "Accept-Profile": schema,
-                "Content-Profile": schema,
-            }
-        )
         return self

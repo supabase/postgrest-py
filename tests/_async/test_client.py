@@ -62,8 +62,8 @@ class TestAuth:
 
 
 def test_schema(postgrest_client: AsyncPostgrestClient):
-    postgrest_client.schema("private")
-    session = postgrest_client.session
+    client = postgrest_client.schema("private")
+    session = client.session
     subheaders = {
         "accept-profile": "private",
         "content-profile": "private",
