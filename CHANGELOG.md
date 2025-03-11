@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [1.0.0](https://github.com/supabase/postgrest-py/compare/v0.19.3...v1.0.0) (2025-03-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* schema method persisting only on current query ([#575](https://github.com/supabase/postgrest-py/issues/575))
+
+### Bug Fixes
+
+* schema method persisting only on current query ([#575](https://github.com/supabase/postgrest-py/issues/575)) ([b0dd496](https://github.com/supabase/postgrest-py/commit/b0dd496e1793c07ac1081fb59b3c2c8f9feb2984))
+
 ## [0.19.3](https://github.com/supabase/postgrest-py/compare/v0.19.2...v0.19.3) (2025-01-24)
 
 
