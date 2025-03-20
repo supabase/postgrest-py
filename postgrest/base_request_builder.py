@@ -566,7 +566,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
         column: str,
         *,
         desc: bool = False,
-        nullsfirst: bool = False,
+        nullsfirst: Optional[bool] = None,
         foreign_table: Optional[str] = None,
     ) -> Self:
         """Sort the returned rows in some specific order.
@@ -579,20 +579,18 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
         .. versionchanged:: 0.10.3
            Allow ordering results for foreign tables with the foreign_table parameter.
         """
+        key = f"{foreign_table}.order" if foreign_table else "order"
+        existing_order = self.params.get(key)
 
-        new_order_parameter = (
-            f"{foreign_table + '(' if foreign_table else ''}{column}{')' if foreign_table else ''}"
-            f"{'.desc' if desc else ''}{'.nullsfirst' if nullsfirst else ''}"
-        )
-
-        existing_order_parameter = self.params.get("order")
-        if existing_order_parameter:
-            self.params = self.params.remove("order")
-            new_order_parameter = f"{existing_order_parameter},{new_order_parameter}"
-
-        self.params = self.params.add(
-            "order",
-            new_order_parameter,
+        self.params = self.params.set(
+            key,
+            f"{existing_order + ',' if existing_order else ''}"
+            + f"{column}.{'desc' if desc else 'asc'}"
+            + (
+                f".{'nullsfirst' if nullsfirst else 'nullslast'}"
+                if nullsfirst is not None
+                else ""
+            ),
         )
         return self
 

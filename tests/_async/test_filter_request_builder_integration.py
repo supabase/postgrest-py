@@ -498,3 +498,18 @@ async def test_order():
         {"country_name": "UNITED STATES", "iso": "US"},
         {"country_name": "UNITED KINGDOM", "iso": "GB"},
     ]
+
+
+async def test_order_on_foreign_table():
+    res = (
+        await rest_client()
+        .from_("orchestral_sections")
+        .select("name, instruments(name)")
+        .order("name", desc=True, foreign_table="instruments")
+        .execute()
+    )
+
+    assert res.data == [
+        {"name": "strings", "instruments": [{"name": "violin"}, {"name": "harp"}]},
+        {"name": "woodwinds", "instruments": []},
+    ]
