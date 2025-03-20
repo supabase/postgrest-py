@@ -218,10 +218,7 @@ class TestOrder:
             .order("city_name", desc=True, foreign_table=foreign_table)
             .order("id", desc=True, foreign_table=foreign_table)
         )
-        assert (
-            str(builder.params)
-            == "select=%2A&order=cities%28city_name%29.desc%2Ccities%28id%29.desc"
-        )
+        assert str(builder.params) == "select=%2A&cities.order=city_name.desc%2Cid.desc"
 
 
 class TestRange:

@@ -76,3 +76,24 @@ create or replace function public.list_stored_countries()
 as $function$
     select * from countries;
 $function$;
+
+
+create table
+  orchestral_sections (id int8 primary key, name text);
+create table
+  instruments (
+    id int8 primary key,
+    section_id int8 not null references orchestral_sections,
+    name text
+  );
+
+insert into
+  orchestral_sections (id, name)
+values
+  (1, 'strings'),
+  (2, 'woodwinds');
+insert into
+  instruments (id, section_id, name)
+values
+  (1, 1, 'harp'),
+  (2, 1, 'violin');
