@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [1.0.1](https://github.com/supabase/postgrest-py/compare/v1.0.0...v1.0.1) (2025-03-24)
+
+
+### Bug Fixes
+
+* order using foreign table ([#581](https://github.com/supabase/postgrest-py/issues/581)) ([66477dd](https://github.com/supabase/postgrest-py/commit/66477dd82580544c3ed238cc82080c7ca91ee226))
+
 ## [1.0.0](https://github.com/supabase/postgrest-py/compare/v0.19.3...v1.0.0) (2025-03-11)
 
 
