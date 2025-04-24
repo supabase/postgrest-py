@@ -30,6 +30,7 @@ class SyncPostgrestClient(BasePostgrestClient):
         timeout: Union[int, float, Timeout] = DEFAULT_POSTGREST_CLIENT_TIMEOUT,
         verify: bool = True,
         proxy: Optional[str] = None,
+        client: Union[SyncClient, None] = None,
     ) -> None:
         BasePostgrestClient.__init__(
             self,
@@ -39,6 +40,7 @@ class SyncPostgrestClient(BasePostgrestClient):
             timeout=timeout,
             verify=verify,
             proxy=proxy,
+            client=client,
         )
         self.session = cast(SyncClient, self.session)
 
@@ -49,7 +51,11 @@ class SyncPostgrestClient(BasePostgrestClient):
         timeout: Union[int, float, Timeout],
         verify: bool = True,
         proxy: Optional[str] = None,
+        client: Union[SyncClient, None] = None,
     ) -> SyncClient:
+        if client is not None:
+            return client
+
         return SyncClient(
             base_url=base_url,
             headers=headers,

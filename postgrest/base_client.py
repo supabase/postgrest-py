@@ -45,6 +45,7 @@ class BasePostgrestClient(ABC):
         timeout: Union[int, float, Timeout],
         verify: bool = True,
         proxy: Optional[str] = None,
+        client: Union[SyncClient, AsyncClient, None] = None,
     ) -> Union[SyncClient, AsyncClient]:
         raise NotImplementedError()
 
