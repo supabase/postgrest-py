@@ -54,6 +54,8 @@ class SyncPostgrestClient(BasePostgrestClient):
         client: Union[SyncClient, None] = None,
     ) -> SyncClient:
         if client is not None:
+            client.base_url = base_url
+            client.headers = headers
             return client
 
         return SyncClient(

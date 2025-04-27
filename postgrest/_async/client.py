@@ -54,6 +54,8 @@ class AsyncPostgrestClient(BasePostgrestClient):
         client: Union[AsyncClient, None] = None,
     ) -> AsyncClient:
         if client is not None:
+            client.base_url = base_url
+            client.headers = headers
             return client
 
         return AsyncClient(
