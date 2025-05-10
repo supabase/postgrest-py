@@ -30,7 +30,7 @@ class AsyncPostgrestClient(BasePostgrestClient):
         timeout: Union[int, float, Timeout] = DEFAULT_POSTGREST_CLIENT_TIMEOUT,
         verify: bool = True,
         proxy: Optional[str] = None,
-        http_client: Union[AsyncClient, None] = None,
+        http_client: Optional[AsyncClient] = None,
     ) -> None:
         BasePostgrestClient.__init__(
             self,
