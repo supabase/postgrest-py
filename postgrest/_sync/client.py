@@ -51,7 +51,7 @@ class SyncPostgrestClient(BasePostgrestClient):
         timeout: Union[int, float, Timeout],
         verify: bool = True,
         proxy: Optional[str] = None,
-        http_client: Union[SyncClient, None] = None,
+        http_client: Optional[SyncClient] = None,
     ) -> SyncClient:
         if http_client is not None:
             http_client.base_url = base_url

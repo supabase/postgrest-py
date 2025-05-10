@@ -51,7 +51,7 @@ class AsyncPostgrestClient(BasePostgrestClient):
         timeout: Union[int, float, Timeout],
         verify: bool = True,
         proxy: Optional[str] = None,
-        http_client: Union[AsyncClient, None] = None,
+        http_client: Optional[AsyncClient] = None,
     ) -> AsyncClient:
         if http_client is not None:
             http_client.base_url = base_url
