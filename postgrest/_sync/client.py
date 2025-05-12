@@ -55,7 +55,7 @@ class SyncPostgrestClient(BasePostgrestClient):
     ) -> SyncClient:
         if http_client is not None:
             http_client.base_url = base_url
-            http_client.headers = headers
+            http_client.headers.update({**headers})
             return http_client
 
         return SyncClient(
