@@ -135,7 +135,12 @@ class AsyncPostgrestClient(BasePostgrestClient):
 
         if method in ("HEAD", "GET"):
             return AsyncRPCFilterRequestBuilder[Any](
-                self.session, f"/rpc/{func}", method, headers, QueryParams(params), json={}
+                self.session,
+                f"/rpc/{func}",
+                method,
+                headers,
+                QueryParams(params),
+                json={},
             )
         # the params here are params to be sent to the RPC and not the queryparams!
         return AsyncRPCFilterRequestBuilder[Any](
