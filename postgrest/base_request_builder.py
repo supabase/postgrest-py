@@ -665,8 +665,6 @@ class BaseRPCRequestBuilder(BaseSelectRequestBuilder[_ReturnT]):
         else:
             self.headers["Prefer"] = "return=representation"
 
-        print(self.headers)
-
         return self
 
     def single(self) -> Self:
