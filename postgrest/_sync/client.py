@@ -133,6 +133,15 @@ class SyncPostgrestClient(BasePostgrestClient):
 
         headers = Headers({"Prefer": f"count={count}"}) if count else Headers()
 
+        if method in ("HEAD", "GET"):
+            return SyncRPCFilterRequestBuilder[Any](
+                self.session,
+                f"/rpc/{func}",
+                method,
+                headers,
+                QueryParams(params),
+                json={},
+            )
         # the params here are params to be sent to the RPC and not the queryparams!
         return SyncRPCFilterRequestBuilder[Any](
             self.session, f"/rpc/{func}", method, headers, QueryParams(), json=params

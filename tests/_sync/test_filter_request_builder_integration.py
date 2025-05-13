@@ -476,6 +476,48 @@ def test_rpc_with_range():
     ]
 
 
+def test_rpc_post_with_args():
+    res = (
+        rest_client()
+        .rpc("search_countries_by_name", {"search_name": "Alban"})
+        .select("nicename, iso")
+        .execute()
+    )
+    assert res.data == [{"nicename": "Albania", "iso": "AL"}]
+
+
+def test_rpc_get_with_args():
+    res = (
+        rest_client()
+        .rpc("search_countries_by_name", {"search_name": "Alger"}, get=True)
+        .select("nicename, iso")
+        .execute()
+    )
+    assert res.data == [{"nicename": "Algeria", "iso": "DZ"}]
+
+
+def test_rpc_get_with_count():
+    res = (
+        rest_client()
+        .rpc("search_countries_by_name", {"search_name": "Al"}, get=True, count="exact")
+        .select("nicename")
+        .execute()
+    )
+    assert res.count == 2
+    assert res.data == [{"nicename": "Albania"}, {"nicename": "Algeria"}]
+
+
+def test_rpc_head_count():
+    res = (
+        rest_client()
+        .rpc("search_countries_by_name", {"search_name": "Al"}, head=True, count="exact")
+        .execute()
+    )
+
+    assert res.count == 2
+    assert res.data == []
+
+
 def test_order():
     res = (
         rest_client()
