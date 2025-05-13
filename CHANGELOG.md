@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [1.0.2](https://github.com/supabase/postgrest-py/compare/v1.0.1...v1.0.2) (2025-05-13)
+
+
+### Bug Fixes
+
+* pass params as query params for get/head requests ([#593](https://github.com/supabase/postgrest-py/issues/593)) ([576a5b8](https://github.com/supabase/postgrest-py/commit/576a5b84e19c0a379ef10df24f3325c0519d406e))
+
 ## [1.0.1](https://github.com/supabase/postgrest-py/compare/v1.0.0...v1.0.1) (2025-03-24)
 
 
