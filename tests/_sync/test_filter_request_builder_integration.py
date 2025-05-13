@@ -496,6 +496,17 @@ def test_rpc_get_with_args():
     assert res.data == [{"nicename": "Algeria", "iso": "DZ"}]
 
 
+def test_rpc_get_with_count():
+    res = (
+        rest_client()
+        .rpc("search_countries_by_name", {"search_name": "Al"}, get=True, count="exact")
+        .select("nicename")
+        .execute()
+    )
+    assert res.count == 2
+    assert res.data == [{"nicename": "Albania"}, {"nicename": "Algeria"}]
+
+
 def test_rpc_head_count():
     res = (
         rest_client()
