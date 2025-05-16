@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 import pytest
-from httpx import BasicAuth, Headers
+from httpx import BasicAuth, Headers, Request, Response
 
 from postgrest import SyncPostgrestClient
 from postgrest.exceptions import APIError
@@ -123,3 +123,29 @@ def test_response_maybe_single(postgrest_client: SyncPostgrestClient):
         exc_response = exc_info.value.json()
         assert isinstance(exc_response.get("message"), str)
         assert "code" in exc_response and int(exc_response["code"]) == 204
+
+
+# https://github.com/supabase/postgrest-py/issues/595
+
+
+def test_response_client_invalid_response_but_valid_json(
+    postgrest_client: SyncPostgrestClient,
+):
+    with patch(
+        "httpx._client.Client.request",
+        return_value=Response(
+            status_code=502,
+            text='"gateway error: Error: Network connection lost."',  # quotes makes this text a valid non-dict JSON object
+            request=Request(method="GET", url="http://example.com"),
+        ),
+    ):
+        client = postgrest_client.from_("test").select("a", "b").eq("c", "d").single()
+        assert "Accept" in client.headers
+        assert client.headers.get("Accept") == "application/vnd.pgrst.object+json"
+        with pytest.raises(APIError) as exc_info:
+            client.execute()
+        assert isinstance(exc_info, pytest.ExceptionInfo)
+        exc_response = exc_info.value.json()
+        assert isinstance(exc_response.get("message"), str)
+        assert exc_response.get("message") == "JSON could not be generated"
+        assert "code" in exc_response and int(exc_response["code"]) == 502

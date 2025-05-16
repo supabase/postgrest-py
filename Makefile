@@ -37,6 +37,7 @@ remove_pytest_asyncio_from_sync:
 	sed -i 's/@pytest.mark.asyncio//g' tests/_sync/test_client.py
 	sed -i 's/_async/_sync/g' tests/_sync/test_client.py
 	sed -i 's/Async/Sync/g' tests/_sync/test_client.py
+	sed -i 's/_client\.SyncClient/_client\.Client/g' tests/_sync/test_client.py
 
 sleep:
 	sleep 2
