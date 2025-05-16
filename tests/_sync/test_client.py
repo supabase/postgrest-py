@@ -132,7 +132,7 @@ def test_response_client_invalid_response_but_valid_json(
     postgrest_client: SyncPostgrestClient,
 ):
     with patch(
-        "httpx._client.SyncClient.request",
+        "httpx._client.Client.request",
         return_value=Response(
             status_code=502,
             text='"gateway error: Error: Network connection lost."',  # quotes makes this text a valid non-dict JSON object
