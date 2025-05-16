@@ -19,7 +19,7 @@ from ..base_request_builder import (
     pre_update,
     pre_upsert,
 )
-from ..exceptions import APIError, generate_default_error_message
+from ..exceptions import APIError, APIErrorFromJSON, generate_default_error_message
 from ..types import ReturnMethod
 from ..utils import AsyncClient, get_origin_and_cast
 
@@ -75,10 +75,9 @@ class AsyncQueryRequestBuilder(Generic[_ReturnT]):
                             return body
                 return APIResponse[_ReturnT].from_http_request_response(r)
             else:
-                raise APIError(r.json())
+                json_obj = APIErrorFromJSON.model_validate_json(r.content)
+                raise APIError(dict(json_obj))
         except ValidationError as e:
-            raise APIError(r.json()) from e
-        except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
 
 
@@ -124,10 +123,9 @@ class AsyncSingleRequestBuilder(Generic[_ReturnT]):
             ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
                 return SingleAPIResponse[_ReturnT].from_http_request_response(r)
             else:
-                raise APIError(r.json())
+                json_obj = APIErrorFromJSON.model_validate_json(r.content)
+                raise APIError(dict(json_obj))
         except ValidationError as e:
-            raise APIError(r.json()) from e
-        except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
 
 
