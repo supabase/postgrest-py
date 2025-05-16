@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from json import JSONDecodeError
 from typing import Any, Generic, Optional, TypeVar, Union
 
 from httpx import Headers, QueryParams

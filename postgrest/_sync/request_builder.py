@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from json import JSONDecodeError
 from typing import Any, Generic, Optional, TypeVar, Union
 
 from httpx import Headers, QueryParams
@@ -19,7 +18,7 @@ from ..base_request_builder import (
     pre_update,
     pre_upsert,
 )
-from ..exceptions import APIError, generate_default_error_message
+from ..exceptions import APIError, APIErrorFromJSON, generate_default_error_message
 from ..types import ReturnMethod
 from ..utils import SyncClient, get_origin_and_cast
 
@@ -75,10 +74,9 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
                             return body
                 return APIResponse[_ReturnT].from_http_request_response(r)
             else:
-                raise APIError(r.json())
+                json_obj = APIErrorFromJSON.model_validate_json(r.content)
+                raise APIError(dict(json_obj))
         except ValidationError as e:
-            raise APIError(r.json()) from e
-        except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
 
 
@@ -124,10 +122,9 @@ class SyncSingleRequestBuilder(Generic[_ReturnT]):
             ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
                 return SingleAPIResponse[_ReturnT].from_http_request_response(r)
             else:
-                raise APIError(r.json())
+                json_obj = APIErrorFromJSON.model_validate_json(r.content)
+                raise APIError(dict(json_obj))
         except ValidationError as e:
-            raise APIError(r.json()) from e
-        except JSONDecodeError:
             raise APIError(generate_default_error_message(r))
 
 
@@ -290,7 +287,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             *columns: The names of the columns to fetch.
             count: The method to use to get the count of rows returned.
         Returns:
-            :class:`SyncSelectRequestBuilder`
+            :class:`AsyncSelectRequestBuilder`
         """
         method, params, headers, json = pre_select(*columns, count=count, head=head)
         return SyncSelectRequestBuilder[_ReturnT](
@@ -317,7 +314,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
                 Otherwise, use the default value for the column.
                 Only applies for bulk inserts.
         Returns:
-            :class:`SyncQueryRequestBuilder`
+            :class:`AsyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_insert(
             json,
@@ -353,7 +350,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
                 not when merging with existing rows under `ignoreDuplicates: false`.
                 This also only applies when doing bulk upserts.
         Returns:
-            :class:`SyncQueryRequestBuilder`
+            :class:`AsyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_upsert(
             json,
@@ -381,7 +378,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`SyncFilterRequestBuilder`
+            :class:`AsyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_update(
             json,
@@ -404,7 +401,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`SyncFilterRequestBuilder`
+            :class:`AsyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_delete(
             count=count,
