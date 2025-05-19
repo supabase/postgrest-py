@@ -56,3 +56,8 @@ class RequestMethod(StrEnum):
 class ReturnMethod(StrEnum):
     minimal = "minimal"
     representation = "representation"
+
+
+class Handling(StrEnum):
+    lenient = "lenient"
+    strict = "strict"

@@ -20,7 +20,7 @@ from ..base_request_builder import (
     pre_upsert,
 )
 from ..exceptions import APIError, generate_default_error_message
-from ..types import ReturnMethod
+from ..types import Handling, ReturnMethod
 from ..utils import AsyncClient, get_origin_and_cast
 
 _ReturnT = TypeVar("_ReturnT")
@@ -283,16 +283,20 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
         *columns: str,
         count: Optional[CountMethod] = None,
         head: Optional[bool] = None,
+        handling: Handling = Handling.lenient,
     ) -> AsyncSelectRequestBuilder[_ReturnT]:
         """Run a SELECT query.
 
         Args:
             *columns: The names of the columns to fetch.
             count: The method to use to get the count of rows returned.
+            handling: Either 'lenient' or 'strict'
         Returns:
             :class:`AsyncSelectRequestBuilder`
         """
-        method, params, headers, json = pre_select(*columns, count=count, head=head)
+        method, params, headers, json = pre_select(
+            *columns, count=count, head=head, handling=handling
+        )
         return AsyncSelectRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
         )
@@ -305,6 +309,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
         returning: ReturnMethod = ReturnMethod.representation,
         upsert: bool = False,
         default_to_null: bool = True,
+        handling: Handling = Handling.lenient,
     ) -> AsyncQueryRequestBuilder[_ReturnT]:
         """Run an INSERT query.
 
@@ -316,6 +321,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
             default_to_null: Make missing fields default to `null`.
                 Otherwise, use the default value for the column.
                 Only applies for bulk inserts.
+            handling: Either 'lenient' or 'strict'
         Returns:
             :class:`AsyncQueryRequestBuilder`
         """
@@ -325,6 +331,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
             returning=returning,
             upsert=upsert,
             default_to_null=default_to_null,
+            handling=handling,
         )
         return AsyncQueryRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
@@ -339,6 +346,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
         ignore_duplicates: bool = False,
         on_conflict: str = "",
         default_to_null: bool = True,
+        handling: Handling = Handling.lenient,
     ) -> AsyncQueryRequestBuilder[_ReturnT]:
         """Run an upsert (INSERT ... ON CONFLICT DO UPDATE) query.
 
@@ -352,6 +360,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
                 default value for the column. This only applies when inserting new rows,
                 not when merging with existing rows under `ignoreDuplicates: false`.
                 This also only applies when doing bulk upserts.
+            handling: Either 'lenient' or 'strict'
         Returns:
             :class:`AsyncQueryRequestBuilder`
         """
@@ -362,6 +371,7 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
             ignore_duplicates=ignore_duplicates,
             on_conflict=on_conflict,
             default_to_null=default_to_null,
+            handling=handling,
         )
         return AsyncQueryRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
@@ -373,6 +383,8 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
+        handling: Handling = Handling.lenient,
+        max_affected: Optional[int] = None,
     ) -> AsyncFilterRequestBuilder[_ReturnT]:
         """Run an UPDATE query.
 
@@ -380,6 +392,8 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
             json: The updated fields.
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
+            handling: Either 'lenient' or 'strict'
+            max_affected: Limit of rows that can be affected during request. Working only with handling=strict.
         Returns:
             :class:`AsyncFilterRequestBuilder`
         """
@@ -387,6 +401,8 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
             json,
             count=count,
             returning=returning,
+            handling=handling,
+            max_affected=max_affected,
         )
         return AsyncFilterRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
@@ -397,18 +413,24 @@ class AsyncRequestBuilder(Generic[_ReturnT]):
         *,
         count: Optional[CountMethod] = None,
         returning: ReturnMethod = ReturnMethod.representation,
+        handling: Handling = Handling.lenient,
+        max_affected: Optional[int] = None,
     ) -> AsyncFilterRequestBuilder[_ReturnT]:
         """Run a DELETE query.
 
         Args:
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
+            handling: Either 'lenient' or 'strict'
+            max_affected: Limit of rows that can be affected during request. Working only with handling=strict.
         Returns:
             :class:`AsyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_delete(
             count=count,
             returning=returning,
+            handling=handling,
+            max_affected=max_affected,
         )
         return AsyncFilterRequestBuilder[_ReturnT](
             self.session, self.path, method, headers, params, json
