@@ -1,5 +1,23 @@
 from typing import Dict, Optional
 
+from pydantic import BaseModel
+
+
+class APIErrorFromJSON(BaseModel):
+    """
+    A pydantic object to validate an error info object
+    from a json string.
+    """
+
+    message: Optional[str]
+    """The error message."""
+    code: Optional[str]
+    """The error code."""
+    hint: Optional[str]
+    """The error hint."""
+    details: Optional[str]
+    """The error details."""
+
 
 class APIError(Exception):
     """
