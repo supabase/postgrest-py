@@ -660,7 +660,11 @@ class BaseRPCRequestBuilder(BaseSelectRequestBuilder[_ReturnT]):
         """
         method, params, headers, json = pre_select(*columns, count=None)
         self.params = self.params.add("select", params.get("select"))
-        self.headers["Prefer"] = "return=representation"
+        if self.headers.get("Prefer"):
+            self.headers["Prefer"] += ",return=representation"
+        else:
+            self.headers["Prefer"] = "return=representation"
+
         return self
 
     def single(self) -> Self:

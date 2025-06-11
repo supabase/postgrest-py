@@ -77,6 +77,12 @@ as $function$
     select * from countries;
 $function$;
 
+create or replace function public.search_countries_by_name(search_name text)
+    returns setof countries
+    language sql
+as $function$
+    select * from countries where nicename ilike '%' || search_name || '%';
+$function$;
 
 create table
   orchestral_sections (id int8 primary key, name text);
