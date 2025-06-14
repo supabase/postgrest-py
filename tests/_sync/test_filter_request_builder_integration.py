@@ -1,11 +1,30 @@
-from .client import rest_client
+from postgrest import CountMethod
+
+from .client import rest_client, rest_client_httpx
+
+
+def test_multivalued_param_httpx():
+    res = (
+        rest_client_httpx()
+        .from_("countries")
+        .select("country_name, iso", count=CountMethod.exact)
+        .lte("numcode", 8)
+        .gte("numcode", 4)
+        .execute()
+    )
+
+    assert res.count == 2
+    assert res.data == [
+        {"country_name": "AFGHANISTAN", "iso": "AF"},
+        {"country_name": "ALBANIA", "iso": "AL"},
+    ]
 
 
 def test_multivalued_param():
     res = (
         rest_client()
         .from_("countries")
-        .select("country_name, iso", count="exact")
+        .select("country_name, iso", count=CountMethod.exact)
         .lte("numcode", 8)
         .gte("numcode", 4)
         .execute()
@@ -499,7 +518,12 @@ def test_rpc_get_with_args():
 def test_rpc_get_with_count():
     res = (
         rest_client()
-        .rpc("search_countries_by_name", {"search_name": "Al"}, get=True, count="exact")
+        .rpc(
+            "search_countries_by_name",
+            {"search_name": "Al"},
+            get=True,
+            count=CountMethod.exact,
+        )
         .select("nicename")
         .execute()
     )
@@ -510,7 +534,12 @@ def test_rpc_get_with_count():
 def test_rpc_head_count():
     res = (
         rest_client()
-        .rpc("search_countries_by_name", {"search_name": "Al"}, head=True, count="exact")
+        .rpc(
+            "search_countries_by_name",
+            {"search_name": "Al"},
+            head=True,
+            count=CountMethod.exact,
+        )
         .execute()
     )
 

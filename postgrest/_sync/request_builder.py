@@ -287,7 +287,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             *columns: The names of the columns to fetch.
             count: The method to use to get the count of rows returned.
         Returns:
-            :class:`AsyncSelectRequestBuilder`
+            :class:`SyncSelectRequestBuilder`
         """
         method, params, headers, json = pre_select(*columns, count=count, head=head)
         return SyncSelectRequestBuilder[_ReturnT](
@@ -314,7 +314,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
                 Otherwise, use the default value for the column.
                 Only applies for bulk inserts.
         Returns:
-            :class:`AsyncQueryRequestBuilder`
+            :class:`SyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_insert(
             json,
@@ -350,7 +350,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
                 not when merging with existing rows under `ignoreDuplicates: false`.
                 This also only applies when doing bulk upserts.
         Returns:
-            :class:`AsyncQueryRequestBuilder`
+            :class:`SyncQueryRequestBuilder`
         """
         method, params, headers, json = pre_upsert(
             json,
@@ -378,7 +378,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`AsyncFilterRequestBuilder`
+            :class:`SyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_update(
             json,
@@ -401,7 +401,7 @@ class SyncRequestBuilder(Generic[_ReturnT]):
             count: The method to use to get the count of rows returned.
             returning: Either 'minimal' or 'representation'
         Returns:
-            :class:`AsyncFilterRequestBuilder`
+            :class:`SyncFilterRequestBuilder`
         """
         method, params, headers, json = pre_delete(
             count=count,

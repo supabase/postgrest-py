@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel
 
@@ -34,7 +34,7 @@ class APIError(Exception):
     details: Optional[str]
     """The error details."""
 
-    def __init__(self, error: Dict[str, str]) -> None:
+    def __init__(self, error: Dict[str, Any]) -> None:
         self._raw_error = error
         self.message = error.get("message")
         self.code = error.get("code")
