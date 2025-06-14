@@ -54,7 +54,13 @@ class AsyncPostgrestClient(BasePostgrestClient):
 
         self.verify = bool(verify) if verify is not None else True
         self.timeout = (
-            int(abs(timeout)) if timeout is not None else DEFAULT_POSTGREST_CLIENT_TIMEOUT
+            timeout
+            if isinstance(timeout, Timeout)
+            else (
+                int(abs(timeout))
+                if timeout is not None
+                else DEFAULT_POSTGREST_CLIENT_TIMEOUT
+            )
         )
 
         BasePostgrestClient.__init__(
@@ -76,8 +82,11 @@ class AsyncPostgrestClient(BasePostgrestClient):
         timeout: Union[int, float, Timeout],
         verify: bool = True,
         proxy: Optional[str] = None,
-        http_client: Optional[AsyncClient] = None,
     ) -> AsyncClient:
+        http_client = None
+        if isinstance(self.http_client, AsyncClient):
+            http_client = self.http_client
+
         if http_client is not None:
             http_client.base_url = base_url
             http_client.headers.update({**headers})

@@ -41,7 +41,6 @@ class BasePostgrestClient(ABC):
             self.timeout,
             self.verify,
             self.proxy,
-            self.http_client,
         )
 
     @abstractmethod
@@ -52,7 +51,6 @@ class BasePostgrestClient(ABC):
         timeout: Union[int, float, Timeout],
         verify: bool = True,
         proxy: Optional[str] = None,
-        http_client: Union[SyncClient, AsyncClient, None] = None,
     ) -> Union[SyncClient, AsyncClient]:
         raise NotImplementedError()
 
