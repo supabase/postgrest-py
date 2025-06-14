@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [1.1.0](https://github.com/supabase/postgrest-py/compare/v1.0.2...v1.1.0) (2025-06-14)
+
+
+### Features
+
+* allow injection of httpx client ([#591](https://github.com/supabase/postgrest-py/issues/591)) ([635a4ba](https://github.com/supabase/postgrest-py/commit/635a4ba421457ce0967c3efc332ae883b693ef71))
+
 ## [1.0.2](https://github.com/supabase/postgrest-py/compare/v1.0.1...v1.0.2) (2025-05-21)
 
 
