@@ -1,10 +1,19 @@
 from unittest.mock import patch
 
 import pytest
-from httpx import BasicAuth, Headers, Request, Response
+from httpx import (
+    BasicAuth,
+    Headers,
+    HTTPTransport,
+    Limits,
+    Request,
+    Response,
+    Timeout,
+)
 
 from postgrest import SyncPostgrestClient
 from postgrest.exceptions import APIError
+from postgrest.utils import SyncClient
 
 
 @pytest.fixture
@@ -43,6 +52,32 @@ class TestConstructor:
                 }
             )
             assert session.headers.items() >= headers.items()
+
+
+class TestHttpxClientConstructor:
+
+    def test_custom_httpx_client(self):
+        transport = HTTPTransport(
+            retries=10,
+            limits=Limits(
+                max_connections=1,
+                max_keepalive_connections=1,
+                keepalive_expiry=None,
+            ),
+        )
+        headers = {"x-user-agent": "my-app/0.0.1"}
+        http_client = SyncClient(transport=transport, headers=headers)
+        with SyncPostgrestClient(
+            "https://example.com", http_client=http_client, timeout=20.0
+        ) as client:
+            session = client.session
+
+            assert session.base_url == "https://example.com"
+            assert session.timeout == Timeout(
+                timeout=5.0
+            )  # Should be the default 5 since we use custom httpx client
+            assert session.headers.get("x-user-agent") == "my-app/0.0.1"
+            assert isinstance(session, SyncClient)
 
 
 class TestAuth:

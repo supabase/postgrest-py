@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict, Optional, Union, cast
+from warnings import warn
 
 from deprecation import deprecated
 from httpx import Headers, QueryParams, Timeout
@@ -27,18 +28,50 @@ class SyncPostgrestClient(BasePostgrestClient):
         *,
         schema: str = "public",
         headers: Dict[str, str] = DEFAULT_POSTGREST_CLIENT_HEADERS,
-        timeout: Union[int, float, Timeout] = DEFAULT_POSTGREST_CLIENT_TIMEOUT,
-        verify: bool = True,
+        timeout: Union[int, float, Timeout, None] = None,
+        verify: Optional[bool] = None,
         proxy: Optional[str] = None,
+        http_client: Optional[SyncClient] = None,
     ) -> None:
+        if timeout is not None:
+            warn(
+                "The 'timeout' parameter is deprecated. Please configure it in the http client instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+        if verify is not None:
+            warn(
+                "The 'verify' parameter is deprecated. Please configure it in the http client instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+        if proxy is not None:
+            warn(
+                "The 'proxy' parameter is deprecated. Please configure it in the http client instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
+        self.verify = bool(verify) if verify is not None else True
+        self.timeout = (
+            timeout
+            if isinstance(timeout, Timeout)
+            else (
+                int(abs(timeout))
+                if timeout is not None
+                else DEFAULT_POSTGREST_CLIENT_TIMEOUT
+            )
+        )
+
         BasePostgrestClient.__init__(
             self,
             base_url,
             schema=schema,
             headers=headers,
-            timeout=timeout,
-            verify=verify,
+            timeout=self.timeout,
+            verify=self.verify,
             proxy=proxy,
+            http_client=http_client,
         )
         self.session = cast(SyncClient, self.session)
 
@@ -50,6 +83,15 @@ class SyncPostgrestClient(BasePostgrestClient):
         verify: bool = True,
         proxy: Optional[str] = None,
     ) -> SyncClient:
+        http_client = None
+        if isinstance(self.http_client, SyncClient):
+            http_client = self.http_client
+
+        if http_client is not None:
+            http_client.base_url = base_url
+            http_client.headers.update({**headers})
+            return http_client
+
         return SyncClient(
             base_url=base_url,
             headers=headers,

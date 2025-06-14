@@ -27,4 +27,41 @@ from .constants import DEFAULT_POSTGREST_CLIENT_HEADERS
 from .deprecated_client import Client, PostgrestClient
 from .deprecated_get_request_builder import GetRequestBuilder
 from .exceptions import APIError
+from .types import (
+    CountMethod,
+    Filters,
+    RequestMethod,
+    ReturnMethod,
+)
 from .version import __version__
+
+__all__ = [
+    "AsyncPostgrestClient",
+    "AsyncFilterRequestBuilder",
+    "AsyncQueryRequestBuilder",
+    "AsyncRequestBuilder",
+    "AsyncRPCFilterRequestBuilder",
+    "AsyncSelectRequestBuilder",
+    "AsyncSingleRequestBuilder",
+    "AsyncMaybeSingleRequestBuilder",
+    "SyncPostgrestClient",
+    "SyncFilterRequestBuilder",
+    "SyncMaybeSingleRequestBuilder",
+    "SyncQueryRequestBuilder",
+    "SyncRequestBuilder",
+    "SyncRPCFilterRequestBuilder",
+    "SyncSelectRequestBuilder",
+    "SyncSingleRequestBuilder",
+    "APIResponse",
+    "DEFAULT_POSTGREST_CLIENT_HEADERS",
+    "Client",
+    "PostgrestClient",
+    "GetRequestBuilder",
+    "APIError",
+    "CountMethod",
+    "Filters",
+    "RequestMethod",
+    "ReturnMethod",
+    "Timeout",
+    "__version__",
+]
