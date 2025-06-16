@@ -1,8 +1,7 @@
 import pytest
-from httpx import Headers, QueryParams
+from httpx import AsyncClient, Headers, QueryParams
 
 from postgrest import AsyncFilterRequestBuilder
-from postgrest.utils import AsyncClient
 
 
 @pytest.fixture

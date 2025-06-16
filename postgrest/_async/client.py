@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional, Union, cast
 from warnings import warn
 
 from deprecation import deprecated
-from httpx import Headers, QueryParams, Timeout
+from httpx import AsyncClient, Headers, QueryParams, Timeout
 
 from ..base_client import BasePostgrestClient
 from ..constants import (
@@ -12,7 +12,6 @@ from ..constants import (
     DEFAULT_POSTGREST_CLIENT_TIMEOUT,
 )
 from ..types import CountMethod
-from ..utils import AsyncClient
 from ..version import __version__
 from .request_builder import AsyncRequestBuilder, AsyncRPCFilterRequestBuilder
 

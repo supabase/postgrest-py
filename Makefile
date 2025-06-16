@@ -36,11 +36,11 @@ build_sync: run_unasync remove_pytest_asyncio_from_sync
 remove_pytest_asyncio_from_sync:
 	sed -i 's/@pytest.mark.asyncio//g' tests/_sync/test_client.py
 	sed -i 's/_async/_sync/g' tests/_sync/test_client.py
-	sed -i 's/Async/Sync/g' tests/_sync/test_client.py
-	sed -i 's/Async/Sync/g' postgrest/_sync/request_builder.py
+	sed -i 's/Async/Sync/g' postgrest/_sync/request_builder.py tests/_sync/test_client.py
 	sed -i 's/_client\.SyncClient/_client\.Client/g' tests/_sync/test_client.py
-	sed -i 's/SyncHTTPTransport/HTTPTransport/g' tests/_sync/test_client.py
-	sed -i 's/SyncHTTPTransport/HTTPTransport/g' tests/_sync/client.py
+	sed -i 's/SyncHTTPTransport/HTTPTransport/g' tests/_sync/**.py
+	sed -i 's/SyncClient/Client/g' postgrest/_sync/**.py tests/_sync/**.py
+	sed -i 's/self\.session\.aclose/self\.session\.close/g' postgrest/_sync/client.py
 
 sleep:
 	sleep 2

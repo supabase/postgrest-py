@@ -24,8 +24,6 @@ from ._sync.request_builder import (
 )
 from .base_request_builder import APIResponse
 from .constants import DEFAULT_POSTGREST_CLIENT_HEADERS
-from .deprecated_client import Client, PostgrestClient
-from .deprecated_get_request_builder import GetRequestBuilder
 from .exceptions import APIError
 from .types import (
     CountMethod,
@@ -54,9 +52,6 @@ __all__ = [
     "SyncSingleRequestBuilder",
     "APIResponse",
     "DEFAULT_POSTGREST_CLIENT_HEADERS",
-    "Client",
-    "PostgrestClient",
-    "GetRequestBuilder",
     "APIError",
     "CountMethod",
     "Filters",

@@ -1,12 +1,11 @@
 from typing import Any, Dict, List
 
 import pytest
-from httpx import Request, Response
+from httpx import AsyncClient, Request, Response
 
 from postgrest import AsyncRequestBuilder, AsyncSingleRequestBuilder
 from postgrest.base_request_builder import APIResponse, SingleAPIResponse
 from postgrest.types import CountMethod
-from postgrest.utils import AsyncClient
 
 
 @pytest.fixture

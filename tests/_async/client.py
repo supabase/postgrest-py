@@ -1,7 +1,6 @@
-from httpx import AsyncHTTPTransport, Limits
+from httpx import AsyncClient, AsyncHTTPTransport, Limits
 
 from postgrest import AsyncPostgrestClient
-from postgrest.utils import AsyncClient
 
 REST_URL = "http://127.0.0.1:3000"
 

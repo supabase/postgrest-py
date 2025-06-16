@@ -1,6 +1,16 @@
 import pytest
+from deprecation import fail_if_not_removed
 
-from postgrest.utils import sanitize_param
+from postgrest.utils import SyncClient, sanitize_param
+
+
+@fail_if_not_removed
+def test_sync_client():
+    client = SyncClient()
+    # Verify that aclose method exists and calls close
+    assert hasattr(client, "aclose")
+    assert callable(client.aclose)
+    client.aclose()  # Should not raise any exception
 
 
 @pytest.mark.parametrize(
