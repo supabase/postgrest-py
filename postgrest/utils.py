@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 from deprecation import deprecated
 from httpx import AsyncClient  # noqa: F401
 from httpx import Client as BaseClient  # noqa: F401
+from pydantic import BaseModel
 
 from .version import __version__
 
@@ -81,3 +82,17 @@ def is_valid_jwt(value: str) -> bool:
             return False
 
     return True
+
+
+TBaseModel = TypeVar("TBaseModel", bound=BaseModel)
+
+
+def model_validate_json(model: Type[TBaseModel], contents) -> TBaseModel:
+    """Compatibility layer between pydantic 1 and 2 for parsing an instance
+    of a BaseModel from varied"""
+    try:
+        # pydantic > 2
+        return model.model_validate_json(contents)
+    except AttributeError:
+        # pydantic < 2
+        return model.parse_raw(contents)

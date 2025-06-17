@@ -20,7 +20,7 @@ from ..base_request_builder import (
 )
 from ..exceptions import APIError, APIErrorFromJSON, generate_default_error_message
 from ..types import ReturnMethod
-from ..utils import get_origin_and_cast
+from ..utils import get_origin_and_cast, model_validate_json
 
 _ReturnT = TypeVar("_ReturnT")
 
@@ -74,7 +74,7 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
                             return body
                 return APIResponse[_ReturnT].from_http_request_response(r)
             else:
-                json_obj = APIErrorFromJSON.model_validate_json(r.content)
+                json_obj = model_validate_json(APIErrorFromJSON, r.content)
                 raise APIError(dict(json_obj))
         except ValidationError as e:
             raise APIError(generate_default_error_message(r))
@@ -122,7 +122,7 @@ class SyncSingleRequestBuilder(Generic[_ReturnT]):
             ):  # Response.ok from JS (https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
                 return SingleAPIResponse[_ReturnT].from_http_request_response(r)
             else:
-                json_obj = APIErrorFromJSON.model_validate_json(r.content)
+                json_obj = model_validate_json(APIErrorFromJSON, r.content)
                 raise APIError(dict(json_obj))
         except ValidationError as e:
             raise APIError(generate_default_error_message(r))
