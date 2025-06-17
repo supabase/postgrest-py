@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Generic, Optional, TypeVar, Union
 
-from httpx import Headers, QueryParams
+from httpx import AsyncClient, Headers, QueryParams
 from pydantic import ValidationError
 
 from ..base_request_builder import (
@@ -20,7 +20,7 @@ from ..base_request_builder import (
 )
 from ..exceptions import APIError, APIErrorFromJSON, generate_default_error_message
 from ..types import ReturnMethod
-from ..utils import AsyncClient, get_origin_and_cast
+from ..utils import get_origin_and_cast
 
 _ReturnT = TypeVar("_ReturnT")
 

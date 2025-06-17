@@ -2,6 +2,7 @@ from unittest.mock import patch
 
 import pytest
 from httpx import (
+    AsyncClient,
     AsyncHTTPTransport,
     BasicAuth,
     Headers,
@@ -13,7 +14,6 @@ from httpx import (
 
 from postgrest import AsyncPostgrestClient
 from postgrest.exceptions import APIError
-from postgrest.utils import AsyncClient
 
 
 @pytest.fixture

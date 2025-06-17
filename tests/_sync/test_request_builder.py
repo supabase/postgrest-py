@@ -1,17 +1,16 @@
 from typing import Any, Dict, List
 
 import pytest
-from httpx import Request, Response
+from httpx import Client, Request, Response
 
 from postgrest import SyncRequestBuilder, SyncSingleRequestBuilder
 from postgrest.base_request_builder import APIResponse, SingleAPIResponse
 from postgrest.types import CountMethod
-from postgrest.utils import SyncClient
 
 
 @pytest.fixture
 def request_builder():
-    with SyncClient() as client:
+    with Client() as client:
         yield SyncRequestBuilder(client, "/example_table")
 
 

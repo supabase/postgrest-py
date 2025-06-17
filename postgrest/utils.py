@@ -4,13 +4,28 @@ import re
 from typing import Any, Type, TypeVar, cast, get_origin
 from urllib.parse import urlparse
 
+from deprecation import deprecated
 from httpx import AsyncClient  # noqa: F401
 from httpx import Client as BaseClient  # noqa: F401
+
+from .version import __version__
 
 BASE64URL_REGEX = r"^([a-z0-9_-]{4})*($|[a-z0-9_-]{3}$|[a-z0-9_-]{2}$)$"
 
 
 class SyncClient(BaseClient):
+    @deprecated(
+        "1.0.2", "1.3.0", __version__, "Use `Client` from the httpx package instead"
+    )
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+    @deprecated(
+        "1.0.2",
+        "1.3.0",
+        __version__,
+        "Use `close` method from `Client` in the httpx package instead",
+    )
     def aclose(self) -> None:
         self.close()
 

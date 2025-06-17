@@ -18,7 +18,7 @@ from typing import (
     Union,
 )
 
-from httpx import Headers, QueryParams
+from httpx import AsyncClient, Client, Headers, QueryParams
 from httpx import Response as RequestResponse
 from pydantic import BaseModel
 
@@ -35,7 +35,7 @@ except ImportError:
     from pydantic import validator as field_validator
 
 from .types import CountMethod, Filters, RequestMethod, ReturnMethod
-from .utils import AsyncClient, SyncClient, get_origin_and_cast, sanitize_param
+from .utils import get_origin_and_cast, sanitize_param
 
 
 class QueryArgs(NamedTuple):
@@ -255,7 +255,7 @@ class SingleAPIResponse(APIResponse[_ReturnT], Generic[_ReturnT]):
 class BaseFilterRequestBuilder(Generic[_ReturnT]):
     def __init__(
         self,
-        session: Union[AsyncClient, SyncClient],
+        session: Union[AsyncClient, Client],
         headers: Headers,
         params: QueryParams,
     ) -> None:
@@ -530,7 +530,7 @@ class BaseFilterRequestBuilder(Generic[_ReturnT]):
 class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
     def __init__(
         self,
-        session: Union[AsyncClient, SyncClient],
+        session: Union[AsyncClient, Client],
         headers: Headers,
         params: QueryParams,
     ) -> None:
@@ -636,7 +636,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
 class BaseRPCRequestBuilder(BaseSelectRequestBuilder[_ReturnT]):
     def __init__(
         self,
-        session: Union[AsyncClient, SyncClient],
+        session: Union[AsyncClient, Client],
         headers: Headers,
         params: QueryParams,
     ) -> None:

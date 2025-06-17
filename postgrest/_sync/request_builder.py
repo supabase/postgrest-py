@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Generic, Optional, TypeVar, Union
 
-from httpx import Headers, QueryParams
+from httpx import Client, Headers, QueryParams
 from pydantic import ValidationError
 
 from ..base_request_builder import (
@@ -20,7 +20,7 @@ from ..base_request_builder import (
 )
 from ..exceptions import APIError, APIErrorFromJSON, generate_default_error_message
 from ..types import ReturnMethod
-from ..utils import SyncClient, get_origin_and_cast
+from ..utils import get_origin_and_cast
 
 _ReturnT = TypeVar("_ReturnT")
 
@@ -28,7 +28,7 @@ _ReturnT = TypeVar("_ReturnT")
 class SyncQueryRequestBuilder(Generic[_ReturnT]):
     def __init__(
         self,
-        session: SyncClient,
+        session: Client,
         path: str,
         http_method: str,
         headers: Headers,
@@ -83,7 +83,7 @@ class SyncQueryRequestBuilder(Generic[_ReturnT]):
 class SyncSingleRequestBuilder(Generic[_ReturnT]):
     def __init__(
         self,
-        session: SyncClient,
+        session: Client,
         path: str,
         http_method: str,
         headers: Headers,
@@ -152,7 +152,7 @@ class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder[_ReturnT]):
 class SyncFilterRequestBuilder(BaseFilterRequestBuilder[_ReturnT], SyncQueryRequestBuilder[_ReturnT]):  # type: ignore
     def __init__(
         self,
-        session: SyncClient,
+        session: Client,
         path: str,
         http_method: str,
         headers: Headers,
@@ -173,7 +173,7 @@ class SyncRPCFilterRequestBuilder(
 ):
     def __init__(
         self,
-        session: SyncClient,
+        session: Client,
         path: str,
         http_method: str,
         headers: Headers,
@@ -192,7 +192,7 @@ class SyncRPCFilterRequestBuilder(
 class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequestBuilder[_ReturnT]):  # type: ignore
     def __init__(
         self,
-        session: SyncClient,
+        session: Client,
         path: str,
         http_method: str,
         headers: Headers,
@@ -271,7 +271,7 @@ class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequ
 
 
 class SyncRequestBuilder(Generic[_ReturnT]):
-    def __init__(self, session: SyncClient, path: str) -> None:
+    def __init__(self, session: Client, path: str) -> None:
         self.session = session
         self.path = path
 

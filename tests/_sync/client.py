@@ -1,7 +1,6 @@
-from httpx import HTTPTransport, Limits
+from httpx import Client, HTTPTransport, Limits
 
 from postgrest import SyncPostgrestClient
-from postgrest.utils import SyncClient
 
 REST_URL = "http://127.0.0.1:3000"
 
@@ -22,7 +21,7 @@ def rest_client_httpx():
         ),
     )
     headers = {"x-user-agent": "my-app/0.0.1"}
-    http_client = SyncClient(transport=transport, headers=headers)
+    http_client = Client(transport=transport, headers=headers)
     return SyncPostgrestClient(
         base_url=REST_URL,
         http_client=http_client,

@@ -1,13 +1,12 @@
 import pytest
-from httpx import Headers, QueryParams
+from httpx import Client, Headers, QueryParams
 
 from postgrest import SyncFilterRequestBuilder
-from postgrest.utils import SyncClient
 
 
 @pytest.fixture
 def filter_request_builder():
-    with SyncClient() as client:
+    with Client() as client:
         yield SyncFilterRequestBuilder(
             client, "/example_table", "GET", Headers(), QueryParams(), {}
         )
