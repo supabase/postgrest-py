@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [1.1.0](https://github.com/supabase/postgrest-py/compare/v1.0.2...v1.1.0) (2025-06-19)
+
+
+### Features
+
+* allow injection of httpx client ([#591](https://github.com/supabase/postgrest-py/issues/591)) ([635a4ba](https://github.com/supabase/postgrest-py/commit/635a4ba421457ce0967c3efc332ae883b693ef71))
+
+
+### Bug Fixes
+
+* **pydantic:** model_validate_json causing code break with pydantic v1 ([#609](https://github.com/supabase/postgrest-py/issues/609)) ([587dcc8](https://github.com/supabase/postgrest-py/commit/587dcc82835afd0290c0c83f3c38ff6b8de123a2))
+* remove reliance on SyncClient and use Client directly from httpx ([#607](https://github.com/supabase/postgrest-py/issues/607)) ([021f1b6](https://github.com/supabase/postgrest-py/commit/021f1b65fd728116c715b33504df7c37847e6bf2))
+
 ## [1.0.2](https://github.com/supabase/postgrest-py/compare/v1.0.1...v1.0.2) (2025-05-21)
 
 
