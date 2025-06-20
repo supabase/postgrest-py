@@ -5,7 +5,7 @@ from typing import Dict, Optional, Union
 
 from httpx import AsyncClient, BasicAuth, Client, Timeout
 
-from .utils import is_http_url, is_valid_jwt
+from .utils import is_http_url
 
 
 class BasePostgrestClient(ABC):
@@ -71,8 +71,6 @@ class BasePostgrestClient(ABC):
             Bearer token is preferred if both ones are provided.
         """
         if token:
-            if not is_valid_jwt(token):
-                ValueError("token must be a valid JWT authorization token")
             self.session.headers["Authorization"] = f"Bearer {token}"
         elif username:
             self.session.auth = BasicAuth(username, password)
