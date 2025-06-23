@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [1.1.1](https://github.com/supabase/postgrest-py/compare/v1.1.0...v1.1.1) (2025-06-23)
+
+
+### Bug Fixes
+
+* remove jwt key validation to allow new api keys ([#612](https://github.com/supabase/postgrest-py/issues/612)) ([af63482](https://github.com/supabase/postgrest-py/commit/af634822dac7b0a7f12973c01de2750de5723490))
+
 ## [1.1.0](https://github.com/supabase/postgrest-py/compare/v1.0.2...v1.1.0) (2025-06-19)
 
 
