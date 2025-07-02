@@ -19,7 +19,7 @@ def test_constructor(filter_request_builder: AsyncFilterRequestBuilder):
     assert len(builder.headers) == 0
     assert len(builder.params) == 0
     assert builder.http_method == "GET"
-    assert builder.json == None
+    assert builder.json is None
     assert not builder.negate_next
 
 
@@ -172,7 +172,9 @@ def test_overlaps(filter_request_builder):
 
 
 def test_overlaps_with_timestamp_range(filter_request_builder):
-    builder = filter_request_builder.overlaps("x", "[2000-01-01 12:45, 2000-01-01 13:15)")
+    builder = filter_request_builder.overlaps(
+        "x", "[2000-01-01 12:45, 2000-01-01 13:15)"
+    )
 
     # {a,["b",+"c"]}
     assert str(builder.params) == "x=ov.%5B2000-01-01+12%3A45%2C+2000-01-01+13%3A15%29"

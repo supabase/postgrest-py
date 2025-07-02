@@ -24,16 +24,14 @@ deprecation = "^2.1.0"
 pydantic = ">=1.9,<3.0"
 strenum = {version = "^0.4.9", python = "<3.11"}
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^8.4.1"
-flake8 = "^7.3.0"
-black = "^25.1"
-isort = "^6.0.1"
 pre-commit = "^4.2.0"
 pytest-cov = "^6.2.1"
 pytest-depends = "^1.0.1"
 pytest-asyncio = "^1.0.0"
 unasync-cli = { git = "https://github.com/supabase-community/unasync-cli.git", branch = "main" }
+ruff = "^0.12.1"
 
 [tool.poetry.group.docs]
 optional = true
@@ -41,6 +39,28 @@ optional = true
 [tool.poetry.group.docs.dependencies]
 sphinx = "^7.1.2"
 furo = ">=2023.9.10,<2025.0.0"
+
+[tool.ruff.lint]
+select = [
+  # pycodestyle
+  "E",
+  # Pyflakes
+  "F",
+  # pyupgrade
+  "UP",
+  # flake8-bugbear
+  # "B",
+  # flake8-simplify
+  # "SIM",
+  # isort
+  "I",
+]
+ignore = ["F401", "F403", "F841", "E712", "E501", "E402", "UP006", "UP035"]
+# isort.required-imports = ["from __future__ import annotations"]
+
+[tool.ruff.lint.pyupgrade]
+# Preserve types, even if a file imports `from __future__ import annotations`.
+keep-runtime-typing = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

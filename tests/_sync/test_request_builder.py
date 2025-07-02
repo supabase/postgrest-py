@@ -25,7 +25,7 @@ class TestSelect:
         assert builder.params["select"] == "col1,col2"
         assert builder.headers.get("prefer") is None
         assert builder.http_method == "GET"
-        assert builder.json == None
+        assert builder.json is None
 
     def test_select_with_count(self, request_builder: SyncRequestBuilder):
         builder = request_builder.select(count=CountMethod.exact)
@@ -33,7 +33,7 @@ class TestSelect:
         assert builder.params["select"] == "*"
         assert builder.headers["prefer"] == "count=exact"
         assert builder.http_method == "GET"
-        assert builder.json == None
+        assert builder.json is None
 
     def test_select_with_head(self, request_builder: SyncRequestBuilder):
         builder = request_builder.select("col1", "col2", head=True)
@@ -41,7 +41,7 @@ class TestSelect:
         assert builder.params.get("select") == "col1,col2"
         assert builder.headers.get("prefer") is None
         assert builder.http_method == "HEAD"
-        assert builder.json == None
+        assert builder.json is None
 
     def test_select_as_csv(self, request_builder: SyncRequestBuilder):
         builder = request_builder.select("*").csv()
@@ -194,7 +194,9 @@ class TestExplain:
         )
         assert builder.params["select"] == "*"
         assert "application/vnd.pgrst.plan+json;" in str(builder.headers.get("accept"))
-        assert "options=analyze|verbose|buffers|wal" in str(builder.headers.get("accept"))
+        assert "options=analyze|verbose|buffers|wal" in str(
+            builder.headers.get("accept")
+        )
 
 
 class TestOrder:
@@ -210,7 +212,9 @@ class TestOrder:
         )
         assert str(builder.params) == "select=%2A&order=country_name.desc%2Ciso.desc"
 
-    def test_multiple_orders_on_foreign_table(self, request_builder: SyncRequestBuilder):
+    def test_multiple_orders_on_foreign_table(
+        self, request_builder: SyncRequestBuilder
+    ):
         foreign_table = "cities"
         builder = (
             request_builder.select()

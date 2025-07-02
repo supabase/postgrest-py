@@ -149,7 +149,9 @@ class AsyncMaybeSingleRequestBuilder(AsyncSingleRequestBuilder[_ReturnT]):
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
-class AsyncFilterRequestBuilder(BaseFilterRequestBuilder[_ReturnT], AsyncQueryRequestBuilder[_ReturnT]):  # type: ignore
+class AsyncFilterRequestBuilder(
+    BaseFilterRequestBuilder[_ReturnT], AsyncQueryRequestBuilder[_ReturnT]
+):  # type: ignore
     def __init__(
         self,
         session: AsyncClient,
@@ -189,7 +191,9 @@ class AsyncRPCFilterRequestBuilder(
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
-class AsyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], AsyncQueryRequestBuilder[_ReturnT]):  # type: ignore
+class AsyncSelectRequestBuilder(
+    BaseSelectRequestBuilder[_ReturnT], AsyncQueryRequestBuilder[_ReturnT]
+):  # type: ignore
     def __init__(
         self,
         session: AsyncClient,
