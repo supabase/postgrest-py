@@ -130,9 +130,9 @@ async def test_response_status_code_outside_ok(postgrest_client: AsyncPostgrestC
         ),
     ):
         with pytest.raises(APIError) as exc_info:
-            await postgrest_client.from_("test").select("a", "b").eq(
-                "c", "d"
-            ).execute()  # gives status_code = 400
+            await (
+                postgrest_client.from_("test").select("a", "b").eq("c", "d").execute()
+            )  # gives status_code = 400
         exc_response = exc_info.value.json()
         assert not exc_response.get("success")
         assert isinstance(exc_response.get("errors"), list)

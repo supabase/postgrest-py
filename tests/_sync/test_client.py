@@ -55,7 +55,6 @@ class TestConstructor:
 
 
 class TestHttpxClientConstructor:
-
     def test_custom_httpx_client(self):
         transport = HTTPTransport(
             retries=10,
@@ -127,9 +126,9 @@ def test_response_status_code_outside_ok(postgrest_client: SyncPostgrestClient):
         ),
     ):
         with pytest.raises(APIError) as exc_info:
-            postgrest_client.from_("test").select("a", "b").eq(
-                "c", "d"
-            ).execute()  # gives status_code = 400
+            (
+                postgrest_client.from_("test").select("a", "b").eq("c", "d").execute()
+            )  # gives status_code = 400
         exc_response = exc_info.value.json()
         assert not exc_response.get("success")
         assert isinstance(exc_response.get("errors"), list)

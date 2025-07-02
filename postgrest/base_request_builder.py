@@ -609,7 +609,7 @@ class BaseSelectRequestBuilder(BaseFilterRequestBuilder[_ReturnT]):
         )
         return self
 
-    def offset(self: _FilterT, size: int) -> _FilterT:
+    def offset(self: Self, size: int) -> Self:
         """Set the starting row index returned by a query.
         Args:
             size: The number of the row to start at

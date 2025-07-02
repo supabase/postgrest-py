@@ -149,7 +149,9 @@ class SyncMaybeSingleRequestBuilder(SyncSingleRequestBuilder[_ReturnT]):
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
-class SyncFilterRequestBuilder(BaseFilterRequestBuilder[_ReturnT], SyncQueryRequestBuilder[_ReturnT]):  # type: ignore
+class SyncFilterRequestBuilder(
+    BaseFilterRequestBuilder[_ReturnT], SyncQueryRequestBuilder[_ReturnT]
+):  # type: ignore
     def __init__(
         self,
         session: Client,
@@ -189,7 +191,9 @@ class SyncRPCFilterRequestBuilder(
 
 
 # ignoring type checking as a workaround for https://github.com/python/mypy/issues/9319
-class SyncSelectRequestBuilder(BaseSelectRequestBuilder[_ReturnT], SyncQueryRequestBuilder[_ReturnT]):  # type: ignore
+class SyncSelectRequestBuilder(
+    BaseSelectRequestBuilder[_ReturnT], SyncQueryRequestBuilder[_ReturnT]
+):  # type: ignore
     def __init__(
         self,
         session: Client,
