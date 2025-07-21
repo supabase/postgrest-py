@@ -38,7 +38,7 @@ optional = true
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "^7.1.2"
-furo = ">=2023.9.10,<2025.0.0"
+furo = ">=2023.9.10,<2026.0.0"
 
 [tool.ruff.lint]
 select = [
